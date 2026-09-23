@@ -180,6 +180,41 @@ pub(crate) fn verify_shortcut_consent(state: &Rc<State>) {
             .collect::<Vec<_>>(),
         vec!["<Super>m"]
     );
+    let original = state.store.borrow().settings.clone();
+    assert!(write_shortcuts(
+        state,
+        &original.activate_shortcut,
+        &original.note_shortcut,
+        "<Control><Alt>b",
+        original.quick_paste,
+    ));
+    assert_eq!(
+        state.store.borrow().settings.library_shortcut,
+        "<Control><Alt>b"
+    );
+    assert_eq!(
+        extension
+            .strv("library-shortcut")
+            .iter()
+            .map(|value| value.as_str())
+            .collect::<Vec<_>>(),
+        vec!["<Control><Alt>b"]
+    );
+    assert!(write_shortcuts(
+        state,
+        &original.activate_shortcut,
+        &original.note_shortcut,
+        "",
+        original.quick_paste,
+    ));
+    assert!(extension.strv("library-shortcut").is_empty());
+    assert!(write_shortcuts(
+        state,
+        &original.activate_shortcut,
+        &original.note_shortcut,
+        &original.library_shortcut,
+        original.quick_paste,
+    ));
     println!("PASS shortcut consent, decline, stale settings and alternate shortcut");
 }
 
@@ -206,6 +241,11 @@ const NOTE_SHORTCUTS: &[(&str, &str)] = &[
     (mark("Super+Shift+N"), "<Super><Shift>n"),
     (mark("Shift+Alt+N"), "<Shift><Alt>n"),
     (mark("None"), ""),
+];
+const LIBRARY_SHORTCUTS: &[(&str, &str)] = &[
+    (mark("Super+B"), "<Super>b"),
+    (mark("Ctrl+Alt+B"), "<Control><Alt>b"),
+    (mark("Disabled"), ""),
 ];
 const RETENTION: &[(i64, &str)] = &[
     (1, mark("1 day")),
@@ -402,7 +442,13 @@ pub(crate) fn extension_settings() -> Result<gio::Settings, String> {
     ))
 }
 
-fn write_shortcuts(state: &Rc<State>, activate: &str, note: &str, quick: bool) -> bool {
+fn write_shortcuts(
+    state: &Rc<State>,
+    activate: &str,
+    note: &str,
+    library: &str,
+    quick: bool,
+) -> bool {
     let settings = match extension_settings() {
         Ok(settings) => settings,
         Err(message) => {
@@ -410,6 +456,16 @@ fn write_shortcuts(state: &Rc<State>, activate: &str, note: &str, quick: bool) -
             return false;
         }
     };
+    if !settings
+        .settings_schema()
+        .is_some_and(|schema| schema.has_key("library-shortcut"))
+    {
+        ui::error(
+            state,
+            &tr("The installed GNOME Shell extension does not support the Library shortcut. Update the extension first."),
+        );
+        return false;
+    }
     let old_activate: Vec<String> = settings
         .strv("activate-shortcut")
         .iter()
@@ -417,6 +473,11 @@ fn write_shortcuts(state: &Rc<State>, activate: &str, note: &str, quick: bool) -
         .collect();
     let old_note: Vec<String> = settings
         .strv("note-shortcut")
+        .iter()
+        .map(|value| value.to_string())
+        .collect();
+    let old_library: Vec<String> = settings
+        .strv("library-shortcut")
         .iter()
         .map(|value| value.to_string())
         .collect();
@@ -439,6 +500,11 @@ fn write_shortcuts(state: &Rc<State>, activate: &str, note: &str, quick: bool) -
     } else {
         vec![note]
     };
+    let library_values: Vec<&str> = if library.is_empty() {
+        Vec::new()
+    } else {
+        vec![library]
+    };
     settings.delay();
     if let Err(error) = settings.set_strv("activate-shortcut", activate_values) {
         settings.revert();
@@ -446,6 +512,11 @@ fn write_shortcuts(state: &Rc<State>, activate: &str, note: &str, quick: bool) -
         return false;
     }
     if let Err(error) = settings.set_strv("note-shortcut", note_values) {
+        settings.revert();
+        ui::error(state, &error.to_string());
+        return false;
+    }
+    if let Err(error) = settings.set_strv("library-shortcut", library_values) {
         settings.revert();
         ui::error(state, &error.to_string());
         return false;
@@ -467,12 +538,14 @@ fn write_shortcuts(state: &Rc<State>, activate: &str, note: &str, quick: bool) -
     let saved = save_change(state, |config| {
         config.activate_shortcut = activate.into();
         config.note_shortcut = note.into();
+        config.library_shortcut = library.into();
         config.quick_paste = quick;
     });
     if !saved {
         settings.delay();
         let _ = settings.set_strv("activate-shortcut", old_activate.as_slice());
         let _ = settings.set_strv("note-shortcut", old_note.as_slice());
+        let _ = settings.set_strv("library-shortcut", old_library.as_slice());
         for (index, values) in old_quick.iter().enumerate() {
             let _ = settings.set_strv(&format!("quick-paste-{}", index + 1), values.as_slice());
         }
@@ -527,6 +600,7 @@ fn reset_defaults(state: &Rc<State>) -> bool {
         state,
         &defaults.activate_shortcut,
         &defaults.note_shortcut,
+        &defaults.library_shortcut,
         defaults.quick_paste,
     ) {
         let _ = configure_autostart(previous.open_at_login);
@@ -537,6 +611,7 @@ fn reset_defaults(state: &Rc<State>) -> bool {
             state,
             &previous.activate_shortcut,
             &previous.note_shortcut,
+            &previous.library_shortcut,
             previous.quick_paste,
         );
         let _ = configure_autostart(previous.open_at_login);
@@ -553,6 +628,7 @@ fn reset_defaults(state: &Rc<State>) -> bool {
             state,
             &previous.activate_shortcut,
             &previous.note_shortcut,
+            &previous.library_shortcut,
             previous.quick_paste,
         );
         let _ = configure_autostart(previous.open_at_login);
@@ -1303,7 +1379,13 @@ fn show_page(state: &Rc<State>, page: Option<&str>) {
             if *value == settings.activate_shortcut {
                 return;
             }
-            if !write_shortcuts(&state, value, &settings.note_shortcut, settings.quick_paste) {
+            if !write_shortcuts(
+                &state,
+                value,
+                &settings.note_shortcut,
+                &settings.library_shortcut,
+                settings.quick_paste,
+            ) {
                 guard.set(true);
                 row.set_selected(
                     ACTIVATE_SHORTCUTS
@@ -1380,6 +1462,7 @@ fn show_page(state: &Rc<State>, page: Option<&str>) {
                 &state,
                 &settings.activate_shortcut,
                 value,
+                &settings.library_shortcut,
                 settings.quick_paste,
             ) {
                 guard.set(true);
@@ -1394,6 +1477,45 @@ fn show_page(state: &Rc<State>, page: Option<&str>) {
         });
     }
     shortcut_group.add(&note);
+    let library_index = LIBRARY_SHORTCUTS
+        .iter()
+        .position(|(_, value)| *value == current.library_shortcut)
+        .unwrap_or(0) as u32;
+    let library_labels: Vec<&str> = LIBRARY_SHORTCUTS.iter().map(|(label, _)| *label).collect();
+    let library = combo(mark("Open Library"), &library_labels, library_index);
+    {
+        let state = state.clone();
+        let guard = Rc::new(Cell::new(false));
+        library.connect_selected_notify(move |row| {
+            if guard.get() {
+                return;
+            }
+            let Some((_, value)) = LIBRARY_SHORTCUTS.get(row.selected() as usize) else {
+                return;
+            };
+            let settings = state.store.borrow().settings.clone();
+            if *value == settings.library_shortcut {
+                return;
+            }
+            if !write_shortcuts(
+                &state,
+                &settings.activate_shortcut,
+                &settings.note_shortcut,
+                value,
+                settings.quick_paste,
+            ) {
+                guard.set(true);
+                row.set_selected(
+                    LIBRARY_SHORTCUTS
+                        .iter()
+                        .position(|(_, v)| *v == settings.library_shortcut)
+                        .unwrap_or(0) as u32,
+                );
+                guard.set(false);
+            }
+        });
+    }
+    shortcut_group.add(&library);
     let quick = switch_row(
         mark("Quick Paste Alt+1…9"),
         mark("Paste History items 1–9"),
@@ -1414,6 +1536,7 @@ fn show_page(state: &Rc<State>, page: Option<&str>) {
                 &state,
                 &settings.activate_shortcut,
                 &settings.note_shortcut,
+                &settings.library_shortcut,
                 toggle.is_active(),
             ) {
                 guard.set(true);
@@ -1554,7 +1677,7 @@ fn show_page(state: &Rc<State>, page: Option<&str>) {
 fn shortcut_reference(page: &adw::PreferencesPage) {
     let group = adw::PreferencesGroup::builder()
         .title(tr("Selected card"))
-        .description(tr("In the library, click a card or focus it with the keyboard; use arrows to move across cards and pages. In the overlay, commands use the highlighted card. Delete in the search field edits text. Deletion always asks for confirmation."))
+        .description(tr("In the library, click a card or focus it with the keyboard; use arrows to move across cards and pages. In the overlay, commands use the highlighted card. Delete edits nonempty search text; otherwise it acts on the highlighted card. Deletion always asks for confirmation."))
         .build();
     for (label, _, accelerator) in crate::item_shortcuts::COMMANDS {
         let row = adw::ActionRow::builder()

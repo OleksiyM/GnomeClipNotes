@@ -9,6 +9,10 @@
       <default>['&lt;Super&gt;&lt;Shift&gt;n']</default>
       <summary>Create a note</summary>
     </key>
+    <key name="library-shortcut" type="as">
+      <default>['&lt;Super&gt;b']</default>
+      <summary>Open the library</summary>
+    </key>
     <key name="quick-paste-1" type="as"><default>['&lt;Alt&gt;1']</default><summary>Paste result 1</summary></key>
     <key name="quick-paste-2" type="as"><default>['&lt;Alt&gt;2']</default><summary>Paste result 2</summary></key>
     <key name="quick-paste-3" type="as"><default>['&lt;Alt&gt;3']</default><summary>Paste result 3</summary></key>

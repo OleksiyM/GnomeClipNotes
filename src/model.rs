@@ -53,6 +53,7 @@ pub struct Settings {
     pub paused_until: i64,
     pub activate_shortcut: String,
     pub note_shortcut: String,
+    pub library_shortcut: String,
     pub quick_paste: bool,
     pub retention_days: i64,
     pub open_at_login: bool,
@@ -78,6 +79,7 @@ impl Default for Settings {
             paused_until: 0,
             activate_shortcut: "<Super>v".into(),
             note_shortcut: "<Super><Shift>n".into(),
+            library_shortcut: "<Super>b".into(),
             quick_paste: true,
             retention_days: 30,
             open_at_login: true,
@@ -128,5 +130,6 @@ mod tests {
         )
         .unwrap();
         assert_eq!(settings.preview_mode, "webkit");
+        assert_eq!(settings.library_shortcut, "<Super>b");
     }
 }

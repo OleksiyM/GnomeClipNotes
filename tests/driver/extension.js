@@ -15,6 +15,7 @@ const XML=`<node><interface name="org.example.ClipNotesTestDriver">
 <method name="SourceFixture"><arg type="s" direction="in"/></method>
 <method name="Layout"><arg type="s" direction="in"/></method><method name="Focus"/><method name="Copy"/><method name="Key"><arg type="s" direction="in"/></method>
 <method name="ShortcutProbe"><arg type="s" direction="in"/></method>
+<method name="LibraryShortcut"><arg type="s" direction="in"/></method>
 <method name="CardFocus"><arg type="s" direction="in"/></method>
 <method name="Hint"><arg type="s" direction="in"/></method>
 <method name="Dates"><arg type="s" direction="in"/></method>
@@ -158,6 +159,24 @@ export default class TestDriver extends Extension {
                 }else if(this._originalActivate){
                     overlay._activateApp=this._originalActivate;
                     this._originalActivate=null;
+                }
+            },
+            LibraryShortcut:mode=>{
+                const extension=Main.extensionManager.lookup('gnome-clip-notes@oleksiym.github.io').stateObj;
+                if(mode==='begin'){
+                    this._libraryCalls=[];
+                    this._libraryActivate=extension.activate;
+                    this._libraryBinding=extension._settings.get_strv('library-shortcut');
+                    extension.activate=(action,id)=>this._libraryCalls.push({action,id});
+                }else if(mode==='end'){
+                    extension.activate=this._libraryActivate;
+                    extension._settings.set_strv('library-shortcut',this._libraryBinding);
+                }else if(mode==='alternate'||mode==='disabled'){
+                    extension._settings.set_strv('library-shortcut',mode==='alternate'?['<Control><Alt>b']:[]);
+                }else{
+                    const keys=mode==='super'?[125,48]:[29,56,48];
+                    for(const code of keys)this._keyboard.notify_key(GLib.get_monotonic_time(),code,Clutter.KeyState.PRESSED);
+                    for(const code of keys.reverse())this._keyboard.notify_key(GLib.get_monotonic_time(),code,Clutter.KeyState.RELEASED);
                 }
             },
             CardFocus:index=>{
@@ -347,7 +366,9 @@ export default class TestDriver extends Extension {
                     overlay_bottom:overlay?(overlay._actor.get_transformed_position()[1]+overlay._actor.height):0,
                     selected:overlay?._selected??0,
                     selected_id:overlay?._items?.[overlay?._selected]?.id??null,
+                    card_has_focus:!!(overlay && global.stage.get_key_focus() && overlay._cards.contains(global.stage.get_key_focus())),
                     shortcut_calls:this._shortcutCalls??[],
+                    library_calls:this._libraryCalls??[],
                     selected_content:overlay?._items?.[overlay?._selected]?.content??'',
                     offset:overlay?._query.offset??0,
                     has_next:overlay?._hasNext??false,

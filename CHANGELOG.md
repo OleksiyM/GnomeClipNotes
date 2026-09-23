@@ -26,6 +26,9 @@ builds, not public releases.
 
 - Native GTK4/libadwaita Library, Settings and About; GNOME Shell clipboard and
   shortcut integration on Wayland.
+- Configurable Library shortcut: Super+B by default, with Ctrl+Alt+B as an
+  alternative. Card deletion uses Delete or F8 with confirmation; overlay arrow
+  navigation keeps keyboard focus aligned with the highlighted card.
 - Explicit release availability checks, opening downloads in the system browser.
 - English UI with System default / English selection and localization groundwork.
 - Platform-labelled archives and per-user installation/update tooling.

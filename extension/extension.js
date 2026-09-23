@@ -746,9 +746,12 @@ class Overlay {
 
     _navigate(direction) {
         if (this._changingPage || !this._items.length) return;
+        // Navigation acts on cards, not on the search cursor. Move real focus
+        // as well as the highlight so Delete has the same target as F8.
+        this._cards.get_children()[this._selected]?.grab_key_focus();
         const index = this._selected + direction;
         if (index < 0 || index >= this._items.length) this._changePage(direction);
-        else this._select(index);
+        else { this._select(index); this._cards.get_children()[this._selected]?.grab_key_focus(); }
     }
 
     _select(index) {
@@ -774,7 +777,7 @@ class Overlay {
             action = ({[Clutter.KEY_F3]: 'view', [Clutter.KEY_F4]: 'edit', [Clutter.KEY_F2]: 'rename', [Clutter.KEY_F8]: 'delete', [Clutter.KEY_Delete]: 'delete', [Clutter.KEY_KP_Delete]: 'delete'})[key] ?? null;
         }
         const inSearch = global.stage.get_key_focus() === this._search.get_clutter_text();
-        if (inSearch && [Clutter.KEY_Delete, Clutter.KEY_KP_Delete].includes(key)) return Clutter.EVENT_PROPAGATE;
+        if (inSearch && this._search.get_text().length > 0 && [Clutter.KEY_Delete, Clutter.KEY_KP_Delete].includes(key)) return Clutter.EVENT_PROPAGATE;
         if (action) {
             const item = this._items[this._selected];
             if (item && !this._changingPage) this._activateApp(action, item.id);
@@ -905,6 +908,7 @@ export default class GnomeClipNotesExtension extends Extension {
         const flags = Meta.KeyBindingFlags.NONE;
         Main.wm.addKeybinding('activate-shortcut', this._settings, flags, Shell.ActionMode.NORMAL, () => this._overlay.toggle());
         Main.wm.addKeybinding('note-shortcut', this._settings, flags, Shell.ActionMode.NORMAL, () => this.activate('new-note', 0));
+        Main.wm.addKeybinding('library-shortcut', this._settings, flags, Shell.ActionMode.NORMAL, () => this.activate('show', 0));
         for (let i = 1; i <= 9; i++)
             Main.wm.addKeybinding(`quick-paste-${i}`, this._settings, flags, Shell.ActionMode.NORMAL, () => this._quickPaste(i - 1));
     }
@@ -1269,7 +1273,7 @@ export default class GnomeClipNotesExtension extends Extension {
         this._alive = false;
         this._captureGeneration = (this._captureGeneration ?? 0) + 1;
         this._captureCancellable?.cancel();
-        for (const name of ['activate-shortcut', 'note-shortcut', ...Array.from({length: 9}, (_, i) => `quick-paste-${i + 1}`)])
+        for (const name of ['activate-shortcut', 'note-shortcut', 'library-shortcut', ...Array.from({length: 9}, (_, i) => `quick-paste-${i + 1}`)])
             Main.wm.removeKeybinding(name);
         if (this._ownerChangedId) this._selection.disconnect(this._ownerChangedId);
         if (this._focusId) global.display.disconnect(this._focusId);

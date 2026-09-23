@@ -71,7 +71,8 @@ for SHA256 integrity and optional signed-provenance verification.
 
 Running `gnome-clip-notes` opens the bottom clipboard panel through the GNOME
 extension. The library is a separate browsing window, available from the panel
-menu or `--library`. Without the extension, the app falls back to the library
+menu, **Super+B**, or `--library`. Settings → Shortcuts → Open Library lets you
+choose **Ctrl+Alt+B** instead, or disable the binding. Without the extension, the app falls back to the library
 and explains how to enable the panel. Other entry points are:
 
 ```text
@@ -122,8 +123,9 @@ In the library, click a card or focus it with the keyboard to select it; arrows
 move through the grid and across pages. Selection stays visible and follows item
 identity across refreshes; it clears if that item leaves the visible results.
 Commands require focus in the grid, not in search or a dialog. In the overlay,
-commands target the highlighted card; Delete in search still edits the search
-text. Menu hints and Settings → Shortcuts document the bindings.
+commands target the highlighted card; arrows also move keyboard focus to it.
+Delete edits nonempty search text while search has focus; with empty search it
+acts on the highlighted card. Menu hints and Settings → Shortcuts document the bindings.
 
 Settings → Data → **Export…** saves Notes and selected custom folders as separate
 human-readable Markdown files. History and current filters are excluded. Choose

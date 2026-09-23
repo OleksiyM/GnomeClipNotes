@@ -438,6 +438,10 @@ msgid "Created: {date}"
 msgstr ""
 
 #: src/preferences.rs
+msgid "Ctrl+Alt+B"
+msgstr ""
+
+#: src/preferences.rs
 #, rust-format
 msgid "Currently applied: {period}"
 msgstr ""
@@ -541,6 +545,10 @@ msgstr ""
 #: src/export_ui.rs
 #, rust-format
 msgid "Destination: {destination}"
+msgstr ""
+
+#: src/preferences.rs
+msgid "Disabled"
 msgstr ""
 
 #: src/ui.rs
@@ -744,7 +752,7 @@ msgid "Ignored applications"
 msgstr ""
 
 #: src/preferences.rs
-msgid "In the library, click a card or focus it with the keyboard; use arrows to move across cards and pages. In the overlay, commands use the highlighted card. Delete in the search field edits text. Deletion always asks for confirmation."
+msgid "In the library, click a card or focus it with the keyboard; use arrows to move across cards and pages. In the overlay, commands use the highlighted card. Delete edits nonempty search text; otherwise it acts on the highlighted card. Deletion always asks for confirmation."
 msgstr ""
 
 #: src/export_ui.rs
@@ -994,7 +1002,7 @@ msgstr ""
 msgid "Open Export Folder"
 msgstr ""
 
-#: extension/extension.js
+#: src/preferences.rs
 msgid "Open Library"
 msgstr ""
 
@@ -1221,6 +1229,10 @@ msgid "Startup and appearance"
 msgstr ""
 
 #: src/preferences.rs
+msgid "Super+B"
+msgstr ""
+
+#: src/preferences.rs
 msgid "Super+Shift+N"
 msgstr ""
 
@@ -1262,6 +1274,10 @@ msgstr ""
 
 #: src/export_ui.rs
 msgid "The export worker stopped unexpectedly. Some files may have been created in the selected folder. Nothing was deleted from the application."
+msgstr ""
+
+#: src/preferences.rs
+msgid "The installed GNOME Shell extension does not support the Library shortcut. Update the extension first."
 msgstr ""
 
 #: src/export_ui.rs

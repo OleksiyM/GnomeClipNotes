@@ -85,6 +85,23 @@ try {
     await call('org.gnome.Shell','/org/example/ClipNotesTestDriver','org.example.ClipNotesTestDriver','Focus',null);
     await waitUntil('test window keyboard focus',()=>Promise.resolve(window.is_active));
 
+    await driver('LibraryShortcut','begin');
+    await driver('LibraryShortcut','super');
+    await waitUntil('Super+B opens Library',async()=> (await overlayInfo()).library_calls.length===1);
+    await driver('LibraryShortcut','alternate');
+    await delay(200);
+    await driver('LibraryShortcut','ctrl-alt');
+    await waitUntil('Ctrl+Alt+B opens Library',async()=> (await overlayInfo()).library_calls.length===2);
+    assert((await overlayInfo()).library_calls.every(call=>call.action==='show'&&call.id===0),'Library bindings reuse show action');
+    await driver('LibraryShortcut','disabled');
+    await delay(200);
+    await driver('LibraryShortcut','super');
+    await driver('LibraryShortcut','ctrl-alt');
+    await delay(200);
+    assert((await overlayInfo()).library_calls.length===2,'Disabled Library shortcut is inactive');
+    await driver('LibraryShortcut','end');
+    print('PASS Library global shortcuts and disabling');
+
     const display = Gdk.Display.get_default();
     assert(display !== null, 'GTK did not connect to the isolated Wayland display');
     const clipboard = display.get_clipboard();
@@ -366,10 +383,20 @@ try {
     // Verify real Shell key routing, recording dispatch without opening app windows.
     // GTK smoke covers the corresponding real dialogs and item mutations.
     await driver('ShortcutProbe','begin');
+    await driver('Search','');
+    await driver('CardFocus','search');
+    await driver('Key','delete');
+    await waitUntil('Delete from empty search targets highlighted card',async()=> (await overlayInfo()).shortcut_calls.length===1);
+    assert((await overlayInfo()).shortcut_calls[0].action==='delete','Empty search Delete dispatches deletion');
+    await driver('Key','right');
+    assert((await overlayInfo()).card_has_focus,'Arrow navigation transfers focus from search to cards');
+    await driver('Key','delete');
+    await waitUntil('Delete after navigation from search',async()=> (await overlayInfo()).shortcut_calls.length===2);
+    assert((await overlayInfo()).shortcut_calls.at(-1).id===(await overlayInfo()).selected_id,'Delete follows arrow selection');
     await driver('CardFocus','1');
     await waitUntil('keyboard focus selects card',async()=> (await overlayInfo()).selected===1);
     const shortcutItem=(await overlayInfo()).selected_id;
-    let shortcutCount=0;
+    let shortcutCount=2;
     for(const [key,action] of [['f3','view'],['f4','edit'],['alt+enter','info'],['f2','rename'],['f8','delete'],['delete','delete']]){
         await driver('Key',key);
         shortcutCount++;
@@ -388,9 +415,12 @@ try {
     await driver('Key','left');
     await waitUntil('focused card returns to previous page',async()=> (await overlayInfo()).offset===beforePage.offset);
     await driver('CardFocus','search');
+    await driver('Search','gcn');
     await driver('Key','delete');
     await delay(150);
     assert((await overlayInfo()).shortcut_calls.length===shortcutCount,'Delete in search must not delete a card');
+    await driver('Search','');
+    await delay(350);
     await driver('Click','card-context');
     await waitUntil('context menu guards shortcuts',async()=> (await overlayInfo()).context_visible);
     await driver('Key','f3');

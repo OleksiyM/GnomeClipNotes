@@ -4,9 +4,17 @@ The primary interface is the bottom clipboard panel, not the library window.
 Opening the app or using its shortcut brings up the panel. The library remains
 available for browsing larger collections.
 
+The Shell-owned Open Library shortcut defaults to Super+B. Settings → Shortcuts
+offers Ctrl+Alt+B as an alternative and Disabled; it brings forward the existing
+library window rather than creating duplicates. Other desktop bindings are not
+changed to reserve either combination.
+
 ## GNOME Shell panel
 
 - Use Shell's native surface and button styles, rather than imitating GTK.
+- Arrow navigation transfers keyboard focus to the selected card. Delete and F8
+  request deletion of that card with confirmation. Delete in a focused nonempty
+  search edits text; an empty search does not swallow the card command.
 - Keep search, filters, collections, and page navigation together above cards;
   there is no bottom footer. Search takes remaining space, with a usable minimum.
 - Give collections symbolic icons. Move excess folders to More based on their
