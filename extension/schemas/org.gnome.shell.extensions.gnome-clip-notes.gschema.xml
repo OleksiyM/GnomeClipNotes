@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schemalist gettext-domain="gnome-clip-notes">
+  <schema id="org.gnome.shell.extensions.gnome-clip-notes" path="/org/gnome/shell/extensions/gnome-clip-notes/">
+    <key name="activate-shortcut" type="as">
+      <default>['&lt;Super&gt;v']</default>
+      <summary>Open the clipboard overlay</summary>
+    </key>
+    <key name="note-shortcut" type="as">
+      <default>['&lt;Super&gt;&lt;Shift&gt;n']</default>
+      <summary>Create a note</summary>
+    </key>
+    <key name="quick-paste-1" type="as"><default>['&lt;Alt&gt;1']</default><summary>Paste result 1</summary></key>
+    <key name="quick-paste-2" type="as"><default>['&lt;Alt&gt;2']</default><summary>Paste result 2</summary></key>
+    <key name="quick-paste-3" type="as"><default>['&lt;Alt&gt;3']</default><summary>Paste result 3</summary></key>
+    <key name="quick-paste-4" type="as"><default>['&lt;Alt&gt;4']</default><summary>Paste result 4</summary></key>
+    <key name="quick-paste-5" type="as"><default>['&lt;Alt&gt;5']</default><summary>Paste result 5</summary></key>
+    <key name="quick-paste-6" type="as"><default>['&lt;Alt&gt;6']</default><summary>Paste result 6</summary></key>
+    <key name="quick-paste-7" type="as"><default>['&lt;Alt&gt;7']</default><summary>Paste result 7</summary></key>
+    <key name="quick-paste-8" type="as"><default>['&lt;Alt&gt;8']</default><summary>Paste result 8</summary></key>
+    <key name="quick-paste-9" type="as"><default>['&lt;Alt&gt;9']</default><summary>Paste result 9</summary></key>
+  </schema>
+</schemalist>

@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="A local-first clipboard history and Markdown notes app for GNOME on Wayland. Capture fragments, keep what matters, export readable Markdown.">
+  <title>GnomeClipNotes — Keep what matters</title>
+  <link rel="icon" href="assets/icon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+  <header>
+    <a class="brand" href="#"><img src="assets/icon.svg" width="32" height="32" alt="">GnomeClipNotes</a>
+    <nav aria-label="Main navigation"><a href="#screenshots">Look inside</a><a href="#install">Install</a><a href="https://github.com/OleksiyM/GnomeClipNotes">GitHub</a></nav>
+  </header>
+  <main id="main">
+    <section class="hero">
+      <p class="eyebrow">GNOME · Wayland · Local first</p>
+      <h1>Copied today.<br>Worth keeping tomorrow.</h1>
+      <p class="intro">A clipboard is a starting point. Turn useful fragments into notes,
+        organize them into folders, and take them further as readable Markdown.</p>
+      <p class="actions"><a class="button" href="#install">Installation guide</a><a href="https://github.com/OleksiyM/GnomeClipNotes/blob/main/README.md">Explore the project →</a></p>
+      <p class="status">1.0.0 is in preparation. No public release is available yet.</p>
+    </section>
+    <section aria-labelledby="workflow">
+      <h2 id="workflow">From a fragment to something useful.</h2>
+      <p class="flow">Capture → Curate → Organize → Export → Develop → Reuse</p>
+      <div class="features">
+        <article><h3>Find it again</h3><p>A bottom clipboard panel with search, filters and keyboard navigation. Keep your work in view.</p></article>
+        <article><h3>Keep it deliberately</h3><p>Notes and custom folders stay separate from expiring History. Edit Markdown with a lightweight Native or rich Full preview.</p></article>
+        <article><h3>Make it your own</h3><p>Export selected collections as readable Markdown. Develop ideas in the tools you already use. No account or cloud service required.</p></article>
+      </div>
+    </section>
+    <section id="screenshots" aria-labelledby="screenshots-title">
+      <h2 id="screenshots-title">At home on your desktop.</h2>
+      <figure><a href="assets/overlay.png"><img src="assets/overlay.png" width="1440" height="900" alt="The GNOME clipboard panel with search, filters, collections and a row of text cards." loading="lazy"></a><figcaption>The clipboard panel keeps recent text within reach.</figcaption></figure>
+      <figure><a href="assets/library.png"><img src="assets/library.png" width="1030" height="710" alt="The Library with a collection sidebar, search field and text cards." loading="lazy"></a><figcaption>The Library gives saved material a place of its own.</figcaption></figure>
+      <p class="muted">Real development-build screenshots from isolated test sessions, using synthetic notes — not personal clipboard contents.</p>
+    </section>
+    <section id="install" aria-labelledby="install-title">
+      <h2 id="install-title">A small app. A straightforward install.</h2>
+      <p><strong>Not published yet:</strong> the commands and download links below describe the planned 1.0.0 release. They are not currently available release endpoints.</p>
+      <h3>Manual archive installation</h3>
+      <ol>
+        <li>Use a GNOME Wayland session and install the runtime packages listed in the guide.</li>
+        <li>Download the archive matching your distribution and architecture, plus its checksum manifest.</li>
+        <li>Verify, extract, and run the included local installation helper as your normal user.</li>
+        <li>Log out and back in, then enable the GnomeClipNotes extension.</li>
+      </ol>
+      <p><a class="button" href="https://github.com/OleksiyM/GnomeClipNotes/blob/main/docs/installation.md">Packages and exact commands</a></p>
+      <h3>One command for installation and updates</h3>
+      <p>After publication, the same command will install the app or update an existing managed installation:</p>
+      <pre><code>curl -fsSL https://raw.githubusercontent.com/OleksiyM/GnomeClipNotes/main/install.sh | bash</code></pre>
+      <p>The installer checks download integrity and asks before changing anything installed. Missing system packages require separate consent. GitHub CLI is optional for stronger provenance verification.</p>
+      <p><a href="https://github.com/OleksiyM/GnomeClipNotes/blob/main/docs/artifact-verification.md">Verification and inspect-first alternative</a> · <a href="https://github.com/OleksiyM/GnomeClipNotes/releases">Release downloads</a></p>
+      <p class="status">Fedora 44 / x86_64 is locally exercised. Ubuntu 24.04 / x86_64 is an untested candidate. No claim of universal Linux compatibility.</p>
+    </section>
+    <section class="closing" aria-labelledby="local-title">
+      <h2 id="local-title">Your notes stay yours.</h2>
+      <p>Local SQLite storage. Plain text and Markdown. No automatic update requests.
+        Capture exclusions help, but cannot recognize every secret: pause capture when needed.</p>
+      <p><a href="https://github.com/OleksiyM/GnomeClipNotes/blob/main/docs/privacy.md">Privacy and limits</a> · <a href="https://github.com/OleksiyM/GnomeClipNotes/blob/main/docs/README.md">Documentation</a> · <a href="https://github.com/OleksiyM/GnomeClipNotes/blob/main/CHANGELOG.md">Changelog</a></p>
+    </section>
+  </main>
+  <footer><span>GnomeClipNotes · MIT licensed</span><span><a href="https://github.com/OleksiyM/GnomeClipNotes">GitHub</a> · <a href="https://x.com/oleksiyML">X</a></span></footer>
+</body>
+</html>

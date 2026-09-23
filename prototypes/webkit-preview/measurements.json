@@ -1,0 +1,6202 @@
+{
+  "date": "2026-09-13",
+  "binary_sha256": "f428bd2599db9708a345ef12bcaef8c5949b75d4c0bb2b663957a9501d0b1194",
+  "runs": [
+    {
+      "id": "dZ1c9v",
+      "kind": "baseline",
+      "samples": [
+        {
+          "main_to_map_ms": 129.878345,
+          "startup_to_map_ms": 163.583914
+        },
+        {
+          "phase": "before_preview",
+          "processes": [
+            {
+              "name": "gcn-webkit-base",
+              "pid": 443592,
+              "pss_kib": 59224,
+              "rss_kib": 126528
+            }
+          ],
+          "pss_kib": 59224,
+          "rss_kib": 126528,
+          "unreadable_processes": 0,
+          "webkit": false
+        }
+      ]
+    },
+    {
+      "id": "eg2tWo",
+      "kind": "baseline",
+      "samples": [
+        {
+          "main_to_map_ms": 127.862639,
+          "startup_to_map_ms": 161.132851
+        },
+        {
+          "phase": "before_preview",
+          "processes": [
+            {
+              "name": "gcn-webkit-base",
+              "pid": 444375,
+              "pss_kib": 59276,
+              "rss_kib": 126828
+            }
+          ],
+          "pss_kib": 59276,
+          "rss_kib": 126828,
+          "unreadable_processes": 0,
+          "webkit": false
+        }
+      ]
+    },
+    {
+      "id": "beVHn2",
+      "kind": "baseline",
+      "samples": [
+        {
+          "main_to_map_ms": 134.139829,
+          "startup_to_map_ms": 168.72778
+        },
+        {
+          "phase": "before_preview",
+          "processes": [
+            {
+              "name": "gcn-webkit-base",
+              "pid": 445166,
+              "pss_kib": 59477,
+              "rss_kib": 126988
+            }
+          ],
+          "pss_kib": 59477,
+          "rss_kib": 126988,
+          "unreadable_processes": 0,
+          "webkit": false
+        }
+      ]
+    },
+    {
+      "id": "Eiorli",
+      "kind": "regular",
+      "samples": [
+        {
+          "main_to_map_ms": 160.356524,
+          "startup_to_map_ms": 230.552446
+        },
+        {
+          "phase": "before_preview",
+          "processes": [
+            {
+              "name": "gcn-webkit-prev",
+              "pid": 456526,
+              "pss_kib": 71870,
+              "rss_kib": 145328
+            }
+          ],
+          "pss_kib": 71870,
+          "rss_kib": 145328,
+          "unreadable_processes": 0,
+          "webkit": true
+        },
+        {
+          "document_loaded_ms": 386.944276
+        },
+        {
+          "phase": "open_0",
+          "processes": [
+            {
+              "name": "WebKitNetworkPr",
+              "pid": 456577,
+              "pss_kib": 16650,
+              "rss_kib": 51952
+            },
+            {
+              "name": "bwrap",
+              "pid": 456585,
+              "pss_kib": 125,
+              "rss_kib": 2412
+            },
+            {
+              "name": "bwrap",
+              "pid": 456587,
+              "pss_kib": 182,
+              "rss_kib": 1660
+            },
+            {
+              "name": "xdg-dbus-proxy",
+              "pid": 456582,
+              "pss_kib": 524,
+              "rss_kib": 6016
+            },
+            {
+              "name": "bwrap",
+              "pid": 456581,
+              "pss_kib": 172,
+              "rss_kib": 1532
+            },
+            {
+              "name": "gcn-webkit-prev",
+              "pid": 456526,
+              "pss_kib": 79976,
+              "rss_kib": 171952
+            },
+            {
+              "name": "WebKitWebProces",
+              "pid": 456592,
+              "pss_kib": 88589,
+              "rss_kib": 166544
+            },
+            {
+              "name": "bwrap",
+              "pid": 456580,
+              "pss_kib": 123,
+              "rss_kib": 2380
+            }
+          ],
+          "pss_kib": 186341,
+          "rss_kib": 404448,
+          "unreadable_processes": 0,
+          "webkit": true
+        },
+        {
+          "view_released": true
+        },
+        {
+          "phase": "closed_0_1s",
+          "processes": [
+            {
+              "name": "WebKitNetworkPr",
+              "pid": 456577,
+              "pss_kib": 18721,
+              "rss_kib": 52148
+            },
+            {
+              "name": "xdg-dbus-proxy",
+              "pid": 456582,
+              "pss_kib": 524,
+              "rss_kib": 6016
+            },
+            {
+              "name": "bwrap",
+              "pid": 456581,
+              "pss_kib": 174,
+              "rss_kib": 1532
+            },
+            {
+              "name": "gcn-webkit-prev",
+              "pid": 456526,
+              "pss_kib": 84810,
+              "rss_kib": 172000
+            },
+            {
+              "name": "bwrap",
+              "pid": 456580,
+              "pss_kib": 125,
+              "rss_kib": 2380
+            }
+          ],
+          "pss_kib": 104354,
+          "rss_kib": 234076,
+          "unreadable_processes": 0,
+          "webkit": true
+        },
+        {
+          "phase": "closed_0_5s",
+          "processes": [
+            {
+              "name": "WebKitNetworkPr",
+              "pid": 456577,
+              "pss_kib": 18752,
+              "rss_kib": 52212
+            },
+            {
+              "name": "xdg-dbus-proxy",
+              "pid": 456582,
+              "pss_kib": 524,
+              "rss_kib": 6016
+            },
+            {
+              "name": "bwrap",
+              "pid": 456581,
+              "pss_kib": 174,
+              "rss_kib": 1532
+            },
+            {
+              "name": "gcn-webkit-prev",
+              "pid": 456526,
+              "pss_kib": 84781,
+              "rss_kib": 172004
+            },
+            {
+              "name": "bwrap",
+              "pid": 456580,
+              "pss_kib": 125,
+              "rss_kib": 2380
+            }
+          ],
+          "pss_kib": 104356,
+          "rss_kib": 234144,
+          "unreadable_processes": 0,
+          "webkit": true
+        },
+        {
+          "document_loaded_ms": 239.0916
+        },
+        {
+          "phase": "open_1",
+          "processes": [
+            {
+              "name": "WebKitNetworkPr",
+              "pid": 456577,
+              "pss_kib": 16673,
+              "rss_kib": 52224
+            },
+            {
+              "name": "bwrap",
+              "pid": 456718,
+              "pss_kib": 120,
+              "rss_kib": 2344
+            },
+            {
+              "name": "bwrap",
+              "pid": 456581,
+              "pss_kib": 170,
+              "rss_kib": 1532
+            },
+            {
+              "name": "WebKitWebProces",
+              "pid": 456720,
+              "pss_kib": 82518,
+              "rss_kib": 160036
+            },
+            {
+              "name": "bwrap",
+              "pid": 456580,
+              "pss_kib": 121,
+              "rss_kib": 2380
+            },
+            {
+              "name": "bwrap",
+              "pid": 456713,
+              "pss_kib": 122,
+              "rss_kib": 2264
+            },
+            {
+              "name": "bwrap",
+              "pid": 456719,
+              "pss_kib": 183,
+              "rss_kib": 1660
+            },
+            {
+              "name": "xdg-dbus-proxy",
+              "pid": 456582,
+              "pss_kib": 495,
+              "rss_kib": 6016
+            },
+            {
+              "name": "bwrap",
+              "pid": 456714,
+              "pss_kib": 181,
+              "rss_kib": 1584
+            },
+            {
+              "name": "gcn-webkit-prev",
+              "pid": 456526,
+              "pss_kib": 79739,
+              "rss_kib": 171792
+            },
+            {
+              "name": "xdg-dbus-proxy",
+              "pid": 456715,
+              "pss_kib": 503,
+              "rss_kib": 6232
+            }
+          ],
+          "pss_kib": 180825,
+          "rss_kib": 408064,
+          "unreadable_processes": 0,
+          "webkit": true
+        },
+        {
+          "view_released": true
+        },
+        {
+          "phase": "closed_1_1s",
+          "processes": [
+            {
+              "name": "WebKitNetworkPr",
+              "pid": 456577,
+              "pss_kib": 18764,
+              "rss_kib": 52224
+            },
+            {
+              "name": "bwrap",
+              "pid": 456581,
+              "pss_kib": 172,
+              "rss_kib": 1532
+            },
+            {
+              "name": "bwrap",
+              "pid": 456580,
+              "pss_kib": 123,
+              "rss_kib": 2380
+            },
+            {
+              "name": "bwrap",
+              "pid": 456713,
+              "pss_kib": 124,
+              "rss_kib": 2264
+            },
+            {
+              "name": "xdg-dbus-proxy",
+              "pid": 456582,
+              "pss_kib": 495,
+              "rss_kib": 6016
+            },
+            {
+              "name": "bwrap",
+              "pid": 456714,
+              "pss_kib": 182,
+              "rss_kib": 1584
+            },
+            {
+              "name": "gcn-webkit-prev",
+              "pid": 456526,
+              "pss_kib": 84453,
+              "rss_kib": 171676
+            },
+            {
+              "name": "xdg-dbus-proxy",
+              "pid": 456715,
+              "pss_kib": 503,
+              "rss_kib": 6232
+            }
+          ],
+          "pss_kib": 104816,
+          "rss_kib": 243908,
+          "unreadable_processes": 0,
+          "webkit": true
+        },
+        {
+          "phase": "closed_1_5s",
+          "processes": [
+            {
+              "name": "WebKitNetworkPr",
+              "pid": 456577,
+              "pss_kib": 18764,
+              "rss_kib": 52224
+            },
+            {
+              "name": "bwrap",
+              "pid": 456581,
+              "pss_kib": 172,
+              "rss_kib": 1532
+            },
+            {
+              "name": "bwrap",
+              "pid": 456580,
+              "pss_kib": 123,
+              "rss_kib": 2380
+            },
+            {
+              "name": "bwrap",
+              "pid": 456713,
+              "pss_kib": 124,
+              "rss_kib": 2264
+            },
+            {
+              "name": "xdg-dbus-proxy",
+              "pid": 456582,
+              "pss_kib": 495,
+              "rss_kib": 6016
+            },
+            {
+              "name": "bwrap",
+              "pid": 456714,
+              "pss_kib": 182,
+              "rss_kib": 1584
+            },
+            {
+              "name": "gcn-webkit-prev",
+              "pid": 456526,
+              "pss_kib": 84448,
+              "rss_kib": 171672
+            },
+            {
+              "name": "xdg-dbus-proxy",
+              "pid": 456715,
+              "pss_kib": 503,
+              "rss_kib": 6232
+            }
+          ],
+          "pss_kib": 104811,
+          "rss_kib": 243904,
+          "unreadable_processes": 0,
+          "webkit": true
+        },
+        {
+          "document_loaded_ms": 245.04734200000001
+        },
+        {
+          "phase": "open_2",
+          "processes": [
+            {
+              "name": "WebKitWebProces",
+              "pid": 456819,
+              "pss_kib": 82036,
+              "rss_kib": 159480
+            },
+            {
+              "name": "WebKitNetworkPr",
+              "pid": 456577,
+              "pss_kib": 16685,
+              "rss_kib": 52232
+            },
+            {
+              "name": "bwrap",
+              "pid": 456818,
+              "pss_kib": 185,
+              "rss_kib": 1568
+            },
+            {
+              "name": "bwrap",
+              "pid": 456581,
+              "pss_kib": 169,
+              "rss_kib": 1532
+            },
+            {
+              "name": "bwrap",
+              "pid": 456580,
+              "pss_kib": 120,
+              "rss_kib": 2380
+            },
+            {
+              "name": "bwrap",
+              "pid": 456713,
+              "pss_kib": 121,
+              "rss_kib": 2264
+            },
+            {
+              "name": "bwrap",
+              "pid": 456812,
+              "pss_kib": 117,
+              "rss_kib": 2320
+            },
+            {
+              "name": "bwrap",
+              "pid": 456813,
+              "pss_kib": 179,
+              "rss_kib": 1568
+            },
+            {
+              "name": "xdg-dbus-proxy",
+              "pid": 456814,
+              "pss_kib": 490,
+              "rss_kib": 5964
+            },
+            {
+              "name": "xdg-dbus-proxy",
+              "pid": 456582,
+              "pss_kib": 485,
+              "rss_kib": 6016
+            },
+            {
+              "name": "bwrap",
+              "pid": 456817,
+              "pss_kib": 124,
+              "rss_kib": 2384
+            },
+            {
+              "name": "bwrap",
+              "pid": 456714,
+              "pss_kib": 180,
+              "rss_kib": 1584
+            },
+            {
+              "name": "gcn-webkit-prev",
+              "pid": 456526,
+              "pss_kib": 79777,
+              "rss_kib": 171828
+            },
+            {
+              "name": "xdg-dbus-proxy",
+              "pid": 456715,
+              "pss_kib": 493,
+              "rss_kib": 6232
+            }
+          ],
+          "pss_kib": 181161,
+          "rss_kib": 417352,
+          "unreadable_processes": 0,
+          "webkit": true
+        },
+        {
+          "view_released": true
+        },
+        {
+          "phase": "closed_2_1s",
+          "processes": [
+            {
+              "name": "WebKitNetworkPr",
+              "pid": 456577,
+              "pss_kib": 18771,
+              "rss_kib": 52232
+            },
+            {
+              "name": "bwrap",
+              "pid": 456581,
+              "pss_kib": 170,
+              "rss_kib": 1532
+            },
+            {
+              "name": "bwrap",
+              "pid": 456580,
+              "pss_kib": 121,
+              "rss_kib": 2380
+            },
+            {
+              "name": "bwrap",
+              "pid": 456713,
+              "pss_kib": 122,
+              "rss_kib": 2264
+            },
+            {
+              "name": "bwrap",
+              "pid": 456812,
+              "pss_kib": 118,
+              "rss_kib": 2320
+            },
+            {
+              "name": "bwrap",
+              "pid": 456813,
+              "pss_kib": 180,
+              "rss_kib": 1568
+            },
+            {
+              "name": "xdg-dbus-proxy",
+              "pid": 456814,
+              "pss_kib": 490,
+              "rss_kib": 5964
+            },
+            {
+              "name": "xdg-dbus-proxy",
+              "pid": 456582,
+              "pss_kib": 486,
+              "rss_kib": 6016
+            },
+            {
+              "name": "bwrap",
+              "pid": 456714,
+              "pss_kib": 181,
+              "rss_kib": 1584
+            },
+            {
+              "name": "gcn-webkit-prev",
+              "pid": 456526,
+              "pss_kib": 84548,
+              "rss_kib": 171772
+            },
+            {
+              "name": "xdg-dbus-proxy",
+              "pid": 456715,
+              "pss_kib": 493,
+              "rss_kib": 6232
+            }
+          ],
+          "pss_kib": 105680,
+          "rss_kib": 253864,
+          "unreadable_processes": 0,
+          "webkit": true
+        },
+        {
+          "phase": "closed_2_5s",
+          "processes": [
+            {
+              "name": "WebKitNetworkPr",
+              "pid": 456577,
+              "pss_kib": 18771,
+              "rss_kib": 52232
+            },
+            {
+              "name": "bwrap",
+              "pid": 456581,
+              "pss_kib": 170,
+              "rss_kib": 1532
+            },
+            {
+              "name": "bwrap",
+              "pid": 456580,
+              "pss_kib": 121,
+              "rss_kib": 2380
+            },
+            {
+              "name": "bwrap",
+              "pid": 456713,
+              "pss_kib": 122,
+              "rss_kib": 2264
+            },
+            {
+              "name": "bwrap",
+              "pid": 456812,
+              "pss_kib": 118,
+              "rss_kib": 2320
+            },
+            {
+              "name": "bwrap",
+              "pid": 456813,
+              "pss_kib": 180,
+              "rss_kib": 1568
+            },
+            {
+              "name": "xdg-dbus-proxy",
+              "pid": 456814,
+              "pss_kib": 490,
+              "rss_kib": 5964
+            },
+            {
+              "name": "xdg-dbus-proxy",
+              "pid": 456582,
+              "pss_kib": 487,
+              "rss_kib": 6144
+            },
+            {
+              "name": "bwrap",
+              "pid": 456714,
+              "pss_kib": 181,
+              "rss_kib": 1584
+            },
+            {
+              "name": "gcn-webkit-prev",
+              "pid": 456526,
+              "pss_kib": 84548,
+              "rss_kib": 171772
+            },
+            {
+              "name": "xdg-dbus-proxy",
+              "pid": 456715,
+              "pss_kib": 493,
+              "rss_kib": 6232
+            }
+          ],
+          "pss_kib": 105681,
+          "rss_kib": 253992,
+          "unreadable_processes": 0,
+          "webkit": true
+        },
+        {
+          "phase": "closed_final_10s",
+          "processes": [
+            {
+              "name": "WebKitNetworkPr",
+              "pid": 456577,
+              "pss_kib": 18771,
+              "rss_kib": 52232
+            },
+            {
+              "name": "bwrap",
+              "pid": 456581,
+              "pss_kib": 170,
+              "rss_kib": 1532
+            },
+            {
+              "name": "bwrap",
+              "pid": 456580,
+              "pss_kib": 121,
+              "rss_kib": 2380
+            },
+            {
+              "name": "bwrap",
+              "pid": 456713,
+              "pss_kib": 122,
+              "rss_kib": 2264
+            },
+            {
+              "name": "bwrap",
+              "pid": 456812,
+              "pss_kib": 118,
+              "rss_kib": 2320
+            },
+            {
+              "name": "bwrap",
+              "pid": 456813,
+              "pss_kib": 180,
+              "rss_kib": 1568
+            },
+            {
+              "name": "xdg-dbus-proxy",
+              "pid": 456814,
+              "pss_kib": 490,
+              "rss_kib": 5964
+            },
+            {
+              "name": "xdg-dbus-proxy",
+              "pid": 456582,
+              "pss_kib": 487,
+              "rss_kib": 6144
+            },
+            {
+              "name": "bwrap",
+              "pid": 456714,
+              "pss_kib": 181,
+              "rss_kib": 1584
+            },
+            {
+              "name": "gcn-webkit-prev",
+              "pid": 456526,
+              "pss_kib": 84548,
+              "rss_kib": 171772
+            },
+            {
+              "name": "xdg-dbus-proxy",
+              "pid": 456715,
+              "pss_kib": 494,
+              "rss_kib": 6296
+            }
+          ],
+          "pss_kib": 105682,
+          "rss_kib": 254056,
+          "unreadable_processes": 0,
+          "webkit": true
+        }
+      ]
+    },
+    {
+      "id": "UBsAoM",
+      "kind": "regular",
+      "samples": [
+        {
+          "main_to_map_ms": 150.093314,
+          "startup_to_map_ms": 213.999412
+        },
+        {
+          "phase": "before_preview",
+          "processes": [
+            {
+              "name": "gcn-webkit-prev",
+              "pid": 457726,
+              "pss_kib": 71849,
+              "rss_kib": 145020
+            }
+          ],
+          "pss_kib": 71849,
+          "rss_kib": 145020,
+          "unreadable_processes": 0,
+          "webkit": true
+        },
+        {
+          "document_loaded_ms": 359.907201
+        },
+        {
+          "phase": "open_0",
+          "processes": [
+            {
+              "name": "WebKitNetworkPr",
+              "pid": 457785,
+              "pss_kib": 16654,
+              "rss_kib": 52016
+            },
+            {
+              "name": "xdg-dbus-proxy",
+              "pid": 457790,
+              "pss_kib": 527,
+              "rss_kib": 5832
+            },
+            {
+              "name": "WebKitWebProces",
+              "pid": 457800,
+              "pss_kib": 88514,
+              "rss_kib": 166332
+            },
+            {
+              "name": "bwrap",
+              "pid": 457788,
+              "pss_kib": 123,
+              "rss_kib": 2412
+            },
+            {
+              "name": "bwrap",
+              "pid": 457795,
+              "pss_kib": 184,
+              "rss_kib": 1664
+            },
+            {
+              "name": "bwrap",
+              "pid": 457793,
+              "pss_kib": 123,
+              "rss_kib": 2412
+            },
+            {
+              "name": "gcn-webkit-prev",
+              "pid": 457726,
+              "pss_kib": 79918,
+              "rss_kib": 171516
+            },
+            {
+              "name": "bwrap",
+              "pid": 457789,
+              "pss_kib": 172,
+              "rss_kib": 1652
+            }
+          ],
+          "pss_kib": 186215,
+          "rss_kib": 403836,
+          "unreadable_processes": 0,
+          "webkit": true
+        },
+        {
+          "view_released": true
+        },
+        {
+          "phase": "closed_0_1s",
+          "processes": [
+            {
+              "name": "WebKitNetworkPr",
+              "pid": 457785,
+              "pss_kib": 18718,
+              "rss_kib": 52212
+            },
+            {
+              "name": "xdg-dbus-proxy",
+              "pid": 457790,
+              "pss_kib": 527,
+              "rss_kib": 5832
+            },
+            {
+              "name": "bwrap",
+              "pid": 457788,
+              "pss_kib": 125,
+              "rss_kib": 2412
+            },
+            {
+              "name": "gcn-webkit-prev",
+              "pid": 457726,
+              "pss_kib": 84744,
+              "rss_kib": 171572
+            },
+            {
+              "name": "bwrap",
+              "pid": 457789,
+              "pss_kib": 174,
+              "rss_kib": 1652
+            }
+          ],
+          "pss_kib": 104288,
+          "rss_kib": 233680,
+          "unreadable_processes": 0,
+          "webkit": true
+        },
+        {
+          "phase": "closed_0_5s",
+          "processes": [
+            {
+              "name": "WebKitNetworkPr",
+              "pid": 457785,
+              "pss_kib": 18751,
+              "rss_kib": 52276
+            },
+            {
+              "name": "xdg-dbus-proxy",
+              "pid": 457790,
+              "pss_kib": 528,
+              "rss_kib": 5832
+            },
+            {
+              "name": "bwrap",
+              "pid": 457788,
+              "pss_kib": 125,
+              "rss_kib": 2412
+            },
+            {
+              "name": "gcn-webkit-prev",
+              "pid": 457726,
+              "pss_kib": 84717,
+              "rss_kib": 171576
+            },
+            {
+              "name": "bwrap",
+              "pid": 457789,
+              "pss_kib": 175,
+              "rss_kib": 1652
+            }
+          ],
+          "pss_kib": 104296,
+          "rss_kib": 233748,
+          "unreadable_processes": 0,
+          "webkit": true
+        },
+        {
+          "document_loaded_ms": 237.51117599999998
+        },
+        {
+          "phase": "open_1",
+          "processes": [
+            {
+              "name": "WebKitNetworkPr",
+              "pid": 457785,
+              "pss_kib": 16667,
+              "rss_kib": 52288
+            },
+            {
+              "name": "xdg-dbus-proxy",
+              "pid": 457908,
+              "pss_kib": 496,
+              "rss_kib": 6156
+            },
+            {
+              "name": "bwrap",
+              "pid": 457907,
+              "pss_kib": 177,
+              "rss_kib": 1656
+            },
+            {
+              "name": "gcn-webkit-prev",
+              "pid": 457726,
+              "pss_kib": 79687,
+              "rss_kib": 171368
+            },
+            {
+              "name": "bwrap",
+              "pid": 457906,
+              "pss_kib": 119,
+              "rss_kib": 2340
+            },
+            {
+              "name": "xdg-dbus-proxy",
+              "pid": 457790,
+              "pss_kib": 499,
+              "rss_kib": 5832
+            },
+            {
+              "name": "bwrap",
+              "pid": 457788,
+              "pss_kib": 121,
+              "rss_kib": 2412
+            },
+            {
+              "name": "bwrap",
+              "pid": 457912,
+              "pss_kib": 182,
+              "rss_kib": 1600
+            },
+            {
+              "name": "bwrap",
+              "pid": 457911,
+              "pss_kib": 125,
+              "rss_kib": 2200
+            },
+            {
+              "name": "bwrap",
+              "pid": 457789,
+              "pss_kib": 171,
+              "rss_kib": 1652
+            },
+            {
+              "name": "WebKitWebProces",
+              "pid": 457913,
+              "pss_kib": 82521,
+              "rss_kib": 159768
+            }
+          ],
+          "pss_kib": 180765,
+          "rss_kib": 407272,
+          "unreadable_processes": 0,
+          "webkit": true
+        },
+        {
+          "view_released": true
+        },
+        {
+          "phase": "closed_1_1s",
+          "processes": [
+            {
+              "name": "WebKitNetworkPr",
+              "pid": 457785,
+              "pss_kib": 18763,
+              "rss_kib": 52288
+            },
+            {
+              "name": "xdg-dbus-proxy",
+              "pid": 457908,
+              "pss_kib": 496,
+              "rss_kib": 6156
+            },
+            {
+              "name": "bwrap",
+              "pid": 457907,
+              "pss_kib": 178,
+              "rss_kib": 1656
+            },
+            {
+              "name": "gcn-webkit-prev",
+              "pid": 457726,
+              "pss_kib": 84396,
+              "rss_kib": 171256
+            },
+            {
+              "name": "bwrap",
+              "pid": 457906,
+              "pss_kib": 120,
+              "rss_kib": 2340
+            },
+            {
+              "name": "xdg-dbus-proxy",
+              "pid": 457790,
+              "pss_kib": 499,
+              "rss_kib": 5832
+            },
+            {
+              "name": "bwrap",
+              "pid": 457788,
+              "pss_kib": 123,
+              "rss_kib": 2412
+            },
+            {
+              "name": "bwrap",
+              "pid": 457789,
+              "pss_kib": 172,
+              "rss_kib": 1652
+            }
+          ],
+          "pss_kib": 104747,
+          "rss_kib": 243592,
+          "unreadable_processes": 0,
+          "webkit": true
+        },
+        {
+          "phase": "closed_1_5s",
+          "processes": [
+            {
+              "name": "WebKitNetworkPr",
+              "pid": 457785,
+              "pss_kib": 18763,
+              "rss_kib": 52288
+            },
+            {
+              "name": "xdg-dbus-proxy",
+              "pid": 457908,
+              "pss_kib": 496,
+              "rss_kib": 6156
+            },
+            {
+              "name": "bwrap",
+              "pid": 457907,
+              "pss_kib": 178,
+              "rss_kib": 1656
+            },
+            {
+              "name": "gcn-webkit-prev",
+              "pid": 457726,
+              "pss_kib": 84392,
+              "rss_kib": 171252
+            },
+            {
+              "name": "bwrap",
+              "pid": 457906,
+              "pss_kib": 120,
+              "rss_kib": 2340
+            },
+            {
+              "name": "xdg-dbus-proxy",
+              "pid": 457790,
+              "pss_kib": 499,
+              "rss_kib": 5832
+            },
+            {
+              "name": "bwrap",
+              "pid": 457788,
+              "pss_kib": 123,
+              "rss_kib": 2412
+            },
+            {
+              "name": "bwrap",
+              "pid": 457789,
+              "pss_kib": 172,
+              "rss_kib": 1652
+            }
+          ],
+          "pss_kib": 104743,
+          "rss_kib": 243588,
+          "unreadable_processes": 0,
+          "webkit": true
+        },
+        {
+          "document_loaded_ms": 242.99558900000002
+        },
+        {
+          "phase": "open_2",
+          "processes": [
+            {
+              "name": "WebKitNetworkPr",
+              "pid": 457785,
+              "pss_kib": 16671,
+              "rss_kib": 52296
+            },
+            {
+              "name": "xdg-dbus-proxy",
+              "pid": 457908,
+              "pss_kib": 486,
+              "rss_kib": 6156
+            },
+            {
+              "name": "xdg-dbus-proxy",
+              "pid": 458013,
+              "pss_kib": 491,
+              "rss_kib": 6056
+            },
+            {
+              "name": "WebKitWebProces",
+              "pid": 458018,
+              "pss_kib": 82455,
+              "rss_kib": 159888
+            },
+            {
+              "name": "bwrap",
+              "pid": 457907,
+              "pss_kib": 176,
+              "rss_kib": 1656
+            },
+            {
+              "name": "gcn-webkit-prev",
+              "pid": 457726,
+              "pss_kib": 79715,
+              "rss_kib": 171396
+            },
+            {
+              "name": "bwrap",
+              "pid": 457906,
+              "pss_kib": 117,
+              "rss_kib": 2340
+            },
+            {
+              "name": "xdg-dbus-proxy",
+              "pid": 457790,
+              "pss_kib": 489,
+              "rss_kib": 5832
+            },
+            {
+              "name": "bwrap",
+              "pid": 457788,
+              "pss_kib": 120,
+              "rss_kib": 2412
+            },
+            {
+              "name": "bwrap",
+              "pid": 458012,
+              "pss_kib": 180,
+              "rss_kib": 1660
+            },
+            {
+              "name": "bwrap",
+              "pid": 458017,
+              "pss_kib": 186,
+              "rss_kib": 1648
+            },
+            {
+              "name": "bwrap",
+              "pid": 457789,
+              "pss_kib": 170,
+              "rss_kib": 1652
+            },
+            {
+              "name": "bwrap",
+              "pid": 458011,
+              "pss_kib": 118,
+              "rss_kib": 2408
+            },
+            {
+              "name": "bwrap",
+              "pid": 458016,
+              "pss_kib": 123,
+              "rss_kib": 2336
+            }
+          ],
+          "pss_kib": 181497,
+          "rss_kib": 417736,
+          "unreadable_processes": 0,
+          "webkit": true
+        },
+        {
+          "view_released": true
+        },
+        {
+          "phase": "closed_2_1s",
+          "processes": [
+            {
+              "name": "WebKitNetworkPr",
+              "pid": 457785,
+              "pss_kib": 18770,
+              "rss_kib": 52296
+            },
+            {
+              "name": "xdg-dbus-proxy",
+              "pid": 457908,
+              "pss_kib": 487,
+              "rss_kib": 6156
+            },
+            {
+              "name": "xdg-dbus-proxy",
+              "pid": 458013,
+              "pss_kib": 491,
+              "rss_kib": 6056
+            },
+            {
+              "name": "bwrap",
+              "pid": 457907,
+              "pss_kib": 177,
+              "rss_kib": 1656
+            },
+            {
+              "name": "gcn-webkit-prev",
+              "pid": 457726,
+              "pss_kib": 84428,
+              "rss_kib": 171288
+            },
+            {
+              "name": "bwrap",
+              "pid": 457906,
+              "pss_kib": 119,
+              "rss_kib": 2340
+            },
+            {
+              "name": "xdg-dbus-proxy",
+              "pid": 457790,
+              "pss_kib": 489,
+              "rss_kib": 5832
+            },
+            {
+              "name": "bwrap",
+              "pid": 457788,
+              "pss_kib": 121,
+              "rss_kib": 2412
+            },
+            {
+              "name": "bwrap",
+              "pid": 458012,
+              "pss_kib": 181,
+              "rss_kib": 1660
+            },
+            {
+              "name": "bwrap",
+              "pid": 457789,
+              "pss_kib": 171,
+              "rss_kib": 1652
+            },
+            {
+              "name": "bwrap",
+              "pid": 458011,
+              "pss_kib": 119,
+              "rss_kib": 2408
+            }
+          ],
+          "pss_kib": 105553,
+          "rss_kib": 253756,
+          "unreadable_processes": 0,
+          "webkit": true
+        },
+        {
+          "phase": "closed_2_5s",
+          "processes": [
+            {
+              "name": "WebKitNetworkPr",
+              "pid": 457785,
+              "pss_kib": 18770,
+              "rss_kib": 52296
+            },
+            {
+              "name": "xdg-dbus-proxy",
+              "pid": 457908,
+              "pss_kib": 487,
+              "rss_kib": 6156
+            },
+            {
+              "name": "xdg-dbus-proxy",
+              "pid": 458013,
+              "pss_kib": 491,
+              "rss_kib": 6056
+            },
+            {
+              "name": "bwrap",
+              "pid": 457907,
+              "pss_kib": 177,
+              "rss_kib": 1656
+            },
+            {
+              "name": "gcn-webkit-prev",
+              "pid": 457726,
+              "pss_kib": 84428,
+              "rss_kib": 171288
+            },
+            {
+              "name": "bwrap",
+              "pid": 457906,
+              "pss_kib": 119,
+              "rss_kib": 2340
+            },
+            {
+              "name": "xdg-dbus-proxy",
+              "pid": 457790,
+              "pss_kib": 490,
+              "rss_kib": 5960
+            },
+            {
+              "name": "bwrap",
+              "pid": 457788,
+              "pss_kib": 121,
+              "rss_kib": 2412
+            },
+            {
+              "name": "bwrap",
+              "pid": 458012,
+              "pss_kib": 181,
+              "rss_kib": 1660
+            },
+            {
+              "name": "bwrap",
+              "pid": 457789,
+              "pss_kib": 171,
+              "rss_kib": 1652
+            },
+            {
+              "name": "bwrap",
+              "pid": 458011,
+              "pss_kib": 119,
+              "rss_kib": 2408
+            }
+          ],
+          "pss_kib": 105554,
+          "rss_kib": 253884,
+          "unreadable_processes": 0,
+          "webkit": true
+        },
+        {
+          "phase": "closed_final_10s",
+          "processes": [
+            {
+              "name": "WebKitNetworkPr",
+              "pid": 457785,
+              "pss_kib": 18770,
+              "rss_kib": 52296
+            },
+            {
+              "name": "xdg-dbus-proxy",
+              "pid": 457908,
+              "pss_kib": 487,
+              "rss_kib": 6284
+            },
+            {
+              "name": "xdg-dbus-proxy",
+              "pid": 458013,
+              "pss_kib": 491,
+              "rss_kib": 6056
+            },
+            {
+              "name": "bwrap",
+              "pid": 457907,
+              "pss_kib": 177,
+              "rss_kib": 1656
+            },
+            {
+              "name": "gcn-webkit-prev",
+              "pid": 457726,
+              "pss_kib": 84428,
+              "rss_kib": 171288
+            },
+            {
+              "name": "bwrap",
+              "pid": 457906,
+              "pss_kib": 119,
+              "rss_kib": 2340
+            },
+            {
+              "name": "xdg-dbus-proxy",
+              "pid": 457790,
+              "pss_kib": 490,
+              "rss_kib": 5960
+            },
+            {
+              "name": "bwrap",
+              "pid": 457788,
+              "pss_kib": 121,
+              "rss_kib": 2412
+            },
+            {
+              "name": "bwrap",
+              "pid": 458012,
+              "pss_kib": 181,
+              "rss_kib": 1660
+            },
+            {
+              "name": "bwrap",
+              "pid": 457789,
+              "pss_kib": 171,
+              "rss_kib": 1652
+            },
+            {
+              "name": "bwrap",
+              "pid": 458011,
+              "pss_kib": 119,
+              "rss_kib": 2408
+            }
+          ],
+          "pss_kib": 105554,
+          "rss_kib": 254012,
+          "unreadable_processes": 0,
+          "webkit": true
+        }
+      ]
+    },
+    {
+      "id": "R4nSn4",
+      "kind": "ten_cycles",
+      "samples": [
+        {
+          "main_to_map_ms": 159.471116,
+          "startup_to_map_ms": 227.735529
+        },
+        {
+          "phase": "before_preview",
+          "processes": [
+            {
+              "name": "gcn-webkit-prev",
+              "pid": 458903,
+              "pss_kib": 71820,
+              "rss_kib": 145476
+            }
+          ],
+          "pss_kib": 71820,
+          "rss_kib": 145476,
+          "unreadable_processes": 0,
+          "webkit": true
+        },
+        {
+          "document_loaded_ms": 365.953894
+        },
+        {
+          "phase": "open_0",
+          "processes": [
+            {
+              "name": "WebKitNetworkPr",
+              "pid": 458953,
+              "pss_kib": 16649,
+              "rss_kib": 52152
+            },
+            {
+              "name": "bwrap",
+              "pid": 458957,
+              "pss_kib": 174,
+              "rss_kib": 1576
+            },
+            {
+              "name": "WebKitWebProces",
+              "pid": 458968,
+              "pss_kib": 88884,
+              "rss_kib": 166844
+            },
+            {
+              "name": "bwrap",
+              "pid": 458956,
+              "pss_kib": 124,
+              "rss_kib": 2264
+            },
+            {
+              "name": "gcn-webkit-prev",
+              "pid": 458903,
+              "pss_kib": 79919,
+              "rss_kib": 172020
+            },
+            {
+              "name": "bwrap",
+              "pid": 458961,
+              "pss_kib": 126,
+              "rss_kib": 2260
+            },
+            {
+              "name": "bwrap",
+              "pid": 458963,
+              "pss_kib": 184,
+              "rss_kib": 1584
+            },
+            {
+              "name": "xdg-dbus-proxy",
+              "pid": 458958,
+              "pss_kib": 523,
+              "rss_kib": 6016
+            }
+          ],
+          "pss_kib": 186583,
+          "rss_kib": 404716,
+          "unreadable_processes": 0,
+          "webkit": true
+        },
+        {
+          "view_released": true
+        },
+        {
+          "phase": "closed_0_1s",
+          "processes": [
+            {
+              "name": "WebKitNetworkPr",
+              "pid": 458953,
+              "pss_kib": 18731,
+              "rss_kib": 52344
+            },
+            {
+              "name": "bwrap",
+              "pid": 458957,
+              "pss_kib": 176,
+              "rss_kib": 1576
+            },
+            {
+              "name": "bwrap",
+              "pid": 458956,
+              "pss_kib": 126,
+              "rss_kib": 2264
+            },
+            {
+              "name": "gcn-webkit-prev",
+              "pid": 458903,
+              "pss_kib": 84752,
+              "rss_kib": 172076
+            },
+            {
+              "name": "xdg-dbus-proxy",
+              "pid": 458958,
+              "pss_kib": 524,
+              "rss_kib": 6016
+            }
+          ],
+          "pss_kib": 104309,
+          "rss_kib": 234276,
+          "unreadable_processes": 0,
+          "webkit": true
+        },
+        {
+          "phase": "closed_0_5s",
+          "processes": [
+            {
+              "name": "WebKitNetworkPr",
+              "pid": 458953,
+              "pss_kib": 18762,
+              "rss_kib": 52408
+            },
+            {
+              "name": "bwrap",
+              "pid": 458957,
+              "pss_kib": 176,
+              "rss_kib": 1576
+            },
+            {
+              "name": "bwrap",
+              "pid": 458956,
+              "pss_kib": 126,
+              "rss_kib": 2264
+            },
+            {
+              "name": "gcn-webkit-prev",
+              "pid": 458903,
+              "pss_kib": 84724,
+              "rss_kib": 172080
+            },
+            {
+              "name": "xdg-dbus-proxy",
+              "pid": 458958,
+              "pss_kib": 524,
+              "rss_kib": 6016
+            }
+          ],
+          "pss_kib": 104312,
+          "rss_kib": 234344,
+          "unreadable_processes": 0,
+          "webkit": true
+        },
+        {
+          "document_loaded_ms": 251.302674
+        },
+        {
+          "phase": "open_1",
+          "processes": [
+            {
+              "name": "bwrap",
+              "pid": 458957,
+              "pss_kib": 173,
+              "rss_kib": 1576
+            },
+            {
+              "name": "bwrap",
+              "pid": 459240,
+              "pss_kib": 182,
+              "rss_kib": 1712
+            },
+            {
+              "name": "WebKitWebProces",
+              "pid": 459246,
+              "pss_kib": 82268,
+              "rss_kib": 159672
+            },
+            {
+              "name": "xdg-dbus-proxy",
+              "pid": 459241,
+              "pss_kib": 494,
+              "rss_kib": 5856
+            },
+            {
+              "name": "bwrap",
+              "pid": 459239,
+              "pss_kib": 119,
+              "rss_kib": 2304
+            },
+            {
+              "name": "xdg-dbus-proxy",
+              "pid": 458958,
+              "pss_kib": 495,
+              "rss_kib": 6016
+            },
+            {
+              "name": "WebKitNetworkPr",
+              "pid": 458953,
+              "pss_kib": 16684,
+              "rss_kib": 52420
+            },
+            {
+              "name": "bwrap",
+              "pid": 458956,
+              "pss_kib": 122,
+              "rss_kib": 2264
+            },
+            {
+              "name": "gcn-webkit-prev",
+              "pid": 458903,
+              "pss_kib": 79695,
+              "rss_kib": 171876
+            },
+            {
+              "name": "bwrap",
+              "pid": 459244,
+              "pss_kib": 125,
+              "rss_kib": 2312
+            },
+            {
+              "name": "bwrap",
+              "pid": 459245,
+              "pss_kib": 188,
+              "rss_kib": 1720
+            }
+          ],
+          "pss_kib": 180545,
+          "rss_kib": 407728,
+          "unreadable_processes": 0,
+          "webkit": true
+        },
+        {
+          "view_released": true
+        },
+        {
+          "phase": "closed_1_1s",
+          "processes": [
+            {
+              "name": "bwrap",
+              "pid": 458957,
+              "pss_kib": 174,
+              "rss_kib": 1576
+            },
+            {
+              "name": "bwrap",
+              "pid": 459240,
+              "pss_kib": 183,
+              "rss_kib": 1712
+            },
+            {
+              "name": "xdg-dbus-proxy",
+              "pid": 459241,
+              "pss_kib": 495,
+              "rss_kib": 5856
+            },
+            {
+              "name": "bwrap",
+              "pid": 459239,
+              "pss_kib": 121,
+              "rss_kib": 2304
+            },
+            {
+              "name": "xdg-dbus-proxy",
+              "pid": 458958,
+              "pss_kib": 495,
+              "rss_kib": 6016
+            },
+            {
+              "name": "WebKitNetworkPr",
+              "pid": 458953,
+              "pss_kib": 18774,
+              "rss_kib": 52420
+            },
+            {
+              "name": "bwrap",
+              "pid": 458956,
+              "pss_kib": 124,
+              "rss_kib": 2264
+            },
+            {
+              "name": "gcn-webkit-prev",
+              "pid": 458903,
+              "pss_kib": 84407,
+              "rss_kib": 171764
+            }
+          ],
+          "pss_kib": 104773,
+          "rss_kib": 243912,
+          "unreadable_processes": 0,
+          "webkit": true
+        },
+        {
+          "phase": "closed_1_5s",
+          "processes": [
+            {
+              "name": "bwrap",
+              "pid": 458957,
+              "pss_kib": 174,
+              "rss_kib": 1576
+            },
+            {
+              "name": "bwrap",
+              "pid": 459240,
+              "pss_kib": 183,
+              "rss_kib": 1712
+            },
+            {
+              "name": "xdg-dbus-proxy",
+              "pid": 459241,
+              "pss_kib": 495,
+              "rss_kib": 5856
+            },
+            {
+              "name": "bwrap",
+              "pid": 459239,
+              "pss_kib": 121,
+              "rss_kib": 2304
+            },
+            {
+              "name": "xdg-dbus-proxy",
+              "pid": 458958,
+              "pss_kib": 495,
+              "rss_kib": 6016
+            },
+            {
+              "name": "WebKitNetworkPr",
+              "pid": 458953,
+              "pss_kib": 18774,
+              "rss_kib": 52420
+            },
+            {
+              "name": "bwrap",
+              "pid": 458956,
+              "pss_kib": 124,
+              "rss_kib": 2264
+            },
+            {
+              "name": "gcn-webkit-prev",
+              "pid": 458903,
+              "pss_kib": 84403,
+              "rss_kib": 171760
+            }
+          ],
+          "pss_kib": 104769,
+          "rss_kib": 243908,
+          "unreadable_processes": 0,
+          "webkit": true
+        },
+        {
+          "document_loaded_ms": 241.359104
+        },
+        {
+          "phase": "open_2",
+          "processes": [
+            {
+              "name": "bwrap",
+              "pid": 458957,
+              "pss_kib": 172,
+              "rss_kib": 1576
+            },
+            {
+              "name": "WebKitWebProces",
+              "pid": 459360,
+              "pss_kib": 82473,
+              "rss_kib": 159872
+            },
+            {
+              "name": "bwrap",
+              "pid": 459240,
+              "pss_kib": 181,
+              "rss_kib": 1712
+            },
+            {
+              "name": "bwrap",
+              "pid": 459354,
+              "pss_kib": 176,
+              "rss_kib": 1580
+            },
+            {
+              "name": "xdg-dbus-proxy",
+              "pid": 459241,
+              "pss_kib": 484,
+              "rss_kib": 5856
+            },
+            {
+              "name": "bwrap",
+              "pid": 459359,
+              "pss_kib": 182,
+              "rss_kib": 1644
+            },
+            {
+              "name": "bwrap",
+              "pid": 459239,
+              "pss_kib": 118,
+              "rss_kib": 2304
+            },
+            {
+              "name": "xdg-dbus-proxy",
+              "pid": 458958,
+              "pss_kib": 485,
+              "rss_kib": 6016
+            },
+            {
+              "name": "xdg-dbus-proxy",
+              "pid": 459355,
+              "pss_kib": 489,
+              "rss_kib": 6036
+            },
+            {
+              "name": "WebKitNetworkPr",
+              "pid": 458953,
+              "pss_kib": 16697,
+              "rss_kib": 52428
+            },
+            {
+              "name": "bwrap",
+              "pid": 458956,
+              "pss_kib": 121,
+              "rss_kib": 2264
+            },
+            {
+              "name": "gcn-webkit-prev",
+              "pid": 458903,
+              "pss_kib": 79725,
+              "rss_kib": 171904
+            },
+            {
+              "name": "bwrap",
+              "pid": 459358,
+              "pss_kib": 119,
+              "rss_kib": 2300
+            },
+            {
+              "name": "bwrap",
+              "pid": 459353,
+              "pss_kib": 117,
+              "rss_kib": 2260
+            }
+          ],
+          "pss_kib": 181539,
+          "rss_kib": 417752,
+          "unreadable_processes": 0,
+          "webkit": true
+        },
+        {
+          "view_released": true
+        },
+        {
+          "phase": "closed_2_1s",
+          "processes": [
+            {
+              "name": "bwrap",
+              "pid": 458957,
+              "pss_kib": 173,
+              "rss_kib": 1576
+            },
+            {
+              "name": "bwrap",
+              "pid": 459240,
+              "pss_kib": 182,
+              "rss_kib": 1712
+            },
+            {
+              "name": "bwrap",
+              "pid": 459354,
+              "pss_kib": 177,
+              "rss_kib": 1580
+            },
+            {
+              "name": "xdg-dbus-proxy",
+              "pid": 459241,
+              "pss_kib": 485,
+              "rss_kib": 5856
+            },
+            {
+              "name": "bwrap",
+              "pid": 459239,
+              "pss_kib": 119,
+              "rss_kib": 2304
+            },
+            {
+              "name": "xdg-dbus-proxy",
+              "pid": 458958,
+              "pss_kib": 485,
+              "rss_kib": 6016
+            },
+            {
+              "name": "xdg-dbus-proxy",
+              "pid": 459355,
+              "pss_kib": 490,
+              "rss_kib": 6036
+            },
+            {
+              "name": "WebKitNetworkPr",
+              "pid": 458953,
+              "pss_kib": 18782,
+              "rss_kib": 52428
+            },
+            {
+              "name": "bwrap",
+              "pid": 458956,
+              "pss_kib": 122,
+              "rss_kib": 2264
+            },
+            {
+              "name": "gcn-webkit-prev",
+              "pid": 458903,
+              "pss_kib": 84491,
+              "rss_kib": 171848
+            },
+            {
+              "name": "bwrap",
+              "pid": 459353,
+              "pss_kib": 118,
+              "rss_kib": 2260
+            }
+          ],
+          "pss_kib": 105624,
+          "rss_kib": 253880,
+          "unreadable_processes": 0,
+          "webkit": true
+        },
+        {
+          "phase": "closed_2_5s",
+          "processes": [
+            {
+              "name": "bwrap",
+              "pid": 458957,
+              "pss_kib": 173,
+              "rss_kib": 1576
+            },
+            {
+              "name": "bwrap",
+              "pid": 459240,
+              "pss_kib": 182,
+              "rss_kib": 1712
+            },
+            {
+              "name": "bwrap",
+              "pid": 459354,
+              "pss_kib": 177,
+              "rss_kib": 1580
+            },
+            {
+              "name": "xdg-dbus-proxy",
+              "pid": 459241,
+              "pss_kib": 485,
+              "rss_kib": 5856
+            },
+            {
+              "name": "bwrap",
+              "pid": 459239,
+              "pss_kib": 119,
+              "rss_kib": 2304
+            },
+            {
+              "name": "xdg-dbus-proxy",
+              "pid": 458958,
+              "pss_kib": 486,
+              "rss_kib": 6144
+            },
+            {
+              "name": "xdg-dbus-proxy",
+              "pid": 459355,
+              "pss_kib": 490,
+              "rss_kib": 6036
+            },
+            {
+              "name": "WebKitNetworkPr",
+              "pid": 458953,
+              "pss_kib": 18782,
+              "rss_kib": 52428
+            },
+            {
+              "name": "bwrap",
+              "pid": 458956,
+              "pss_kib": 122,
+              "rss_kib": 2264
+            },
+            {
+              "name": "gcn-webkit-prev",
+              "pid": 458903,
+              "pss_kib": 84491,
+              "rss_kib": 171848
+            },
+            {
+              "name": "bwrap",
+              "pid": 459353,
+              "pss_kib": 118,
+              "rss_kib": 2260
+            }
+          ],
+          "pss_kib": 105625,
+          "rss_kib": 254008,
+          "unreadable_processes": 0,
+          "webkit": true
+        },
+        {
+          "document_loaded_ms": 247.332168
+        },
+        {
+          "phase": "open_3",
+          "processes": [
+            {
+              "name": "bwrap",
+              "pid": 459455,
+              "pss_kib": 118,
+              "rss_kib": 2240
+            },
+            {
+              "name": "bwrap",
+              "pid": 458957,
+              "pss_kib": 171,
+              "rss_kib": 1576
+            },
+            {
+              "name": "bwrap",
+              "pid": 459240,
+              "pss_kib": 180,
+              "rss_kib": 1712
+            },
+            {
+              "name": "bwrap",
+              "pid": 459354,
+              "pss_kib": 175,
+              "rss_kib": 1580
+            },
+            {
+              "name": "bwrap",
+              "pid": 459460,
+              "pss_kib": 122,
+              "rss_kib": 2252
+            },
+            {
+              "name": "xdg-dbus-proxy",
+              "pid": 459457,
+              "pss_kib": 483,
+              "rss_kib": 5832
+            },
+            {
+              "name": "xdg-dbus-proxy",
+              "pid": 459241,
+              "pss_kib": 479,
+              "rss_kib": 5856
+            },
+            {
+              "name": "bwrap",
+              "pid": 459239,
+              "pss_kib": 117,
+              "rss_kib": 2304
+            },
+            {
+              "name": "xdg-dbus-proxy",
+              "pid": 458958,
+              "pss_kib": 481,
+              "rss_kib": 6144
+            },
+            {
+              "name": "xdg-dbus-proxy",
+              "pid": 459355,
+              "pss_kib": 484,
+              "rss_kib": 6036
+            },
+            {
+              "name": "WebKitNetworkPr",
+              "pid": 458953,
+              "pss_kib": 16689,
+              "rss_kib": 52440
+            },
+            {
+              "name": "bwrap",
+              "pid": 459461,
+              "pss_kib": 185,
+              "rss_kib": 1612
+            },
+            {
+              "name": "bwrap",
+              "pid": 458956,
+              "pss_kib": 120,
+              "rss_kib": 2264
+            },
+            {
+              "name": "gcn-webkit-prev",
+              "pid": 458903,
+              "pss_kib": 79741,
+              "rss_kib": 171924
+            },
+            {
+              "name": "bwrap",
+              "pid": 459353,
+              "pss_kib": 116,
+              "rss_kib": 2260
+            },
+            {
+              "name": "WebKitWebProces",
+              "pid": 459462,
+              "pss_kib": 81492,
+              "rss_kib": 158840
+            },
+            {
+              "name": "bwrap",
+              "pid": 459456,
+              "pss_kib": 177,
+              "rss_kib": 1536
+            }
+          ],
+          "pss_kib": 181330,
+          "rss_kib": 426408,
+          "unreadable_processes": 0,
+          "webkit": true
+        },
+        {
+          "view_released": true
+        },
+        {
+          "phase": "closed_3_1s",
+          "processes": [
+            {
+              "name": "bwrap",
+              "pid": 459455,
+              "pss_kib": 119,
+              "rss_kib": 2240
+            },
+            {
+              "name": "bwrap",
+              "pid": 458957,
+              "pss_kib": 172,
+              "rss_kib": 1576
+            },
+            {
+              "name": "bwrap",
+              "pid": 459240,
+              "pss_kib": 181,
+              "rss_kib": 1712
+            },
+            {
+              "name": "bwrap",
+              "pid": 459354,
+              "pss_kib": 176,
+              "rss_kib": 1580
+            },
+            {
+              "name": "xdg-dbus-proxy",
+              "pid": 459457,
+              "pss_kib": 484,
+              "rss_kib": 5832
+            },
+            {
+              "name": "xdg-dbus-proxy",
+              "pid": 459241,
+              "pss_kib": 480,
+              "rss_kib": 5856
+            },
+            {
+              "name": "bwrap",
+              "pid": 459239,
+              "pss_kib": 118,
+              "rss_kib": 2304
+            },
+            {
+              "name": "xdg-dbus-proxy",
+              "pid": 458958,
+              "pss_kib": 481,
+              "rss_kib": 6144
+            },
+            {
+              "name": "xdg-dbus-proxy",
+              "pid": 459355,
+              "pss_kib": 484,
+              "rss_kib": 6036
+            },
+            {
+              "name": "WebKitNetworkPr",
+              "pid": 458953,
+              "pss_kib": 18793,
+              "rss_kib": 52440
+            },
+            {
+              "name": "bwrap",
+              "pid": 458956,
+              "pss_kib": 121,
+              "rss_kib": 2264
+            },
+            {
+              "name": "gcn-webkit-prev",
+              "pid": 458903,
+              "pss_kib": 84514,
+              "rss_kib": 171872
+            },
+            {
+              "name": "bwrap",
+              "pid": 459353,
+              "pss_kib": 117,
+              "rss_kib": 2260
+            },
+            {
+              "name": "bwrap",
+              "pid": 459456,
+              "pss_kib": 178,
+              "rss_kib": 1536
+            }
+          ],
+          "pss_kib": 106418,
+          "rss_kib": 263652,
+          "unreadable_processes": 0,
+          "webkit": true
+        },
+        {
+          "phase": "closed_3_5s",
+          "processes": [
+            {
+              "name": "bwrap",
+              "pid": 459455,
+              "pss_kib": 119,
+              "rss_kib": 2240
+            },
+            {
+              "name": "bwrap",
+              "pid": 458957,
+              "pss_kib": 172,
+              "rss_kib": 1576
+            },
+            {
+              "name": "bwrap",
+              "pid": 459240,
+              "pss_kib": 181,
+              "rss_kib": 1712
+            },
+            {
+              "name": "bwrap",
+              "pid": 459354,
+              "pss_kib": 176,
+              "rss_kib": 1580
+            },
+            {
+              "name": "xdg-dbus-proxy",
+              "pid": 459457,
+              "pss_kib": 484,
+              "rss_kib": 5832
+            },
+            {
+              "name": "xdg-dbus-proxy",
+              "pid": 459241,
+              "pss_kib": 481,
+              "rss_kib": 6048
+            },
+            {
+              "name": "bwrap",
+              "pid": 459239,
+              "pss_kib": 118,
+              "rss_kib": 2304
+            },
+            {
+              "name": "xdg-dbus-proxy",
+              "pid": 458958,
+              "pss_kib": 481,
+              "rss_kib": 6144
+            },
+            {
+              "name": "xdg-dbus-proxy",
+              "pid": 459355,
+              "pss_kib": 484,
+              "rss_kib": 6036
+            },
+            {
+              "name": "WebKitNetworkPr",
+              "pid": 458953,
+              "pss_kib": 18793,
+              "rss_kib": 52440
+            },
+            {
+              "name": "bwrap",
+              "pid": 458956,
+              "pss_kib": 121,
+              "rss_kib": 2264
+            },
+            {
+              "name": "gcn-webkit-prev",
+              "pid": 458903,
+              "pss_kib": 84514,
+              "rss_kib": 171872
+            },
+            {
+              "name": "bwrap",
+              "pid": 459353,
+              "pss_kib": 117,
+              "rss_kib": 2260
+            },
+            {
+              "name": "bwrap",
+              "pid": 459456,
+              "pss_kib": 178,
+              "rss_kib": 1536
+            }
+          ],
+          "pss_kib": 106419,
+          "rss_kib": 263844,
+          "unreadable_processes": 0,
+          "webkit": true
+        },
+        {
+          "document_loaded_ms": 262.700382
+        },
+        {
+          "phase": "open_4",
+          "processes": [
+            {
+              "name": "bwrap",
+              "pid": 459455,
+              "pss_kib": 119,
+              "rss_kib": 2240
+            },
+            {
+              "name": "bwrap",
+              "pid": 458957,
+              "pss_kib": 172,
+              "rss_kib": 1576
+            },
+            {
+              "name": "xdg-dbus-proxy",
+              "pid": 459241,
+              "pss_kib": 477,
+              "rss_kib": 6048
+            },
+            {
+              "name": "xdg-dbus-proxy",
+              "pid": 458958,
+              "pss_kib": 478,
+              "rss_kib": 6144
+            },
+            {
+              "name": "bwrap",
+              "pid": 459592,
+              "pss_kib": 179,
+              "rss_kib": 1564
+            },
+            {
+              "name": "bwrap",
+              "pid": 459597,
+              "pss_kib": 185,
+              "rss_kib": 1576
+            },
+            {
+              "name": "gcn-webkit-prev",
+              "pid": 458903,
+              "pss_kib": 79755,
+              "rss_kib": 171956
+            },
+            {
+              "name": "bwrap",
+              "pid": 459353,
+              "pss_kib": 117,
+              "rss_kib": 2260
+            },
+            {
+              "name": "WebKitWebProces",
+              "pid": 459598,
+              "pss_kib": 81336,
+              "rss_kib": 158504
+            },
+            {
+              "name": "bwrap",
+              "pid": 459456,
+              "pss_kib": 178,
+              "rss_kib": 1536
+            },
+            {
+              "name": "bwrap",
+              "pid": 459354,
+              "pss_kib": 176,
+              "rss_kib": 1580
+            },
+            {
+              "name": "bwrap",
+              "pid": 459240,
+              "pss_kib": 181,
+              "rss_kib": 1712
+            },
+            {
+              "name": "xdg-dbus-proxy",
+              "pid": 459457,
+              "pss_kib": 480,
+              "rss_kib": 5832
+            },
+            {
+              "name": "xdg-dbus-proxy",
+              "pid": 459593,
+              "pss_kib": 481,
+              "rss_kib": 5964
+            },
+            {
+              "name": "bwrap",
+              "pid": 459596,
+              "pss_kib": 119,
+              "rss_kib": 2324
+            },
+            {
+              "name": "bwrap",
+              "pid": 459239,
+              "pss_kib": 118,
+              "rss_kib": 2304
+            },
+            {
+              "name": "xdg-dbus-proxy",
+              "pid": 459355,
+              "pss_kib": 481,
+              "rss_kib": 6036
+            },
+            {
+              "name": "WebKitNetworkPr",
+              "pid": 458953,
+              "pss_kib": 16680,
+              "rss_kib": 52420
+            },
+            {
+              "name": "bwrap",
+              "pid": 459591,
+              "pss_kib": 121,
+              "rss_kib": 2320
+            },
+            {
+              "name": "bwrap",
+              "pid": 458956,
+              "pss_kib": 121,
+              "rss_kib": 2264
+            }
+          ],
+          "pss_kib": 181954,
+          "rss_kib": 436160,
+          "unreadable_processes": 0,
+          "webkit": true
+        },
+        {
+          "view_released": true
+        },
+        {
+          "phase": "closed_4_1s",
+          "processes": [
+            {
+              "name": "bwrap",
+              "pid": 459455,
+              "pss_kib": 120,
+              "rss_kib": 2240
+            },
+            {
+              "name": "bwrap",
+              "pid": 458957,
+              "pss_kib": 173,
+              "rss_kib": 1576
+            },
+            {
+              "name": "xdg-dbus-proxy",
+              "pid": 459241,
+              "pss_kib": 478,
+              "rss_kib": 6048
+            },
+            {
+              "name": "xdg-dbus-proxy",
+              "pid": 458958,
+              "pss_kib": 478,
+              "rss_kib": 6144
+            },
+            {
+              "name": "bwrap",
+              "pid": 459592,
+              "pss_kib": 180,
+              "rss_kib": 1564
+            },
+            {
+              "name": "gcn-webkit-prev",
+              "pid": 458903,
+              "pss_kib": 84501,
+              "rss_kib": 171904
+            },
+            {
+              "name": "bwrap",
+              "pid": 459353,
+              "pss_kib": 118,
+              "rss_kib": 2260
+            },
+            {
+              "name": "bwrap",
+              "pid": 459456,
+              "pss_kib": 179,
+              "rss_kib": 1536
+            },
+            {
+              "name": "bwrap",
+              "pid": 459354,
+              "pss_kib": 177,
+              "rss_kib": 1580
+            },
+            {
+              "name": "bwrap",
+              "pid": 459240,
+              "pss_kib": 182,
+              "rss_kib": 1712
+            },
+            {
+              "name": "xdg-dbus-proxy",
+              "pid": 459457,
+              "pss_kib": 480,
+              "rss_kib": 5832
+            },
+            {
+              "name": "xdg-dbus-proxy",
+              "pid": 459593,
+              "pss_kib": 482,
+              "rss_kib": 5964
+            },
+            {
+              "name": "bwrap",
+              "pid": 459239,
+              "pss_kib": 119,
+              "rss_kib": 2304
+            },
+            {
+              "name": "xdg-dbus-proxy",
+              "pid": 459355,
+              "pss_kib": 481,
+              "rss_kib": 6036
+            },
+            {
+              "name": "WebKitNetworkPr",
+              "pid": 458953,
+              "pss_kib": 18767,
+              "rss_kib": 52420
+            },
+            {
+              "name": "bwrap",
+              "pid": 459591,
+              "pss_kib": 122,
+              "rss_kib": 2320
+            },
+            {
+              "name": "bwrap",
+              "pid": 458956,
+              "pss_kib": 122,
+              "rss_kib": 2264
+            }
+          ],
+          "pss_kib": 107159,
+          "rss_kib": 273704,
+          "unreadable_processes": 0,
+          "webkit": true
+        },
+        {
+          "phase": "closed_4_5s",
+          "processes": [
+            {
+              "name": "bwrap",
+              "pid": 459455,
+              "pss_kib": 120,
+              "rss_kib": 2240
+            },
+            {
+              "name": "bwrap",
+              "pid": 458957,
+              "pss_kib": 173,
+              "rss_kib": 1576
+            },
+            {
+              "name": "xdg-dbus-proxy",
+              "pid": 459241,
+              "pss_kib": 478,
+              "rss_kib": 6048
+            },
+            {
+              "name": "xdg-dbus-proxy",
+              "pid": 458958,
+              "pss_kib": 478,
+              "rss_kib": 6144
+            },
+            {
+              "name": "bwrap",
+              "pid": 459592,
+              "pss_kib": 180,
+              "rss_kib": 1564
+            },
+            {
+              "name": "gcn-webkit-prev",
+              "pid": 458903,
+              "pss_kib": 84501,
+              "rss_kib": 171904
+            },
+            {
+              "name": "bwrap",
+              "pid": 459353,
+              "pss_kib": 118,
+              "rss_kib": 2260
+            },
+            {
+              "name": "bwrap",
+              "pid": 459456,
+              "pss_kib": 179,
+              "rss_kib": 1536
+            },
+            {
+              "name": "bwrap",
+              "pid": 459354,
+              "pss_kib": 177,
+              "rss_kib": 1580
+            },
+            {
+              "name": "bwrap",
+              "pid": 459240,
+              "pss_kib": 182,
+              "rss_kib": 1712
+            },
+            {
+              "name": "xdg-dbus-proxy",
+              "pid": 459457,
+              "pss_kib": 480,
+              "rss_kib": 5832
+            },
+            {
+              "name": "xdg-dbus-proxy",
+              "pid": 459593,
+              "pss_kib": 482,
+              "rss_kib": 5964
+            },
+            {
+              "name": "bwrap",
+              "pid": 459239,
+              "pss_kib": 119,
+              "rss_kib": 2304
+            },
+            {
+              "name": "xdg-dbus-proxy",
+              "pid": 459355,
+              "pss_kib": 482,
+              "rss_kib": 6164
+            },
+            {
+              "name": "WebKitNetworkPr",
+              "pid": 458953,
+              "pss_kib": 18767,
+              "rss_kib": 52420
+            },
+            {
+              "name": "bwrap",
+              "pid": 459591,
+              "pss_kib": 122,
+              "rss_kib": 2320
+            },
+            {
+              "name": "bwrap",
+              "pid": 458956,
+              "pss_kib": 122,
+              "rss_kib": 2264
+            }
+          ],
+          "pss_kib": 107160,
+          "rss_kib": 273832,
+          "unreadable_processes": 0,
+          "webkit": true
+        },
+        {
+          "document_loaded_ms": 262.232389
+        },
+        {
+          "phase": "open_5",
+          "processes": [
+            {
+              "name": "bwrap",
+              "pid": 459455,
+              "pss_kib": 118,
+              "rss_kib": 2240
+            },
+            {
+              "name": "bwrap",
+              "pid": 458957,
+              "pss_kib": 171,
+              "rss_kib": 1576
+            },
+            {
+              "name": "bwrap",
+              "pid": 459724,
+              "pss_kib": 118,
+              "rss_kib": 2324
+            },
+            {
+              "name": "xdg-dbus-proxy",
+              "pid": 459241,
+              "pss_kib": 475,
+              "rss_kib": 6048
+            },
+            {
+              "name": "bwrap",
+              "pid": 459720,
+              "pss_kib": 171,
+              "rss_kib": 1584
+            },
+            {
+              "name": "xdg-dbus-proxy",
+              "pid": 458958,
+              "pss_kib": 476,
+              "rss_kib": 6144
+            },
+            {
+              "name": "bwrap",
+              "pid": 459592,
+              "pss_kib": 178,
+              "rss_kib": 1564
+            },
+            {
+              "name": "gcn-webkit-prev",
+              "pid": 458903,
+              "pss_kib": 79777,
+              "rss_kib": 171996
+            },
+            {
+              "name": "bwrap",
+              "pid": 459353,
+              "pss_kib": 116,
+              "rss_kib": 2260
+            },
+            {
+              "name": "bwrap",
+              "pid": 459725,
+              "pss_kib": 176,
+              "rss_kib": 1568
+            },
+            {
+              "name": "xdg-dbus-proxy",
+              "pid": 459721,
+              "pss_kib": 478,
+              "rss_kib": 5832
+            },
+            {
+              "name": "bwrap",
+              "pid": 459456,
+              "pss_kib": 177,
+              "rss_kib": 1536
+            },
+            {
+              "name": "bwrap",
+              "pid": 459354,
+              "pss_kib": 175,
+              "rss_kib": 1580
+            },
+            {
+              "name": "bwrap",
+              "pid": 459240,
+              "pss_kib": 180,
+              "rss_kib": 1712
+            },
+            {
+              "name": "WebKitWebProces",
+              "pid": 459726,
+              "pss_kib": 81588,
+              "rss_kib": 158896
+            },
+            {
+              "name": "xdg-dbus-proxy",
+              "pid": 459457,
+              "pss_kib": 478,
+              "rss_kib": 5832
+            },
+            {
+              "name": "xdg-dbus-proxy",
+              "pid": 459593,
+              "pss_kib": 479,
+              "rss_kib": 5964
+            },
+            {
+              "name": "bwrap",
+              "pid": 459239,
+              "pss_kib": 117,
+              "rss_kib": 2304
+            },
+            {
+              "name": "xdg-dbus-proxy",
+              "pid": 459355,
+              "pss_kib": 480,
+              "rss_kib": 6164
+            },
+            {
+              "name": "WebKitNetworkPr",
+              "pid": 458953,
+              "pss_kib": 16662,
+              "rss_kib": 52420
+            },
+            {
+              "name": "bwrap",
+              "pid": 459591,
+              "pss_kib": 120,
+              "rss_kib": 2320
+            },
+            {
+              "name": "bwrap",
+              "pid": 458956,
+              "pss_kib": 120,
+              "rss_kib": 2264
+            },
+            {
+              "name": "bwrap",
+              "pid": 459719,
+              "pss_kib": 117,
+              "rss_kib": 2348
+            }
+          ],
+          "pss_kib": 182947,
+          "rss_kib": 446476,
+          "unreadable_processes": 0,
+          "webkit": true
+        },
+        {
+          "view_released": true
+        },
+        {
+          "phase": "closed_5_1s",
+          "processes": [
+            {
+              "name": "bwrap",
+              "pid": 459455,
+              "pss_kib": 119,
+              "rss_kib": 2240
+            },
+            {
+              "name": "bwrap",
+              "pid": 458957,
+              "pss_kib": 172,
+              "rss_kib": 1576
+            },
+            {
+              "name": "xdg-dbus-proxy",
+              "pid": 459241,
+              "pss_kib": 476,
+              "rss_kib": 6048
+            },
+            {
+              "name": "bwrap",
+              "pid": 459720,
+              "pss_kib": 171,
+              "rss_kib": 1584
+            },
+            {
+              "name": "xdg-dbus-proxy",
+              "pid": 458958,
+              "pss_kib": 476,
+              "rss_kib": 6144
+            },
+            {
+              "name": "bwrap",
+              "pid": 459592,
+              "pss_kib": 179,
+              "rss_kib": 1564
+            },
+            {
+              "name": "gcn-webkit-prev",
+              "pid": 458903,
+              "pss_kib": 84534,
+              "rss_kib": 171936
+            },
+            {
+              "name": "bwrap",
+              "pid": 459353,
+              "pss_kib": 117,
+              "rss_kib": 2260
+            },
+            {
+              "name": "xdg-dbus-proxy",
+              "pid": 459721,
+              "pss_kib": 478,
+              "rss_kib": 5832
+            },
+            {
+              "name": "bwrap",
+              "pid": 459456,
+              "pss_kib": 178,
+              "rss_kib": 1536
+            },
+            {
+              "name": "bwrap",
+              "pid": 459354,
+              "pss_kib": 176,
+              "rss_kib": 1580
+            },
+            {
+              "name": "bwrap",
+              "pid": 459240,
+              "pss_kib": 181,
+              "rss_kib": 1712
+            },
+            {
+              "name": "xdg-dbus-proxy",
+              "pid": 459457,
+              "pss_kib": 478,
+              "rss_kib": 5832
+            },
+            {
+              "name": "xdg-dbus-proxy",
+              "pid": 459593,
+              "pss_kib": 479,
+              "rss_kib": 5964
+            },
+            {
+              "name": "bwrap",
+              "pid": 459239,
+              "pss_kib": 118,
+              "rss_kib": 2304
+            },
+            {
+              "name": "xdg-dbus-proxy",
+              "pid": 459355,
+              "pss_kib": 480,
+              "rss_kib": 6164
+            },
+            {
+              "name": "WebKitNetworkPr",
+              "pid": 458953,
+              "pss_kib": 18748,
+              "rss_kib": 52400
+            },
+            {
+              "name": "bwrap",
+              "pid": 459591,
+              "pss_kib": 121,
+              "rss_kib": 2320
+            },
+            {
+              "name": "bwrap",
+              "pid": 458956,
+              "pss_kib": 121,
+              "rss_kib": 2264
+            },
+            {
+              "name": "bwrap",
+              "pid": 459719,
+              "pss_kib": 118,
+              "rss_kib": 2348
+            }
+          ],
+          "pss_kib": 107920,
+          "rss_kib": 283608,
+          "unreadable_processes": 0,
+          "webkit": true
+        },
+        {
+          "phase": "closed_5_5s",
+          "processes": [
+            {
+              "name": "bwrap",
+              "pid": 459455,
+              "pss_kib": 119,
+              "rss_kib": 2240
+            },
+            {
+              "name": "bwrap",
+              "pid": 458957,
+              "pss_kib": 172,
+              "rss_kib": 1576
+            },
+            {
+              "name": "xdg-dbus-proxy",
+              "pid": 459241,
+              "pss_kib": 476,
+              "rss_kib": 6048
+            },
+            {
+              "name": "bwrap",
+              "pid": 459720,
+              "pss_kib": 171,
+              "rss_kib": 1584
+            },
+            {
+              "name": "xdg-dbus-proxy",
+              "pid": 458958,
+              "pss_kib": 476,
+              "rss_kib": 6144
+            },
+            {
+              "name": "bwrap",
+              "pid": 459592,
+              "pss_kib": 179,
+              "rss_kib": 1564
+            },
+            {
+              "name": "gcn-webkit-prev",
+              "pid": 458903,
+              "pss_kib": 84534,
+              "rss_kib": 171936
+            },
+            {
+              "name": "bwrap",
+              "pid": 459353,
+              "pss_kib": 117,
+              "rss_kib": 2260
+            },
+            {
+              "name": "xdg-dbus-proxy",
+              "pid": 459721,
+              "pss_kib": 478,
+              "rss_kib": 5832
+            },
+            {
+              "name": "bwrap",
+              "pid": 459456,
+              "pss_kib": 178,
+              "rss_kib": 1536
+            },
+            {
+              "name": "bwrap",
+              "pid": 459354,
+              "pss_kib": 176,
+              "rss_kib": 1580
+            },
+            {
+              "name": "bwrap",
+              "pid": 459240,
+              "pss_kib": 181,
+              "rss_kib": 1712
+            },
+            {
+              "name": "xdg-dbus-proxy",
+              "pid": 459457,
+              "pss_kib": 479,
+              "rss_kib": 6024
+            },
+            {
+              "name": "xdg-dbus-proxy",
+              "pid": 459593,
+              "pss_kib": 479,
+              "rss_kib": 5964
+            },
+            {
+              "name": "bwrap",
+              "pid": 459239,
+              "pss_kib": 118,
+              "rss_kib": 2304
+            },
+            {
+              "name": "xdg-dbus-proxy",
+              "pid": 459355,
+              "pss_kib": 480,
+              "rss_kib": 6164
+            },
+            {
+              "name": "WebKitNetworkPr",
+              "pid": 458953,
+              "pss_kib": 18748,
+              "rss_kib": 52400
+            },
+            {
+              "name": "bwrap",
+              "pid": 459591,
+              "pss_kib": 121,
+              "rss_kib": 2320
+            },
+            {
+              "name": "bwrap",
+              "pid": 458956,
+              "pss_kib": 121,
+              "rss_kib": 2264
+            },
+            {
+              "name": "bwrap",
+              "pid": 459719,
+              "pss_kib": 118,
+              "rss_kib": 2348
+            }
+          ],
+          "pss_kib": 107921,
+          "rss_kib": 283800,
+          "unreadable_processes": 0,
+          "webkit": true
+        },
+        {
+          "document_loaded_ms": 249.28783199999998
+        },
+        {
+          "phase": "open_6",
+          "processes": [
+            {
+              "name": "bwrap",
+              "pid": 459455,
+              "pss_kib": 117,
+              "rss_kib": 2240
+            },
+            {
+              "name": "bwrap",
+              "pid": 458957,
+              "pss_kib": 170,
+              "rss_kib": 1576
+            },
+            {
+              "name": "xdg-dbus-proxy",
+              "pid": 459241,
+              "pss_kib": 473,
+              "rss_kib": 6048
+            },
+            {
+              "name": "bwrap",
+              "pid": 459720,
+              "pss_kib": 170,
+              "rss_kib": 1584
+            },
+            {
+              "name": "xdg-dbus-proxy",
+              "pid": 458958,
+              "pss_kib": 474,
+              "rss_kib": 6144
+            },
+            {
+              "name": "bwrap",
+              "pid": 459592,
+              "pss_kib": 178,
+              "rss_kib": 1564
+            },
+            {
+              "name": "gcn-webkit-prev",
+              "pid": 458903,
+              "pss_kib": 79799,
+              "rss_kib": 172020
+            },
+            {
+              "name": "bwrap",
+              "pid": 459353,
+              "pss_kib": 115,
+              "rss_kib": 2260
+            },
+            {
+              "name": "xdg-dbus-proxy",
+              "pid": 459721,
+              "pss_kib": 476,
+              "rss_kib": 5832
+            },
+            {
+              "name": "bwrap",
+              "pid": 459456,
+              "pss_kib": 176,
+              "rss_kib": 1536
+            },
+            {
+              "name": "bwrap",
+              "pid": 459354,
+              "pss_kib": 174,
+              "rss_kib": 1580
+            },
+            {
+              "name": "bwrap",
+              "pid": 459240,
+              "pss_kib": 179,
+              "rss_kib": 1712
+            },
+            {
+              "name": "bwrap",
+              "pid": 459828,
+              "pss_kib": 119,
+              "rss_kib": 2264
+            },
+            {
+              "name": "xdg-dbus-proxy",
+              "pid": 459457,
+              "pss_kib": 477,
+              "rss_kib": 6024
+            },
+            {
+              "name": "xdg-dbus-proxy",
+              "pid": 459593,
+              "pss_kib": 477,
+              "rss_kib": 5964
+            },
+            {
+              "name": "bwrap",
+              "pid": 459823,
+              "pss_kib": 116,
+              "rss_kib": 2408
+            },
+            {
+              "name": "bwrap",
+              "pid": 459829,
+              "pss_kib": 182,
+              "rss_kib": 1588
+            },
+            {
+              "name": "bwrap",
+              "pid": 459824,
+              "pss_kib": 170,
+              "rss_kib": 1652
+            },
+            {
+              "name": "xdg-dbus-proxy",
+              "pid": 459825,
+              "pss_kib": 473,
+              "rss_kib": 5884
+            },
+            {
+              "name": "bwrap",
+              "pid": 459239,
+              "pss_kib": 116,
+              "rss_kib": 2304
+            },
+            {
+              "name": "xdg-dbus-proxy",
+              "pid": 459355,
+              "pss_kib": 478,
+              "rss_kib": 6164
+            },
+            {
+              "name": "WebKitNetworkPr",
+              "pid": 458953,
+              "pss_kib": 16687,
+              "rss_kib": 52432
+            },
+            {
+              "name": "bwrap",
+              "pid": 459591,
+              "pss_kib": 119,
+              "rss_kib": 2320
+            },
+            {
+              "name": "WebKitWebProces",
+              "pid": 459837,
+              "pss_kib": 81846,
+              "rss_kib": 159428
+            },
+            {
+              "name": "bwrap",
+              "pid": 458956,
+              "pss_kib": 119,
+              "rss_kib": 2264
+            },
+            {
+              "name": "bwrap",
+              "pid": 459719,
+              "pss_kib": 116,
+              "rss_kib": 2348
+            }
+          ],
+          "pss_kib": 183996,
+          "rss_kib": 457140,
+          "unreadable_processes": 0,
+          "webkit": true
+        },
+        {
+          "view_released": true
+        },
+        {
+          "phase": "closed_6_1s",
+          "processes": [
+            {
+              "name": "bwrap",
+              "pid": 459455,
+              "pss_kib": 118,
+              "rss_kib": 2240
+            },
+            {
+              "name": "bwrap",
+              "pid": 458957,
+              "pss_kib": 171,
+              "rss_kib": 1576
+            },
+            {
+              "name": "xdg-dbus-proxy",
+              "pid": 459241,
+              "pss_kib": 474,
+              "rss_kib": 6048
+            },
+            {
+              "name": "bwrap",
+              "pid": 459720,
+              "pss_kib": 171,
+              "rss_kib": 1584
+            },
+            {
+              "name": "xdg-dbus-proxy",
+              "pid": 458958,
+              "pss_kib": 474,
+              "rss_kib": 6144
+            },
+            {
+              "name": "bwrap",
+              "pid": 459592,
+              "pss_kib": 178,
+              "rss_kib": 1564
+            },
+            {
+              "name": "gcn-webkit-prev",
+              "pid": 458903,
+              "pss_kib": 84557,
+              "rss_kib": 171960
+            },
+            {
+              "name": "bwrap",
+              "pid": 459353,
+              "pss_kib": 116,
+              "rss_kib": 2260
+            },
+            {
+              "name": "xdg-dbus-proxy",
+              "pid": 459721,
+              "pss_kib": 477,
+              "rss_kib": 5832
+            },
+            {
+              "name": "bwrap",
+              "pid": 459456,
+              "pss_kib": 177,
+              "rss_kib": 1536
+            },
+            {
+              "name": "bwrap",
+              "pid": 459354,
+              "pss_kib": 175,
+              "rss_kib": 1580
+            },
+            {
+              "name": "bwrap",
+              "pid": 459240,
+              "pss_kib": 180,
+              "rss_kib": 1712
+            },
+            {
+              "name": "xdg-dbus-proxy",
+              "pid": 459457,
+              "pss_kib": 478,
+              "rss_kib": 6024
+            },
+            {
+              "name": "xdg-dbus-proxy",
+              "pid": 459593,
+              "pss_kib": 478,
+              "rss_kib": 5964
+            },
+            {
+              "name": "bwrap",
+              "pid": 459823,
+              "pss_kib": 117,
+              "rss_kib": 2408
+            },
+            {
+              "name": "bwrap",
+              "pid": 459824,
+              "pss_kib": 171,
+              "rss_kib": 1652
+            },
+            {
+              "name": "xdg-dbus-proxy",
+              "pid": 459825,
+              "pss_kib": 473,
+              "rss_kib": 5884
+            },
+            {
+              "name": "bwrap",
+              "pid": 459239,
+              "pss_kib": 117,
+              "rss_kib": 2304
+            },
+            {
+              "name": "xdg-dbus-proxy",
+              "pid": 459355,
+              "pss_kib": 478,
+              "rss_kib": 6164
+            },
+            {
+              "name": "WebKitNetworkPr",
+              "pid": 458953,
+              "pss_kib": 18783,
+              "rss_kib": 52436
+            },
+            {
+              "name": "bwrap",
+              "pid": 459591,
+              "pss_kib": 120,
+              "rss_kib": 2320
+            },
+            {
+              "name": "bwrap",
+              "pid": 458956,
+              "pss_kib": 120,
+              "rss_kib": 2264
+            },
+            {
+              "name": "bwrap",
+              "pid": 459719,
+              "pss_kib": 117,
+              "rss_kib": 2348
+            }
+          ],
+          "pss_kib": 108720,
+          "rss_kib": 293804,
+          "unreadable_processes": 0,
+          "webkit": true
+        },
+        {
+          "phase": "closed_6_5s",
+          "processes": [
+            {
+              "name": "bwrap",
+              "pid": 459455,
+              "pss_kib": 118,
+              "rss_kib": 2240
+            },
+            {
+              "name": "bwrap",
+              "pid": 458957,
+              "pss_kib": 171,
+              "rss_kib": 1576
+            },
+            {
+              "name": "xdg-dbus-proxy",
+              "pid": 459241,
+              "pss_kib": 474,
+              "rss_kib": 6048
+            },
+            {
+              "name": "bwrap",
+              "pid": 459720,
+              "pss_kib": 171,
+              "rss_kib": 1584
+            },
+            {
+              "name": "xdg-dbus-proxy",
+              "pid": 458958,
+              "pss_kib": 474,
+              "rss_kib": 6144
+            },
+            {
+              "name": "bwrap",
+              "pid": 459592,
+              "pss_kib": 178,
+              "rss_kib": 1564
+            },
+            {
+              "name": "gcn-webkit-prev",
+              "pid": 458903,
+              "pss_kib": 84557,
+              "rss_kib": 171960
+            },
+            {
+              "name": "bwrap",
+              "pid": 459353,
+              "pss_kib": 116,
+              "rss_kib": 2260
+            },
+            {
+              "name": "xdg-dbus-proxy",
+              "pid": 459721,
+              "pss_kib": 477,
+              "rss_kib": 5832
+            },
+            {
+              "name": "bwrap",
+              "pid": 459456,
+              "pss_kib": 177,
+              "rss_kib": 1536
+            },
+            {
+              "name": "bwrap",
+              "pid": 459354,
+              "pss_kib": 175,
+              "rss_kib": 1580
+            },
+            {
+              "name": "bwrap",
+              "pid": 459240,
+              "pss_kib": 180,
+              "rss_kib": 1712
+            },
+            {
+              "name": "xdg-dbus-proxy",
+              "pid": 459457,
+              "pss_kib": 478,
+              "rss_kib": 6024
+            },
+            {
+              "name": "xdg-dbus-proxy",
+              "pid": 459593,
+              "pss_kib": 478,
+              "rss_kib": 6028
+            },
+            {
+              "name": "bwrap",
+              "pid": 459823,
+              "pss_kib": 117,
+              "rss_kib": 2408
+            },
+            {
+              "name": "bwrap",
+              "pid": 459824,
+              "pss_kib": 171,
+              "rss_kib": 1652
+            },
+            {
+              "name": "xdg-dbus-proxy",
+              "pid": 459825,
+              "pss_kib": 473,
+              "rss_kib": 5884
+            },
+            {
+              "name": "bwrap",
+              "pid": 459239,
+              "pss_kib": 117,
+              "rss_kib": 2304
+            },
+            {
+              "name": "xdg-dbus-proxy",
+              "pid": 459355,
+              "pss_kib": 478,
+              "rss_kib": 6164
+            },
+            {
+              "name": "WebKitNetworkPr",
+              "pid": 458953,
+              "pss_kib": 18783,
+              "rss_kib": 52436
+            },
+            {
+              "name": "bwrap",
+              "pid": 459591,
+              "pss_kib": 120,
+              "rss_kib": 2320
+            },
+            {
+              "name": "bwrap",
+              "pid": 458956,
+              "pss_kib": 120,
+              "rss_kib": 2264
+            },
+            {
+              "name": "bwrap",
+              "pid": 459719,
+              "pss_kib": 117,
+              "rss_kib": 2348
+            }
+          ],
+          "pss_kib": 108720,
+          "rss_kib": 293868,
+          "unreadable_processes": 0,
+          "webkit": true
+        },
+        {
+          "document_loaded_ms": 260.894628
+        },
+        {
+          "phase": "open_7",
+          "processes": [
+            {
+              "name": "bwrap",
+              "pid": 459455,
+              "pss_kib": 116,
+              "rss_kib": 2240
+            },
+            {
+              "name": "bwrap",
+              "pid": 458957,
+              "pss_kib": 170,
+              "rss_kib": 1576
+            },
+            {
+              "name": "bwrap",
+              "pid": 459984,
+              "pss_kib": 184,
+              "rss_kib": 1668
+            },
+            {
+              "name": "WebKitWebProces",
+              "pid": 459985,
+              "pss_kib": 81605,
+              "rss_kib": 159160
+            },
+            {
+              "name": "xdg-dbus-proxy",
+              "pid": 459241,
+              "pss_kib": 472,
+              "rss_kib": 6048
+            },
+            {
+              "name": "bwrap",
+              "pid": 459720,
+              "pss_kib": 169,
+              "rss_kib": 1584
+            },
+            {
+              "name": "xdg-dbus-proxy",
+              "pid": 458958,
+              "pss_kib": 472,
+              "rss_kib": 6144
+            },
+            {
+              "name": "bwrap",
+              "pid": 459592,
+              "pss_kib": 177,
+              "rss_kib": 1564
+            },
+            {
+              "name": "gcn-webkit-prev",
+              "pid": 458903,
+              "pss_kib": 79803,
+              "rss_kib": 172036
+            },
+            {
+              "name": "bwrap",
+              "pid": 459353,
+              "pss_kib": 114,
+              "rss_kib": 2260
+            },
+            {
+              "name": "xdg-dbus-proxy",
+              "pid": 459721,
+              "pss_kib": 475,
+              "rss_kib": 5832
+            },
+            {
+              "name": "bwrap",
+              "pid": 459983,
+              "pss_kib": 117,
+              "rss_kib": 2412
+            },
+            {
+              "name": "bwrap",
+              "pid": 459456,
+              "pss_kib": 176,
+              "rss_kib": 1536
+            },
+            {
+              "name": "bwrap",
+              "pid": 459979,
+              "pss_kib": 177,
+              "rss_kib": 1592
+            },
+            {
+              "name": "bwrap",
+              "pid": 459354,
+              "pss_kib": 174,
+              "rss_kib": 1580
+            },
+            {
+              "name": "bwrap",
+              "pid": 459240,
+              "pss_kib": 179,
+              "rss_kib": 1712
+            },
+            {
+              "name": "xdg-dbus-proxy",
+              "pid": 459457,
+              "pss_kib": 476,
+              "rss_kib": 6024
+            },
+            {
+              "name": "xdg-dbus-proxy",
+              "pid": 459593,
+              "pss_kib": 477,
+              "rss_kib": 6028
+            },
+            {
+              "name": "bwrap",
+              "pid": 459823,
+              "pss_kib": 115,
+              "rss_kib": 2408
+            },
+            {
+              "name": "bwrap",
+              "pid": 459824,
+              "pss_kib": 170,
+              "rss_kib": 1652
+            },
+            {
+              "name": "xdg-dbus-proxy",
+              "pid": 459825,
+              "pss_kib": 472,
+              "rss_kib": 5884
+            },
+            {
+              "name": "bwrap",
+              "pid": 459239,
+              "pss_kib": 116,
+              "rss_kib": 2304
+            },
+            {
+              "name": "bwrap",
+              "pid": 459978,
+              "pss_kib": 115,
+              "rss_kib": 2348
+            },
+            {
+              "name": "xdg-dbus-proxy",
+              "pid": 459355,
+              "pss_kib": 477,
+              "rss_kib": 6164
+            },
+            {
+              "name": "WebKitNetworkPr",
+              "pid": 458953,
+              "pss_kib": 16702,
+              "rss_kib": 52444
+            },
+            {
+              "name": "bwrap",
+              "pid": 459591,
+              "pss_kib": 119,
+              "rss_kib": 2320
+            },
+            {
+              "name": "bwrap",
+              "pid": 458956,
+              "pss_kib": 118,
+              "rss_kib": 2264
+            },
+            {
+              "name": "xdg-dbus-proxy",
+              "pid": 459980,
+              "pss_kib": 473,
+              "rss_kib": 6164
+            },
+            {
+              "name": "bwrap",
+              "pid": 459719,
+              "pss_kib": 115,
+              "rss_kib": 2348
+            }
+          ],
+          "pss_kib": 184525,
+          "rss_kib": 467296,
+          "unreadable_processes": 0,
+          "webkit": true
+        },
+        {
+          "view_released": true
+        },
+        {
+          "phase": "closed_7_1s",
+          "processes": [
+            {
+              "name": "bwrap",
+              "pid": 459455,
+              "pss_kib": 117,
+              "rss_kib": 2240
+            },
+            {
+              "name": "bwrap",
+              "pid": 458957,
+              "pss_kib": 170,
+              "rss_kib": 1576
+            },
+            {
+              "name": "xdg-dbus-proxy",
+              "pid": 459241,
+              "pss_kib": 472,
+              "rss_kib": 6048
+            },
+            {
+              "name": "bwrap",
+              "pid": 459720,
+              "pss_kib": 170,
+              "rss_kib": 1584
+            },
+            {
+              "name": "xdg-dbus-proxy",
+              "pid": 458958,
+              "pss_kib": 473,
+              "rss_kib": 6144
+            },
+            {
+              "name": "bwrap",
+              "pid": 459592,
+              "pss_kib": 178,
+              "rss_kib": 1564
+            },
+            {
+              "name": "gcn-webkit-prev",
+              "pid": 458903,
+              "pss_kib": 84577,
+              "rss_kib": 171980
+            },
+            {
+              "name": "bwrap",
+              "pid": 459353,
+              "pss_kib": 115,
+              "rss_kib": 2260
+            },
+            {
+              "name": "xdg-dbus-proxy",
+              "pid": 459721,
+              "pss_kib": 475,
+              "rss_kib": 5832
+            },
+            {
+              "name": "bwrap",
+              "pid": 459456,
+              "pss_kib": 176,
+              "rss_kib": 1536
+            },
+            {
+              "name": "bwrap",
+              "pid": 459979,
+              "pss_kib": 178,
+              "rss_kib": 1592
+            },
+            {
+              "name": "bwrap",
+              "pid": 459354,
+              "pss_kib": 174,
+              "rss_kib": 1580
+            },
+            {
+              "name": "bwrap",
+              "pid": 459240,
+              "pss_kib": 179,
+              "rss_kib": 1712
+            },
+            {
+              "name": "xdg-dbus-proxy",
+              "pid": 459457,
+              "pss_kib": 476,
+              "rss_kib": 6024
+            },
+            {
+              "name": "xdg-dbus-proxy",
+              "pid": 459593,
+              "pss_kib": 477,
+              "rss_kib": 6028
+            },
+            {
+              "name": "bwrap",
+              "pid": 459823,
+              "pss_kib": 116,
+              "rss_kib": 2408
+            },
+            {
+              "name": "bwrap",
+              "pid": 459824,
+              "pss_kib": 170,
+              "rss_kib": 1652
+            },
+            {
+              "name": "xdg-dbus-proxy",
+              "pid": 459825,
+              "pss_kib": 472,
+              "rss_kib": 5884
+            },
+            {
+              "name": "bwrap",
+              "pid": 459239,
+              "pss_kib": 116,
+              "rss_kib": 2304
+            },
+            {
+              "name": "bwrap",
+              "pid": 459978,
+              "pss_kib": 116,
+              "rss_kib": 2348
+            },
+            {
+              "name": "xdg-dbus-proxy",
+              "pid": 459355,
+              "pss_kib": 477,
+              "rss_kib": 6164
+            },
+            {
+              "name": "WebKitNetworkPr",
+              "pid": 458953,
+              "pss_kib": 18791,
+              "rss_kib": 52444
+            },
+            {
+              "name": "bwrap",
+              "pid": 459591,
+              "pss_kib": 119,
+              "rss_kib": 2320
+            },
+            {
+              "name": "bwrap",
+              "pid": 458956,
+              "pss_kib": 119,
+              "rss_kib": 2264
+            },
+            {
+              "name": "xdg-dbus-proxy",
+              "pid": 459980,
+              "pss_kib": 473,
+              "rss_kib": 6164
+            },
+            {
+              "name": "bwrap",
+              "pid": 459719,
+              "pss_kib": 116,
+              "rss_kib": 2348
+            }
+          ],
+          "pss_kib": 109492,
+          "rss_kib": 304000,
+          "unreadable_processes": 0,
+          "webkit": true
+        },
+        {
+          "phase": "closed_7_5s",
+          "processes": [
+            {
+              "name": "bwrap",
+              "pid": 459455,
+              "pss_kib": 118,
+              "rss_kib": 2240
+            },
+            {
+              "name": "bwrap",
+              "pid": 458957,
+              "pss_kib": 171,
+              "rss_kib": 1576
+            },
+            {
+              "name": "xdg-dbus-proxy",
+              "pid": 459241,
+              "pss_kib": 473,
+              "rss_kib": 6048
+            },
+            {
+              "name": "bwrap",
+              "pid": 459720,
+              "pss_kib": 171,
+              "rss_kib": 1584
+            },
+            {
+              "name": "xdg-dbus-proxy",
+              "pid": 458958,
+              "pss_kib": 473,
+              "rss_kib": 6144
+            },
+            {
+              "name": "bwrap",
+              "pid": 459592,
+              "pss_kib": 178,
+              "rss_kib": 1564
+            },
+            {
+              "name": "gcn-webkit-prev",
+              "pid": 458903,
+              "pss_kib": 84585,
+              "rss_kib": 171980
+            },
+            {
+              "name": "bwrap",
+              "pid": 459353,
+              "pss_kib": 116,
+              "rss_kib": 2260
+            },
+            {
+              "name": "xdg-dbus-proxy",
+              "pid": 459721,
+              "pss_kib": 476,
+              "rss_kib": 5960
+            },
+            {
+              "name": "bwrap",
+              "pid": 459456,
+              "pss_kib": 177,
+              "rss_kib": 1536
+            },
+            {
+              "name": "bwrap",
+              "pid": 459979,
+              "pss_kib": 179,
+              "rss_kib": 1592
+            },
+            {
+              "name": "bwrap",
+              "pid": 459354,
+              "pss_kib": 175,
+              "rss_kib": 1580
+            },
+            {
+              "name": "bwrap",
+              "pid": 459240,
+              "pss_kib": 180,
+              "rss_kib": 1712
+            },
+            {
+              "name": "xdg-dbus-proxy",
+              "pid": 459457,
+              "pss_kib": 476,
+              "rss_kib": 6024
+            },
+            {
+              "name": "xdg-dbus-proxy",
+              "pid": 459593,
+              "pss_kib": 477,
+              "rss_kib": 6028
+            },
+            {
+              "name": "bwrap",
+              "pid": 459823,
+              "pss_kib": 117,
+              "rss_kib": 2408
+            },
+            {
+              "name": "bwrap",
+              "pid": 459824,
+              "pss_kib": 171,
+              "rss_kib": 1652
+            },
+            {
+              "name": "xdg-dbus-proxy",
+              "pid": 459825,
+              "pss_kib": 472,
+              "rss_kib": 5884
+            },
+            {
+              "name": "bwrap",
+              "pid": 459239,
+              "pss_kib": 117,
+              "rss_kib": 2304
+            },
+            {
+              "name": "bwrap",
+              "pid": 459978,
+              "pss_kib": 117,
+              "rss_kib": 2348
+            },
+            {
+              "name": "xdg-dbus-proxy",
+              "pid": 459355,
+              "pss_kib": 477,
+              "rss_kib": 6164
+            },
+            {
+              "name": "WebKitNetworkPr",
+              "pid": 458953,
+              "pss_kib": 18795,
+              "rss_kib": 52444
+            },
+            {
+              "name": "bwrap",
+              "pid": 459591,
+              "pss_kib": 120,
+              "rss_kib": 2320
+            },
+            {
+              "name": "bwrap",
+              "pid": 458956,
+              "pss_kib": 120,
+              "rss_kib": 2264
+            },
+            {
+              "name": "xdg-dbus-proxy",
+              "pid": 459980,
+              "pss_kib": 473,
+              "rss_kib": 6164
+            },
+            {
+              "name": "bwrap",
+              "pid": 459719,
+              "pss_kib": 117,
+              "rss_kib": 2348
+            }
+          ],
+          "pss_kib": 109521,
+          "rss_kib": 304128,
+          "unreadable_processes": 0,
+          "webkit": true
+        },
+        {
+          "document_loaded_ms": 267.489694
+        },
+        {
+          "phase": "open_8",
+          "processes": [
+            {
+              "name": "bwrap",
+              "pid": 459455,
+              "pss_kib": 116,
+              "rss_kib": 2240
+            },
+            {
+              "name": "bwrap",
+              "pid": 458957,
+              "pss_kib": 170,
+              "rss_kib": 1576
+            },
+            {
+              "name": "bwrap",
+              "pid": 459720,
+              "pss_kib": 169,
+              "rss_kib": 1584
+            },
+            {
+              "name": "xdg-dbus-proxy",
+              "pid": 458958,
+              "pss_kib": 472,
+              "rss_kib": 6144
+            },
+            {
+              "name": "gcn-webkit-prev",
+              "pid": 458903,
+              "pss_kib": 79847,
+              "rss_kib": 172068
+            },
+            {
+              "name": "xdg-dbus-proxy",
+              "pid": 459721,
+              "pss_kib": 475,
+              "rss_kib": 5960
+            },
+            {
+              "name": "bwrap",
+              "pid": 460095,
+              "pss_kib": 175,
+              "rss_kib": 1556
+            },
+            {
+              "name": "bwrap",
+              "pid": 459456,
+              "pss_kib": 176,
+              "rss_kib": 1536
+            },
+            {
+              "name": "bwrap",
+              "pid": 459979,
+              "pss_kib": 177,
+              "rss_kib": 1592
+            },
+            {
+              "name": "bwrap",
+              "pid": 459354,
+              "pss_kib": 174,
+              "rss_kib": 1580
+            },
+            {
+              "name": "xdg-dbus-proxy",
+              "pid": 459825,
+              "pss_kib": 471,
+              "rss_kib": 5884
+            },
+            {
+              "name": "xdg-dbus-proxy",
+              "pid": 460096,
+              "pss_kib": 470,
+              "rss_kib": 5816
+            },
+            {
+              "name": "xdg-dbus-proxy",
+              "pid": 459355,
+              "pss_kib": 476,
+              "rss_kib": 6164
+            },
+            {
+              "name": "bwrap",
+              "pid": 458956,
+              "pss_kib": 118,
+              "rss_kib": 2264
+            },
+            {
+              "name": "bwrap",
+              "pid": 460094,
+              "pss_kib": 118,
+              "rss_kib": 2376
+            },
+            {
+              "name": "xdg-dbus-proxy",
+              "pid": 459241,
+              "pss_kib": 471,
+              "rss_kib": 6048
+            },
+            {
+              "name": "bwrap",
+              "pid": 460099,
+              "pss_kib": 117,
+              "rss_kib": 2412
+            },
+            {
+              "name": "bwrap",
+              "pid": 459592,
+              "pss_kib": 177,
+              "rss_kib": 1564
+            },
+            {
+              "name": "bwrap",
+              "pid": 459353,
+              "pss_kib": 114,
+              "rss_kib": 2260
+            },
+            {
+              "name": "bwrap",
+              "pid": 459978,
+              "pss_kib": 115,
+              "rss_kib": 2348
+            },
+            {
+              "name": "bwrap",
+              "pid": 459240,
+              "pss_kib": 179,
+              "rss_kib": 1712
+            },
+            {
+              "name": "bwrap",
+              "pid": 459824,
+              "pss_kib": 170,
+              "rss_kib": 1652
+            },
+            {
+              "name": "xdg-dbus-proxy",
+              "pid": 459457,
+              "pss_kib": 475,
+              "rss_kib": 6024
+            },
+            {
+              "name": "xdg-dbus-proxy",
+              "pid": 459593,
+              "pss_kib": 476,
+              "rss_kib": 6028
+            },
+            {
+              "name": "bwrap",
+              "pid": 459823,
+              "pss_kib": 115,
+              "rss_kib": 2408
+            },
+            {
+              "name": "xdg-dbus-proxy",
+              "pid": 459980,
+              "pss_kib": 472,
+              "rss_kib": 6164
+            },
+            {
+              "name": "bwrap",
+              "pid": 459239,
+              "pss_kib": 116,
+              "rss_kib": 2304
+            },
+            {
+              "name": "bwrap",
+              "pid": 460100,
+              "pss_kib": 184,
+              "rss_kib": 1668
+            },
+            {
+              "name": "bwrap",
+              "pid": 459591,
+              "pss_kib": 119,
+              "rss_kib": 2320
+            },
+            {
+              "name": "WebKitNetworkPr",
+              "pid": 458953,
+              "pss_kib": 16706,
+              "rss_kib": 52448
+            },
+            {
+              "name": "WebKitWebProces",
+              "pid": 460101,
+              "pss_kib": 81554,
+              "rss_kib": 159012
+            },
+            {
+              "name": "bwrap",
+              "pid": 459719,
+              "pss_kib": 115,
+              "rss_kib": 2348
+            }
+          ],
+          "pss_kib": 185279,
+          "rss_kib": 477060,
+          "unreadable_processes": 0,
+          "webkit": true
+        },
+        {
+          "view_released": true
+        },
+        {
+          "phase": "closed_8_1s",
+          "processes": [
+            {
+              "name": "bwrap",
+              "pid": 459455,
+              "pss_kib": 117,
+              "rss_kib": 2240
+            },
+            {
+              "name": "bwrap",
+              "pid": 458957,
+              "pss_kib": 170,
+              "rss_kib": 1576
+            },
+            {
+              "name": "bwrap",
+              "pid": 459720,
+              "pss_kib": 170,
+              "rss_kib": 1584
+            },
+            {
+              "name": "xdg-dbus-proxy",
+              "pid": 458958,
+              "pss_kib": 472,
+              "rss_kib": 6144
+            },
+            {
+              "name": "gcn-webkit-prev",
+              "pid": 458903,
+              "pss_kib": 84613,
+              "rss_kib": 172008
+            },
+            {
+              "name": "xdg-dbus-proxy",
+              "pid": 459721,
+              "pss_kib": 475,
+              "rss_kib": 5960
+            },
+            {
+              "name": "bwrap",
+              "pid": 460095,
+              "pss_kib": 176,
+              "rss_kib": 1556
+            },
+            {
+              "name": "bwrap",
+              "pid": 459456,
+              "pss_kib": 176,
+              "rss_kib": 1536
+            },
+            {
+              "name": "bwrap",
+              "pid": 459979,
+              "pss_kib": 178,
+              "rss_kib": 1592
+            },
+            {
+              "name": "bwrap",
+              "pid": 459354,
+              "pss_kib": 174,
+              "rss_kib": 1580
+            },
+            {
+              "name": "xdg-dbus-proxy",
+              "pid": 459825,
+              "pss_kib": 471,
+              "rss_kib": 5884
+            },
+            {
+              "name": "xdg-dbus-proxy",
+              "pid": 460096,
+              "pss_kib": 470,
+              "rss_kib": 5816
+            },
+            {
+              "name": "xdg-dbus-proxy",
+              "pid": 459355,
+              "pss_kib": 476,
+              "rss_kib": 6164
+            },
+            {
+              "name": "bwrap",
+              "pid": 458956,
+              "pss_kib": 119,
+              "rss_kib": 2264
+            },
+            {
+              "name": "bwrap",
+              "pid": 460094,
+              "pss_kib": 118,
+              "rss_kib": 2376
+            },
+            {
+              "name": "xdg-dbus-proxy",
+              "pid": 459241,
+              "pss_kib": 471,
+              "rss_kib": 6048
+            },
+            {
+              "name": "bwrap",
+              "pid": 459592,
+              "pss_kib": 178,
+              "rss_kib": 1564
+            },
+            {
+              "name": "bwrap",
+              "pid": 459353,
+              "pss_kib": 115,
+              "rss_kib": 2260
+            },
+            {
+              "name": "bwrap",
+              "pid": 459978,
+              "pss_kib": 116,
+              "rss_kib": 2348
+            },
+            {
+              "name": "bwrap",
+              "pid": 459240,
+              "pss_kib": 179,
+              "rss_kib": 1712
+            },
+            {
+              "name": "bwrap",
+              "pid": 459824,
+              "pss_kib": 170,
+              "rss_kib": 1652
+            },
+            {
+              "name": "xdg-dbus-proxy",
+              "pid": 459457,
+              "pss_kib": 475,
+              "rss_kib": 6024
+            },
+            {
+              "name": "xdg-dbus-proxy",
+              "pid": 459593,
+              "pss_kib": 476,
+              "rss_kib": 6028
+            },
+            {
+              "name": "bwrap",
+              "pid": 459823,
+              "pss_kib": 116,
+              "rss_kib": 2408
+            },
+            {
+              "name": "xdg-dbus-proxy",
+              "pid": 459980,
+              "pss_kib": 472,
+              "rss_kib": 6164
+            },
+            {
+              "name": "bwrap",
+              "pid": 459239,
+              "pss_kib": 116,
+              "rss_kib": 2304
+            },
+            {
+              "name": "bwrap",
+              "pid": 459591,
+              "pss_kib": 119,
+              "rss_kib": 2320
+            },
+            {
+              "name": "WebKitNetworkPr",
+              "pid": 458953,
+              "pss_kib": 18799,
+              "rss_kib": 52448
+            },
+            {
+              "name": "bwrap",
+              "pid": 459719,
+              "pss_kib": 116,
+              "rss_kib": 2348
+            }
+          ],
+          "pss_kib": 110293,
+          "rss_kib": 313908,
+          "unreadable_processes": 0,
+          "webkit": true
+        },
+        {
+          "phase": "closed_8_5s",
+          "processes": [
+            {
+              "name": "bwrap",
+              "pid": 459455,
+              "pss_kib": 117,
+              "rss_kib": 2240
+            },
+            {
+              "name": "bwrap",
+              "pid": 458957,
+              "pss_kib": 170,
+              "rss_kib": 1576
+            },
+            {
+              "name": "bwrap",
+              "pid": 459720,
+              "pss_kib": 170,
+              "rss_kib": 1584
+            },
+            {
+              "name": "xdg-dbus-proxy",
+              "pid": 458958,
+              "pss_kib": 472,
+              "rss_kib": 6144
+            },
+            {
+              "name": "gcn-webkit-prev",
+              "pid": 458903,
+              "pss_kib": 84698,
+              "rss_kib": 172008
+            },
+            {
+              "name": "xdg-dbus-proxy",
+              "pid": 459721,
+              "pss_kib": 476,
+              "rss_kib": 5960
+            },
+            {
+              "name": "bwrap",
+              "pid": 460095,
+              "pss_kib": 176,
+              "rss_kib": 1556
+            },
+            {
+              "name": "bwrap",
+              "pid": 459456,
+              "pss_kib": 176,
+              "rss_kib": 1536
+            },
+            {
+              "name": "bwrap",
+              "pid": 459979,
+              "pss_kib": 178,
+              "rss_kib": 1592
+            },
+            {
+              "name": "bwrap",
+              "pid": 459354,
+              "pss_kib": 174,
+              "rss_kib": 1580
+            },
+            {
+              "name": "xdg-dbus-proxy",
+              "pid": 459825,
+              "pss_kib": 473,
+              "rss_kib": 6076
+            },
+            {
+              "name": "xdg-dbus-proxy",
+              "pid": 460096,
+              "pss_kib": 470,
+              "rss_kib": 5816
+            },
+            {
+              "name": "xdg-dbus-proxy",
+              "pid": 459355,
+              "pss_kib": 476,
+              "rss_kib": 6164
+            },
+            {
+              "name": "bwrap",
+              "pid": 458956,
+              "pss_kib": 119,
+              "rss_kib": 2264
+            },
+            {
+              "name": "bwrap",
+              "pid": 460094,
+              "pss_kib": 118,
+              "rss_kib": 2376
+            },
+            {
+              "name": "xdg-dbus-proxy",
+              "pid": 459241,
+              "pss_kib": 472,
+              "rss_kib": 6048
+            },
+            {
+              "name": "bwrap",
+              "pid": 459592,
+              "pss_kib": 178,
+              "rss_kib": 1564
+            },
+            {
+              "name": "bwrap",
+              "pid": 459353,
+              "pss_kib": 115,
+              "rss_kib": 2260
+            },
+            {
+              "name": "bwrap",
+              "pid": 459978,
+              "pss_kib": 116,
+              "rss_kib": 2348
+            },
+            {
+              "name": "bwrap",
+              "pid": 459240,
+              "pss_kib": 179,
+              "rss_kib": 1712
+            },
+            {
+              "name": "bwrap",
+              "pid": 459824,
+              "pss_kib": 170,
+              "rss_kib": 1652
+            },
+            {
+              "name": "xdg-dbus-proxy",
+              "pid": 459457,
+              "pss_kib": 476,
+              "rss_kib": 6024
+            },
+            {
+              "name": "xdg-dbus-proxy",
+              "pid": 459593,
+              "pss_kib": 476,
+              "rss_kib": 6028
+            },
+            {
+              "name": "bwrap",
+              "pid": 459823,
+              "pss_kib": 116,
+              "rss_kib": 2408
+            },
+            {
+              "name": "xdg-dbus-proxy",
+              "pid": 459980,
+              "pss_kib": 472,
+              "rss_kib": 6164
+            },
+            {
+              "name": "bwrap",
+              "pid": 459239,
+              "pss_kib": 116,
+              "rss_kib": 2304
+            },
+            {
+              "name": "bwrap",
+              "pid": 459591,
+              "pss_kib": 119,
+              "rss_kib": 2320
+            },
+            {
+              "name": "WebKitNetworkPr",
+              "pid": 458953,
+              "pss_kib": 18815,
+              "rss_kib": 52448
+            },
+            {
+              "name": "bwrap",
+              "pid": 459719,
+              "pss_kib": 116,
+              "rss_kib": 2348
+            }
+          ],
+          "pss_kib": 110399,
+          "rss_kib": 314100,
+          "unreadable_processes": 0,
+          "webkit": true
+        },
+        {
+          "document_loaded_ms": 254.431326
+        },
+        {
+          "phase": "open_9",
+          "processes": [
+            {
+              "name": "bwrap",
+              "pid": 459455,
+              "pss_kib": 116,
+              "rss_kib": 2240
+            },
+            {
+              "name": "bwrap",
+              "pid": 458957,
+              "pss_kib": 169,
+              "rss_kib": 1576
+            },
+            {
+              "name": "bwrap",
+              "pid": 459720,
+              "pss_kib": 169,
+              "rss_kib": 1584
+            },
+            {
+              "name": "xdg-dbus-proxy",
+              "pid": 458958,
+              "pss_kib": 471,
+              "rss_kib": 6144
+            },
+            {
+              "name": "gcn-webkit-prev",
+              "pid": 458903,
+              "pss_kib": 79970,
+              "rss_kib": 172100
+            },
+            {
+              "name": "xdg-dbus-proxy",
+              "pid": 459721,
+              "pss_kib": 474,
+              "rss_kib": 5960
+            },
+            {
+              "name": "bwrap",
+              "pid": 460095,
+              "pss_kib": 175,
+              "rss_kib": 1556
+            },
+            {
+              "name": "bwrap",
+              "pid": 459456,
+              "pss_kib": 175,
+              "rss_kib": 1536
+            },
+            {
+              "name": "bwrap",
+              "pid": 459979,
+              "pss_kib": 177,
+              "rss_kib": 1592
+            },
+            {
+              "name": "bwrap",
+              "pid": 459354,
+              "pss_kib": 173,
+              "rss_kib": 1580
+            },
+            {
+              "name": "xdg-dbus-proxy",
+              "pid": 459825,
+              "pss_kib": 471,
+              "rss_kib": 6076
+            },
+            {
+              "name": "bwrap",
+              "pid": 460208,
+              "pss_kib": 121,
+              "rss_kib": 2416
+            },
+            {
+              "name": "xdg-dbus-proxy",
+              "pid": 460096,
+              "pss_kib": 469,
+              "rss_kib": 5816
+            },
+            {
+              "name": "xdg-dbus-proxy",
+              "pid": 459355,
+              "pss_kib": 475,
+              "rss_kib": 6164
+            },
+            {
+              "name": "bwrap",
+              "pid": 458956,
+              "pss_kib": 118,
+              "rss_kib": 2264
+            },
+            {
+              "name": "WebKitWebProces",
+              "pid": 460210,
+              "pss_kib": 81492,
+              "rss_kib": 158812
+            },
+            {
+              "name": "bwrap",
+              "pid": 460094,
+              "pss_kib": 117,
+              "rss_kib": 2376
+            },
+            {
+              "name": "bwrap",
+              "pid": 460204,
+              "pss_kib": 177,
+              "rss_kib": 1564
+            },
+            {
+              "name": "xdg-dbus-proxy",
+              "pid": 459241,
+              "pss_kib": 470,
+              "rss_kib": 6048
+            },
+            {
+              "name": "bwrap",
+              "pid": 460209,
+              "pss_kib": 183,
+              "rss_kib": 1668
+            },
+            {
+              "name": "bwrap",
+              "pid": 459592,
+              "pss_kib": 177,
+              "rss_kib": 1564
+            },
+            {
+              "name": "bwrap",
+              "pid": 459353,
+              "pss_kib": 114,
+              "rss_kib": 2260
+            },
+            {
+              "name": "xdg-dbus-proxy",
+              "pid": 460205,
+              "pss_kib": 473,
+              "rss_kib": 6056
+            },
+            {
+              "name": "bwrap",
+              "pid": 459978,
+              "pss_kib": 115,
+              "rss_kib": 2348
+            },
+            {
+              "name": "bwrap",
+              "pid": 459240,
+              "pss_kib": 178,
+              "rss_kib": 1712
+            },
+            {
+              "name": "bwrap",
+              "pid": 459824,
+              "pss_kib": 169,
+              "rss_kib": 1652
+            },
+            {
+              "name": "xdg-dbus-proxy",
+              "pid": 459457,
+              "pss_kib": 474,
+              "rss_kib": 6024
+            },
+            {
+              "name": "xdg-dbus-proxy",
+              "pid": 459593,
+              "pss_kib": 475,
+              "rss_kib": 6028
+            },
+            {
+              "name": "bwrap",
+              "pid": 459823,
+              "pss_kib": 115,
+              "rss_kib": 2408
+            },
+            {
+              "name": "xdg-dbus-proxy",
+              "pid": 459980,
+              "pss_kib": 471,
+              "rss_kib": 6164
+            },
+            {
+              "name": "bwrap",
+              "pid": 459239,
+              "pss_kib": 115,
+              "rss_kib": 2304
+            },
+            {
+              "name": "bwrap",
+              "pid": 459591,
+              "pss_kib": 118,
+              "rss_kib": 2320
+            },
+            {
+              "name": "WebKitNetworkPr",
+              "pid": 458953,
+              "pss_kib": 16732,
+              "rss_kib": 52456
+            },
+            {
+              "name": "bwrap",
+              "pid": 460203,
+              "pss_kib": 118,
+              "rss_kib": 2300
+            },
+            {
+              "name": "bwrap",
+              "pid": 459719,
+              "pss_kib": 115,
+              "rss_kib": 2348
+            }
+          ],
+          "pss_kib": 186121,
+          "rss_kib": 487016,
+          "unreadable_processes": 0,
+          "webkit": true
+        },
+        {
+          "view_released": true
+        },
+        {
+          "phase": "closed_9_1s",
+          "processes": [
+            {
+              "name": "bwrap",
+              "pid": 459455,
+              "pss_kib": 116,
+              "rss_kib": 2240
+            },
+            {
+              "name": "bwrap",
+              "pid": 458957,
+              "pss_kib": 170,
+              "rss_kib": 1576
+            },
+            {
+              "name": "bwrap",
+              "pid": 459720,
+              "pss_kib": 169,
+              "rss_kib": 1584
+            },
+            {
+              "name": "xdg-dbus-proxy",
+              "pid": 458958,
+              "pss_kib": 471,
+              "rss_kib": 6144
+            },
+            {
+              "name": "gcn-webkit-prev",
+              "pid": 458903,
+              "pss_kib": 84730,
+              "rss_kib": 172040
+            },
+            {
+              "name": "xdg-dbus-proxy",
+              "pid": 459721,
+              "pss_kib": 475,
+              "rss_kib": 5960
+            },
+            {
+              "name": "bwrap",
+              "pid": 460095,
+              "pss_kib": 175,
+              "rss_kib": 1556
+            },
+            {
+              "name": "bwrap",
+              "pid": 459456,
+              "pss_kib": 176,
+              "rss_kib": 1536
+            },
+            {
+              "name": "bwrap",
+              "pid": 459979,
+              "pss_kib": 177,
+              "rss_kib": 1592
+            },
+            {
+              "name": "bwrap",
+              "pid": 459354,
+              "pss_kib": 174,
+              "rss_kib": 1580
+            },
+            {
+              "name": "xdg-dbus-proxy",
+              "pid": 459825,
+              "pss_kib": 472,
+              "rss_kib": 6076
+            },
+            {
+              "name": "xdg-dbus-proxy",
+              "pid": 460096,
+              "pss_kib": 469,
+              "rss_kib": 5816
+            },
+            {
+              "name": "xdg-dbus-proxy",
+              "pid": 459355,
+              "pss_kib": 475,
+              "rss_kib": 6164
+            },
+            {
+              "name": "bwrap",
+              "pid": 458956,
+              "pss_kib": 118,
+              "rss_kib": 2264
+            },
+            {
+              "name": "bwrap",
+              "pid": 460094,
+              "pss_kib": 118,
+              "rss_kib": 2376
+            },
+            {
+              "name": "bwrap",
+              "pid": 460204,
+              "pss_kib": 177,
+              "rss_kib": 1564
+            },
+            {
+              "name": "xdg-dbus-proxy",
+              "pid": 459241,
+              "pss_kib": 471,
+              "rss_kib": 6048
+            },
+            {
+              "name": "bwrap",
+              "pid": 459592,
+              "pss_kib": 177,
+              "rss_kib": 1564
+            },
+            {
+              "name": "bwrap",
+              "pid": 459353,
+              "pss_kib": 114,
+              "rss_kib": 2260
+            },
+            {
+              "name": "xdg-dbus-proxy",
+              "pid": 460205,
+              "pss_kib": 473,
+              "rss_kib": 6056
+            },
+            {
+              "name": "bwrap",
+              "pid": 459978,
+              "pss_kib": 115,
+              "rss_kib": 2348
+            },
+            {
+              "name": "bwrap",
+              "pid": 459240,
+              "pss_kib": 179,
+              "rss_kib": 1712
+            },
+            {
+              "name": "bwrap",
+              "pid": 459824,
+              "pss_kib": 170,
+              "rss_kib": 1652
+            },
+            {
+              "name": "xdg-dbus-proxy",
+              "pid": 459457,
+              "pss_kib": 475,
+              "rss_kib": 6024
+            },
+            {
+              "name": "xdg-dbus-proxy",
+              "pid": 459593,
+              "pss_kib": 475,
+              "rss_kib": 6028
+            },
+            {
+              "name": "bwrap",
+              "pid": 459823,
+              "pss_kib": 115,
+              "rss_kib": 2408
+            },
+            {
+              "name": "xdg-dbus-proxy",
+              "pid": 459980,
+              "pss_kib": 471,
+              "rss_kib": 6164
+            },
+            {
+              "name": "bwrap",
+              "pid": 459239,
+              "pss_kib": 116,
+              "rss_kib": 2304
+            },
+            {
+              "name": "bwrap",
+              "pid": 459591,
+              "pss_kib": 119,
+              "rss_kib": 2320
+            },
+            {
+              "name": "WebKitNetworkPr",
+              "pid": 458953,
+              "pss_kib": 18823,
+              "rss_kib": 52456
+            },
+            {
+              "name": "bwrap",
+              "pid": 460203,
+              "pss_kib": 118,
+              "rss_kib": 2300
+            },
+            {
+              "name": "bwrap",
+              "pid": 459719,
+              "pss_kib": 115,
+              "rss_kib": 2348
+            }
+          ],
+          "pss_kib": 111188,
+          "rss_kib": 324060,
+          "unreadable_processes": 0,
+          "webkit": true
+        },
+        {
+          "phase": "closed_9_5s",
+          "processes": [
+            {
+              "name": "bwrap",
+              "pid": 459455,
+              "pss_kib": 116,
+              "rss_kib": 2240
+            },
+            {
+              "name": "bwrap",
+              "pid": 458957,
+              "pss_kib": 170,
+              "rss_kib": 1576
+            },
+            {
+              "name": "bwrap",
+              "pid": 459720,
+              "pss_kib": 169,
+              "rss_kib": 1584
+            },
+            {
+              "name": "xdg-dbus-proxy",
+              "pid": 458958,
+              "pss_kib": 471,
+              "rss_kib": 6144
+            },
+            {
+              "name": "gcn-webkit-prev",
+              "pid": 458903,
+              "pss_kib": 84729,
+              "rss_kib": 172040
+            },
+            {
+              "name": "xdg-dbus-proxy",
+              "pid": 459721,
+              "pss_kib": 475,
+              "rss_kib": 5960
+            },
+            {
+              "name": "bwrap",
+              "pid": 460095,
+              "pss_kib": 175,
+              "rss_kib": 1556
+            },
+            {
+              "name": "bwrap",
+              "pid": 459456,
+              "pss_kib": 176,
+              "rss_kib": 1536
+            },
+            {
+              "name": "bwrap",
+              "pid": 459979,
+              "pss_kib": 177,
+              "rss_kib": 1592
+            },
+            {
+              "name": "bwrap",
+              "pid": 459354,
+              "pss_kib": 174,
+              "rss_kib": 1580
+            },
+            {
+              "name": "xdg-dbus-proxy",
+              "pid": 459825,
+              "pss_kib": 472,
+              "rss_kib": 6076
+            },
+            {
+              "name": "xdg-dbus-proxy",
+              "pid": 460096,
+              "pss_kib": 469,
+              "rss_kib": 5816
+            },
+            {
+              "name": "xdg-dbus-proxy",
+              "pid": 459355,
+              "pss_kib": 475,
+              "rss_kib": 6164
+            },
+            {
+              "name": "bwrap",
+              "pid": 458956,
+              "pss_kib": 118,
+              "rss_kib": 2264
+            },
+            {
+              "name": "bwrap",
+              "pid": 460094,
+              "pss_kib": 118,
+              "rss_kib": 2376
+            },
+            {
+              "name": "bwrap",
+              "pid": 460204,
+              "pss_kib": 177,
+              "rss_kib": 1564
+            },
+            {
+              "name": "xdg-dbus-proxy",
+              "pid": 459241,
+              "pss_kib": 471,
+              "rss_kib": 6048
+            },
+            {
+              "name": "bwrap",
+              "pid": 459592,
+              "pss_kib": 177,
+              "rss_kib": 1564
+            },
+            {
+              "name": "bwrap",
+              "pid": 459353,
+              "pss_kib": 114,
+              "rss_kib": 2260
+            },
+            {
+              "name": "xdg-dbus-proxy",
+              "pid": 460205,
+              "pss_kib": 473,
+              "rss_kib": 6056
+            },
+            {
+              "name": "bwrap",
+              "pid": 459978,
+              "pss_kib": 115,
+              "rss_kib": 2348
+            },
+            {
+              "name": "bwrap",
+              "pid": 459240,
+              "pss_kib": 179,
+              "rss_kib": 1712
+            },
+            {
+              "name": "bwrap",
+              "pid": 459824,
+              "pss_kib": 170,
+              "rss_kib": 1652
+            },
+            {
+              "name": "xdg-dbus-proxy",
+              "pid": 459457,
+              "pss_kib": 475,
+              "rss_kib": 6024
+            },
+            {
+              "name": "xdg-dbus-proxy",
+              "pid": 459593,
+              "pss_kib": 475,
+              "rss_kib": 6028
+            },
+            {
+              "name": "bwrap",
+              "pid": 459823,
+              "pss_kib": 115,
+              "rss_kib": 2408
+            },
+            {
+              "name": "xdg-dbus-proxy",
+              "pid": 459980,
+              "pss_kib": 472,
+              "rss_kib": 6292
+            },
+            {
+              "name": "bwrap",
+              "pid": 459239,
+              "pss_kib": 116,
+              "rss_kib": 2304
+            },
+            {
+              "name": "bwrap",
+              "pid": 459591,
+              "pss_kib": 119,
+              "rss_kib": 2320
+            },
+            {
+              "name": "WebKitNetworkPr",
+              "pid": 458953,
+              "pss_kib": 18822,
+              "rss_kib": 52456
+            },
+            {
+              "name": "bwrap",
+              "pid": 460203,
+              "pss_kib": 118,
+              "rss_kib": 2300
+            },
+            {
+              "name": "bwrap",
+              "pid": 459719,
+              "pss_kib": 115,
+              "rss_kib": 2348
+            }
+          ],
+          "pss_kib": 111187,
+          "rss_kib": 324188,
+          "unreadable_processes": 0,
+          "webkit": true
+        },
+        {
+          "phase": "closed_final_10s",
+          "processes": [
+            {
+              "name": "bwrap",
+              "pid": 459455,
+              "pss_kib": 116,
+              "rss_kib": 2240
+            },
+            {
+              "name": "bwrap",
+              "pid": 458957,
+              "pss_kib": 170,
+              "rss_kib": 1576
+            },
+            {
+              "name": "bwrap",
+              "pid": 459720,
+              "pss_kib": 169,
+              "rss_kib": 1584
+            },
+            {
+              "name": "xdg-dbus-proxy",
+              "pid": 458958,
+              "pss_kib": 471,
+              "rss_kib": 6144
+            },
+            {
+              "name": "gcn-webkit-prev",
+              "pid": 458903,
+              "pss_kib": 84729,
+              "rss_kib": 172040
+            },
+            {
+              "name": "xdg-dbus-proxy",
+              "pid": 459721,
+              "pss_kib": 475,
+              "rss_kib": 5960
+            },
+            {
+              "name": "bwrap",
+              "pid": 460095,
+              "pss_kib": 175,
+              "rss_kib": 1556
+            },
+            {
+              "name": "bwrap",
+              "pid": 459456,
+              "pss_kib": 176,
+              "rss_kib": 1536
+            },
+            {
+              "name": "bwrap",
+              "pid": 459979,
+              "pss_kib": 177,
+              "rss_kib": 1592
+            },
+            {
+              "name": "bwrap",
+              "pid": 459354,
+              "pss_kib": 174,
+              "rss_kib": 1580
+            },
+            {
+              "name": "xdg-dbus-proxy",
+              "pid": 459825,
+              "pss_kib": 472,
+              "rss_kib": 6076
+            },
+            {
+              "name": "xdg-dbus-proxy",
+              "pid": 460096,
+              "pss_kib": 470,
+              "rss_kib": 5944
+            },
+            {
+              "name": "xdg-dbus-proxy",
+              "pid": 459355,
+              "pss_kib": 475,
+              "rss_kib": 6164
+            },
+            {
+              "name": "bwrap",
+              "pid": 458956,
+              "pss_kib": 118,
+              "rss_kib": 2264
+            },
+            {
+              "name": "bwrap",
+              "pid": 460094,
+              "pss_kib": 118,
+              "rss_kib": 2376
+            },
+            {
+              "name": "bwrap",
+              "pid": 460204,
+              "pss_kib": 177,
+              "rss_kib": 1564
+            },
+            {
+              "name": "xdg-dbus-proxy",
+              "pid": 459241,
+              "pss_kib": 471,
+              "rss_kib": 6048
+            },
+            {
+              "name": "bwrap",
+              "pid": 459592,
+              "pss_kib": 177,
+              "rss_kib": 1564
+            },
+            {
+              "name": "bwrap",
+              "pid": 459353,
+              "pss_kib": 114,
+              "rss_kib": 2260
+            },
+            {
+              "name": "xdg-dbus-proxy",
+              "pid": 460205,
+              "pss_kib": 473,
+              "rss_kib": 6056
+            },
+            {
+              "name": "bwrap",
+              "pid": 459978,
+              "pss_kib": 115,
+              "rss_kib": 2348
+            },
+            {
+              "name": "bwrap",
+              "pid": 459240,
+              "pss_kib": 179,
+              "rss_kib": 1712
+            },
+            {
+              "name": "bwrap",
+              "pid": 459824,
+              "pss_kib": 170,
+              "rss_kib": 1652
+            },
+            {
+              "name": "xdg-dbus-proxy",
+              "pid": 459457,
+              "pss_kib": 475,
+              "rss_kib": 6024
+            },
+            {
+              "name": "xdg-dbus-proxy",
+              "pid": 459593,
+              "pss_kib": 475,
+              "rss_kib": 6028
+            },
+            {
+              "name": "bwrap",
+              "pid": 459823,
+              "pss_kib": 115,
+              "rss_kib": 2408
+            },
+            {
+              "name": "xdg-dbus-proxy",
+              "pid": 459980,
+              "pss_kib": 472,
+              "rss_kib": 6292
+            },
+            {
+              "name": "bwrap",
+              "pid": 459239,
+              "pss_kib": 116,
+              "rss_kib": 2304
+            },
+            {
+              "name": "bwrap",
+              "pid": 459591,
+              "pss_kib": 119,
+              "rss_kib": 2320
+            },
+            {
+              "name": "WebKitNetworkPr",
+              "pid": 458953,
+              "pss_kib": 18822,
+              "rss_kib": 52456
+            },
+            {
+              "name": "bwrap",
+              "pid": 460203,
+              "pss_kib": 118,
+              "rss_kib": 2300
+            },
+            {
+              "name": "bwrap",
+              "pid": 459719,
+              "pss_kib": 115,
+              "rss_kib": 2348
+            }
+          ],
+          "pss_kib": 111188,
+          "rss_kib": 324316,
+          "unreadable_processes": 0,
+          "webkit": true
+        }
+      ]
+    },
+    {
+      "id": "hD1IH8",
+      "kind": "large",
+      "samples": [
+        {
+          "main_to_map_ms": 161.335442,
+          "startup_to_map_ms": 224.190319
+        },
+        {
+          "phase": "before_preview",
+          "processes": [
+            {
+              "name": "gcn-webkit-prev",
+              "pid": 461122,
+              "pss_kib": 78117,
+              "rss_kib": 151428
+            }
+          ],
+          "pss_kib": 78117,
+          "rss_kib": 151428,
+          "unreadable_processes": 0,
+          "webkit": true
+        },
+        {
+          "document_loaded_ms": 1062.649914
+        },
+        {
+          "phase": "open_0",
+          "processes": [
+            {
+              "name": "WebKitNetworkPr",
+              "pid": 461177,
+              "pss_kib": 16655,
+              "rss_kib": 52028
+            },
+            {
+              "name": "bwrap",
+              "pid": 461182,
+              "pss_kib": 122,
+              "rss_kib": 2412
+            },
+            {
+              "name": "xdg-dbus-proxy",
+              "pid": 461184,
+              "pss_kib": 523,
+              "rss_kib": 5804
+            },
+            {
+              "name": "WebKitWebProces",
+              "pid": 461193,
+              "pss_kib": 223219,
+              "rss_kib": 301260
+            },
+            {
+              "name": "gcn-webkit-prev",
+              "pid": 461122,
+              "pss_kib": 87894,
+              "rss_kib": 179720
+            },
+            {
+              "name": "bwrap",
+              "pid": 461188,
+              "pss_kib": 184,
+              "rss_kib": 1660
+            },
+            {
+              "name": "bwrap",
+              "pid": 461183,
+              "pss_kib": 175,
+              "rss_kib": 1700
+            },
+            {
+              "name": "bwrap",
+              "pid": 461187,
+              "pss_kib": 122,
+              "rss_kib": 2344
+            }
+          ],
+          "pss_kib": 328894,
+          "rss_kib": 546928,
+          "unreadable_processes": 0,
+          "webkit": true
+        },
+        {
+          "view_released": true
+        },
+        {
+          "phase": "closed_0_1s",
+          "processes": [
+            {
+              "name": "WebKitNetworkPr",
+              "pid": 461177,
+              "pss_kib": 18699,
+              "rss_kib": 52220
+            },
+            {
+              "name": "bwrap",
+              "pid": 461182,
+              "pss_kib": 125,
+              "rss_kib": 2412
+            },
+            {
+              "name": "xdg-dbus-proxy",
+              "pid": 461184,
+              "pss_kib": 523,
+              "rss_kib": 5804
+            },
+            {
+              "name": "gcn-webkit-prev",
+              "pid": 461122,
+              "pss_kib": 92749,
+              "rss_kib": 179788
+            },
+            {
+              "name": "bwrap",
+              "pid": 461183,
+              "pss_kib": 177,
+              "rss_kib": 1700
+            }
+          ],
+          "pss_kib": 112273,
+          "rss_kib": 241924,
+          "unreadable_processes": 0,
+          "webkit": true
+        },
+        {
+          "phase": "closed_0_5s",
+          "processes": [
+            {
+              "name": "WebKitNetworkPr",
+              "pid": 461177,
+              "pss_kib": 18731,
+              "rss_kib": 52284
+            },
+            {
+              "name": "bwrap",
+              "pid": 461182,
+              "pss_kib": 125,
+              "rss_kib": 2412
+            },
+            {
+              "name": "xdg-dbus-proxy",
+              "pid": 461184,
+              "pss_kib": 523,
+              "rss_kib": 5804
+            },
+            {
+              "name": "gcn-webkit-prev",
+              "pid": 461122,
+              "pss_kib": 92721,
+              "rss_kib": 179792
+            },
+            {
+              "name": "bwrap",
+              "pid": 461183,
+              "pss_kib": 177,
+              "rss_kib": 1700
+            }
+          ],
+          "pss_kib": 112277,
+          "rss_kib": 241992,
+          "unreadable_processes": 0,
+          "webkit": true
+        },
+        {
+          "document_loaded_ms": 915.959927
+        },
+        {
+          "phase": "open_1",
+          "processes": [
+            {
+              "name": "bwrap",
+              "pid": 461182,
+              "pss_kib": 121,
+              "rss_kib": 2412
+            },
+            {
+              "name": "xdg-dbus-proxy",
+              "pid": 461321,
+              "pss_kib": 497,
+              "rss_kib": 6224
+            },
+            {
+              "name": "bwrap",
+              "pid": 461325,
+              "pss_kib": 181,
+              "rss_kib": 1660
+            },
+            {
+              "name": "bwrap",
+              "pid": 461319,
+              "pss_kib": 122,
+              "rss_kib": 2324
+            },
+            {
+              "name": "gcn-webkit-prev",
+              "pid": 461122,
+              "pss_kib": 97904,
+              "rss_kib": 189812
+            },
+            {
+              "name": "bwrap",
+              "pid": 461183,
+              "pss_kib": 173,
+              "rss_kib": 1700
+            },
+            {
+              "name": "WebKitWebProces",
+              "pid": 461326,
+              "pss_kib": 224477,
+              "rss_kib": 301588
+            },
+            {
+              "name": "xdg-dbus-proxy",
+              "pid": 461184,
+              "pss_kib": 494,
+              "rss_kib": 5804
+            },
+            {
+              "name": "bwrap",
+              "pid": 461320,
+              "pss_kib": 180,
+              "rss_kib": 1568
+            },
+            {
+              "name": "bwrap",
+              "pid": 461324,
+              "pss_kib": 123,
+              "rss_kib": 2412
+            },
+            {
+              "name": "WebKitNetworkPr",
+              "pid": 461177,
+              "pss_kib": 16676,
+              "rss_kib": 52300
+            }
+          ],
+          "pss_kib": 340948,
+          "rss_kib": 567804,
+          "unreadable_processes": 0,
+          "webkit": true
+        },
+        {
+          "view_released": true
+        },
+        {
+          "phase": "closed_1_1s",
+          "processes": [
+            {
+              "name": "bwrap",
+              "pid": 461182,
+              "pss_kib": 122,
+              "rss_kib": 2412
+            },
+            {
+              "name": "xdg-dbus-proxy",
+              "pid": 461321,
+              "pss_kib": 497,
+              "rss_kib": 6224
+            },
+            {
+              "name": "bwrap",
+              "pid": 461319,
+              "pss_kib": 124,
+              "rss_kib": 2324
+            },
+            {
+              "name": "gcn-webkit-prev",
+              "pid": 461122,
+              "pss_kib": 102684,
+              "rss_kib": 189756
+            },
+            {
+              "name": "bwrap",
+              "pid": 461183,
+              "pss_kib": 175,
+              "rss_kib": 1700
+            },
+            {
+              "name": "xdg-dbus-proxy",
+              "pid": 461184,
+              "pss_kib": 495,
+              "rss_kib": 5804
+            },
+            {
+              "name": "bwrap",
+              "pid": 461320,
+              "pss_kib": 182,
+              "rss_kib": 1568
+            },
+            {
+              "name": "WebKitNetworkPr",
+              "pid": 461177,
+              "pss_kib": 18747,
+              "rss_kib": 52300
+            }
+          ],
+          "pss_kib": 123026,
+          "rss_kib": 262088,
+          "unreadable_processes": 0,
+          "webkit": true
+        },
+        {
+          "phase": "closed_1_5s",
+          "processes": [
+            {
+              "name": "bwrap",
+              "pid": 461182,
+              "pss_kib": 122,
+              "rss_kib": 2412
+            },
+            {
+              "name": "xdg-dbus-proxy",
+              "pid": 461321,
+              "pss_kib": 497,
+              "rss_kib": 6224
+            },
+            {
+              "name": "bwrap",
+              "pid": 461319,
+              "pss_kib": 124,
+              "rss_kib": 2324
+            },
+            {
+              "name": "gcn-webkit-prev",
+              "pid": 461122,
+              "pss_kib": 102680,
+              "rss_kib": 189752
+            },
+            {
+              "name": "bwrap",
+              "pid": 461183,
+              "pss_kib": 175,
+              "rss_kib": 1700
+            },
+            {
+              "name": "xdg-dbus-proxy",
+              "pid": 461184,
+              "pss_kib": 495,
+              "rss_kib": 5804
+            },
+            {
+              "name": "bwrap",
+              "pid": 461320,
+              "pss_kib": 182,
+              "rss_kib": 1568
+            },
+            {
+              "name": "WebKitNetworkPr",
+              "pid": 461177,
+              "pss_kib": 18747,
+              "rss_kib": 52300
+            }
+          ],
+          "pss_kib": 123022,
+          "rss_kib": 262084,
+          "unreadable_processes": 0,
+          "webkit": true
+        },
+        {
+          "document_loaded_ms": 972.6950850000001
+        },
+        {
+          "phase": "open_2",
+          "processes": [
+            {
+              "name": "bwrap",
+              "pid": 461182,
+              "pss_kib": 119,
+              "rss_kib": 2412
+            },
+            {
+              "name": "xdg-dbus-proxy",
+              "pid": 461321,
+              "pss_kib": 487,
+              "rss_kib": 6224
+            },
+            {
+              "name": "bwrap",
+              "pid": 461319,
+              "pss_kib": 121,
+              "rss_kib": 2324
+            },
+            {
+              "name": "bwrap",
+              "pid": 461425,
+              "pss_kib": 121,
+              "rss_kib": 2344
+            },
+            {
+              "name": "gcn-webkit-prev",
+              "pid": 461122,
+              "pss_kib": 99603,
+              "rss_kib": 191512
+            },
+            {
+              "name": "xdg-dbus-proxy",
+              "pid": 461427,
+              "pss_kib": 486,
+              "rss_kib": 6152
+            },
+            {
+              "name": "bwrap",
+              "pid": 461183,
+              "pss_kib": 173,
+              "rss_kib": 1700
+            },
+            {
+              "name": "bwrap",
+              "pid": 461426,
+              "pss_kib": 180,
+              "rss_kib": 1656
+            },
+            {
+              "name": "WebKitWebProces",
+              "pid": 461432,
+              "pss_kib": 224346,
+              "rss_kib": 301764
+            },
+            {
+              "name": "bwrap",
+              "pid": 461430,
+              "pss_kib": 124,
+              "rss_kib": 2416
+            },
+            {
+              "name": "bwrap",
+              "pid": 461431,
+              "pss_kib": 186,
+              "rss_kib": 1668
+            },
+            {
+              "name": "xdg-dbus-proxy",
+              "pid": 461184,
+              "pss_kib": 486,
+              "rss_kib": 5996
+            },
+            {
+              "name": "bwrap",
+              "pid": 461320,
+              "pss_kib": 179,
+              "rss_kib": 1568
+            },
+            {
+              "name": "WebKitNetworkPr",
+              "pid": 461177,
+              "pss_kib": 16670,
+              "rss_kib": 52308
+            }
+          ],
+          "pss_kib": 343281,
+          "rss_kib": 580044,
+          "unreadable_processes": 0,
+          "webkit": true
+        },
+        {
+          "view_released": true
+        },
+        {
+          "phase": "closed_2_1s",
+          "processes": [
+            {
+              "name": "bwrap",
+              "pid": 461182,
+              "pss_kib": 121,
+              "rss_kib": 2412
+            },
+            {
+              "name": "xdg-dbus-proxy",
+              "pid": 461321,
+              "pss_kib": 487,
+              "rss_kib": 6224
+            },
+            {
+              "name": "bwrap",
+              "pid": 461319,
+              "pss_kib": 122,
+              "rss_kib": 2324
+            },
+            {
+              "name": "bwrap",
+              "pid": 461425,
+              "pss_kib": 123,
+              "rss_kib": 2344
+            },
+            {
+              "name": "gcn-webkit-prev",
+              "pid": 461122,
+              "pss_kib": 104388,
+              "rss_kib": 191460
+            },
+            {
+              "name": "xdg-dbus-proxy",
+              "pid": 461427,
+              "pss_kib": 486,
+              "rss_kib": 6152
+            },
+            {
+              "name": "bwrap",
+              "pid": 461183,
+              "pss_kib": 173,
+              "rss_kib": 1700
+            },
+            {
+              "name": "bwrap",
+              "pid": 461426,
+              "pss_kib": 181,
+              "rss_kib": 1656
+            },
+            {
+              "name": "xdg-dbus-proxy",
+              "pid": 461184,
+              "pss_kib": 486,
+              "rss_kib": 5996
+            },
+            {
+              "name": "bwrap",
+              "pid": 461320,
+              "pss_kib": 180,
+              "rss_kib": 1568
+            },
+            {
+              "name": "WebKitNetworkPr",
+              "pid": 461177,
+              "pss_kib": 18755,
+              "rss_kib": 52308
+            }
+          ],
+          "pss_kib": 125502,
+          "rss_kib": 274144,
+          "unreadable_processes": 0,
+          "webkit": true
+        },
+        {
+          "phase": "closed_2_5s",
+          "processes": [
+            {
+              "name": "bwrap",
+              "pid": 461182,
+              "pss_kib": 121,
+              "rss_kib": 2412
+            },
+            {
+              "name": "xdg-dbus-proxy",
+              "pid": 461321,
+              "pss_kib": 487,
+              "rss_kib": 6224
+            },
+            {
+              "name": "bwrap",
+              "pid": 461319,
+              "pss_kib": 122,
+              "rss_kib": 2324
+            },
+            {
+              "name": "bwrap",
+              "pid": 461425,
+              "pss_kib": 123,
+              "rss_kib": 2344
+            },
+            {
+              "name": "gcn-webkit-prev",
+              "pid": 461122,
+              "pss_kib": 104388,
+              "rss_kib": 191460
+            },
+            {
+              "name": "xdg-dbus-proxy",
+              "pid": 461427,
+              "pss_kib": 486,
+              "rss_kib": 6152
+            },
+            {
+              "name": "bwrap",
+              "pid": 461183,
+              "pss_kib": 174,
+              "rss_kib": 1700
+            },
+            {
+              "name": "bwrap",
+              "pid": 461426,
+              "pss_kib": 181,
+              "rss_kib": 1656
+            },
+            {
+              "name": "xdg-dbus-proxy",
+              "pid": 461184,
+              "pss_kib": 486,
+              "rss_kib": 5996
+            },
+            {
+              "name": "bwrap",
+              "pid": 461320,
+              "pss_kib": 180,
+              "rss_kib": 1568
+            },
+            {
+              "name": "WebKitNetworkPr",
+              "pid": 461177,
+              "pss_kib": 18755,
+              "rss_kib": 52308
+            }
+          ],
+          "pss_kib": 125503,
+          "rss_kib": 274144,
+          "unreadable_processes": 0,
+          "webkit": true
+        },
+        {
+          "phase": "closed_final_10s",
+          "processes": [
+            {
+              "name": "bwrap",
+              "pid": 461182,
+              "pss_kib": 125,
+              "rss_kib": 2412
+            },
+            {
+              "name": "xdg-dbus-proxy",
+              "pid": 461321,
+              "pss_kib": 488,
+              "rss_kib": 6288
+            },
+            {
+              "name": "bwrap",
+              "pid": 461319,
+              "pss_kib": 126,
+              "rss_kib": 2324
+            },
+            {
+              "name": "bwrap",
+              "pid": 461425,
+              "pss_kib": 127,
+              "rss_kib": 2344
+            },
+            {
+              "name": "gcn-webkit-prev",
+              "pid": 461122,
+              "pss_kib": 104400,
+              "rss_kib": 191460
+            },
+            {
+              "name": "xdg-dbus-proxy",
+              "pid": 461427,
+              "pss_kib": 487,
+              "rss_kib": 6152
+            },
+            {
+              "name": "bwrap",
+              "pid": 461183,
+              "pss_kib": 177,
+              "rss_kib": 1700
+            },
+            {
+              "name": "bwrap",
+              "pid": 461426,
+              "pss_kib": 184,
+              "rss_kib": 1656
+            },
+            {
+              "name": "xdg-dbus-proxy",
+              "pid": 461184,
+              "pss_kib": 487,
+              "rss_kib": 5996
+            },
+            {
+              "name": "bwrap",
+              "pid": 461320,
+              "pss_kib": 184,
+              "rss_kib": 1568
+            },
+            {
+              "name": "WebKitNetworkPr",
+              "pid": 461177,
+              "pss_kib": 18766,
+              "rss_kib": 52308
+            }
+          ],
+          "pss_kib": 125551,
+          "rss_kib": 274208,
+          "unreadable_processes": 0,
+          "webkit": true
+        }
+      ]
+    }
+  ]
+}

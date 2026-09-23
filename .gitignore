@@ -1,0 +1,26 @@
+/target/
+/dist/
+/.private/
+__pycache__/
+*.pyc
+*.sqlite3
+*.sqlite3-shm
+*.sqlite3-wal
+*.db
+*.db-shm
+*.db-wal
+*.log
+*~
+.DS_Store
+/New_App.txt
+/123.md
+/tokens.md
+# Local conversations, working notes and environment-owned agent metadata.
+/Alex.md
+/Final-step.md
+/PRODUCT_REVIEW.md
+/codex
+/.agents/
+/.codex/
+/extension/schemas/gschemas.compiled
+*.mo

@@ -1,0 +1,9 @@
+[Desktop Entry]
+Type=Application
+Name=GnomeClipNotes Background Service
+Comment=Keep clipboard history available
+Exec="@BINARY@" --daemon
+Icon=io.github.OleksiyM.GnomeClipNotes
+Terminal=false
+NoDisplay=true
+X-GNOME-Autostart-enabled=true

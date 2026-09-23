@@ -1,0 +1,118 @@
+.gcn-overlay {
+  border-radius: 24px;
+  padding: 20px 24px 16px;
+  spacing: 14px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+}
+.gcn-toolbar { spacing: 8px; }
+.gcn-groups, .gcn-paging, .gcn-filter-content { spacing: 8px; }
+.gcn-group-content { spacing: 6px; }
+.gcn-group-label { max-width: 104px; }
+.gcn-paging .gcn-hint { min-width: 44px; text-align: center; }
+.gcn-cards { spacing: 12px; }
+.gcn-search { border-radius: 12px; padding: 10px 12px; min-width: 176px; }
+.gcn-filter { border-radius: 10px; padding: 8px 10px; max-width: 180px; }
+.gcn-chip { border-radius: 99px; padding: 7px 12px; max-width: 160px; }
+.gcn-icon-button { border-radius: 99px; padding: 9px; }
+.gcn-card {
+  min-width: 0;
+  padding: 16px;
+  border-radius: 16px;
+  border: 2px solid transparent;
+  text-align: left;
+  font-weight: normal;
+}
+.gcn-card-selected { border-color: -st-accent-color; }
+.gcn-card-inner { spacing: 12px; }
+.gcn-card-source { spacing: 8px; }
+.gcn-source-label { font-weight: 600; }
+.gcn-card-title { font-weight: 700; }
+.gcn-card-content { font-size: 1em; }
+.gcn-card-meta, .gcn-hint { font-size: 0.85em; }
+.gcn-shortcut { font-size: 0.85em; border-radius: 6px; padding: 1px 6px; background-color: rgba(127,127,127,0.15); }
+.gcn-empty { padding: 36px 24px; spacing: 12px; text-align: center; }
+.gcn-empty-icon { color: rgba(127,127,127,0.8); }
+.gcn-empty-title { font-weight: 700; font-size: 1.2em; }
+
+/* Shell popups normally stay dark even when applications prefer light. */
+.gcn-overlay.gcn-light, .gcn-light .popup-menu-content {
+  background-color: #fafafb; color: #2e3436;
+}
+.gcn-overlay.gcn-dark, .gcn-dark .popup-menu-content {
+  background-color: #222226; color: #fafafb;
+}
+.gcn-light .button, .gcn-light .gcn-search {
+  background-color: #ebebed; color: #2e3436;
+}
+.gcn-dark .button, .gcn-dark .gcn-search {
+  background-color: #36363a; color: #fafafb;
+}
+.gcn-light .button:hover { background-color: #dedee2; color: #2e3436; }
+.gcn-dark .button:hover { background-color: #45454b; color: #fafafb; }
+/* The overlay follows the app theme, which can differ from Shell's theme.
+ * Keep native menu geometry; adapt only the state and separator colours. */
+.gcn-light .popup-menu-item:hover, .gcn-light .popup-menu-item:selected {
+  color: #2e3436; background-color: st-darken(#fafafb, 7%);
+}
+.gcn-light .popup-menu-item:active {
+  color: #2e3436; background-color: st-darken(#fafafb, 9%);
+}
+.gcn-dark .popup-menu-item:hover, .gcn-dark .popup-menu-item:selected {
+  color: #fafafb; background-color: st-lighten(#222226, 7%);
+}
+.gcn-dark .popup-menu-item:active {
+  color: #fafafb; background-color: st-lighten(#222226, 9%);
+}
+.gcn-light .popup-separator-menu-item-separator { background-color: rgba(34,34,38,0.15); }
+.gcn-dark .popup-separator-menu-item-separator { background-color: rgba(255,255,255,0.15); }
+.gcn-light .gcn-chip:checked { background-color: #cddff7; color: #1c426e; }
+.gcn-dark .gcn-chip:checked { background-color: #294d75; color: #ffffff; }
+.gcn-light .gcn-card {
+  background-color: #ffffff;
+  border: 1px solid rgba(46, 52, 54, 0.18);
+  padding: 17px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.09);
+}
+/* Keep border + padding constant so selection never moves card contents. */
+.gcn-light .gcn-card-selected { border-width: 2px; padding: 16px; }
+.gcn-dark .gcn-card { background-color: #303034; }
+.gcn-light .gcn-card-selected, .gcn-dark .gcn-card-selected { border-color: -st-accent-color; }
+
+.gcn-light .gcn-search StLabel.hint-text { color: #68686e; }
+.gcn-dark .gcn-search StLabel.hint-text { color: #b7b7be; }
+.gcn-menu-shortcut { margin-left: 24px; opacity: 160; }
+.gcn-date-form { width: 240px; spacing: 8px; }
+.gcn-date-entry { padding: 8px 10px; border-radius: 8px; }
+.gcn-date-hint { font-size: 0.9em; }
+.gcn-light .gcn-date-entry { background-color: #ebebed; color: #2e3436; }
+.gcn-dark .gcn-date-entry { background-color: #36363a; color: #fafafb; }
+.gcn-light .gcn-date-entry StLabel.hint-text { color: #68686e; }
+.gcn-dark .gcn-date-entry StLabel.hint-text { color: #b7b7be; }
+.gcn-light .popup-sub-menu { background-color: #f0f0f2; }
+.gcn-light .popup-submenu-menu-item:open { background-color: #e4e4e7; color: #2e3436; }
+.gcn-light .gcn-date-form { color: #2e3436; }
+.gcn-dark .gcn-date-form { color: #fafafb; }
+.gcn-light .gcn-date-hint { color: #68686e; }
+.gcn-dark .gcn-date-hint { color: #b7b7be; }
+.gcn-date-picker .calendar { background-color: transparent; color: inherit; }
+.gcn-light.gcn-date-picker .calendar { color: #2e3436; }
+.gcn-dark.gcn-date-picker .calendar { color: #fafafb; }
+.gcn-light.gcn-date-picker .calendar-day,
+.gcn-light.gcn-date-picker .calendar-day-heading,
+.gcn-light.gcn-date-picker .calendar-month-label,
+.gcn-light.gcn-date-picker .pager-button { color: #2e3436; background-color: #ebebed; }
+.gcn-light.gcn-date-picker .calendar-month-label { color: #2e3436 !important; }
+.gcn-dark.gcn-date-picker .calendar-day,
+.gcn-dark.gcn-date-picker .calendar-day-heading,
+.gcn-dark.gcn-date-picker .calendar-month-label,
+.gcn-dark.gcn-date-picker .pager-button { color: #fafafb; background-color: #36363a; }
+.gcn-dark.gcn-date-picker .calendar-month-label { color: #fafafb !important; }
+.gcn-light.gcn-date-picker .calendar-day:hover,
+.gcn-light.gcn-date-picker .pager-button:hover { background-color: #dedee2; }
+.gcn-light.gcn-date-picker .calendar-other-month { color: #68686e; }
+.gcn-dark.gcn-date-picker .calendar-other-month { color: #b7b7be; }
+.gcn-dark.gcn-date-picker .calendar-day:hover,
+.gcn-dark.gcn-date-picker .pager-button:hover { background-color: #45454b; }
+.gcn-light.gcn-date-picker .calendar-day:selected { background-color: #cddff7; color: #1c426e; }
+.gcn-dark.gcn-date-picker .calendar-day:selected { background-color: #294d75; color: #ffffff; }
+.gcn-date-picker .calendar .calendar-today { background-color: -st-accent-color; color: -st-accent-fg-color; }

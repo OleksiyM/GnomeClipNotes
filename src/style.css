@@ -1,0 +1,21 @@
+.collection-button { padding: 10px 12px; }
+.collection-selected { background: alpha(@accent_bg_color, .14); color: @accent_color; }
+.clip-card {
+  background: @card_bg_color;
+  color: @card_fg_color;
+  border-radius: 12px;
+  padding: 16px;
+  box-shadow: 0 1px 3px alpha(black, .12);
+}
+.card-preview { line-height: 1.35; }
+#library-cards > flowboxchild { border-radius: 14px; }
+#library-cards > flowboxchild:selected { background: alpha(@accent_bg_color, .18); }
+#library-cards > flowboxchild:selected .clip-card { box-shadow: 0 0 0 2px @accent_color; }
+.editor-paper {
+  background: alpha(@view_fg_color, .035);
+  border: 1px solid alpha(@view_fg_color, .12);
+  border-radius: 12px;
+}
+.editor-paper textview, .editor-paper textview text { background: transparent; }
+.editor-text { font-size: 1em; line-height: 1.5; }
+.preview-text { font-size: 1.05em; line-height: 1.5; }

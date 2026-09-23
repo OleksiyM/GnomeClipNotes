@@ -1,0 +1,1558 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR GnomeClipNotes contributors
+# This file is distributed under the same license as the GnomeClipNotes package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: GnomeClipNotes 0.2.0\n"
+"Report-Msgid-Bugs-To: https://github.com/\n"
+"POT-Creation-Date: 1970-01-01 00:00+0000\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
+
+#: src/export.rs
+#, rust-format
+msgid ""
+"\n"
+"- Item ID: {item_id}\n"
+"- Collection ID: {collection_id}\n"
+"- Type: {kind}\n"
+"- Origin: {origin}\n"
+"- Source: {source}\n"
+"- Source ID: {source_id}\n"
+"- Last copied: {date}\n"
+msgstr ""
+
+#: src/export.rs
+#, rust-format
+msgid " · Modified: {date}"
+msgstr ""
+
+#: src/preferences.rs
+msgid "1 day"
+msgstr ""
+
+#: src/preferences.rs
+msgid "1 hour"
+msgstr ""
+
+#: src/preferences.rs
+msgid "1 month"
+msgstr ""
+
+#: src/preferences.rs
+msgid "1 week"
+msgstr ""
+
+#: src/preferences.rs
+msgid "1 year"
+msgstr ""
+
+#: src/preferences.rs
+msgid "10 months"
+msgstr ""
+
+#: src/preferences.rs
+msgid "11 months"
+msgstr ""
+
+#: src/preferences.rs
+msgid "15 minutes"
+msgstr ""
+
+#: src/preferences.rs
+msgid "2 days"
+msgstr ""
+
+#: src/preferences.rs
+msgid "2 months"
+msgstr ""
+
+#: src/preferences.rs
+msgid "2 weeks"
+msgstr ""
+
+#: src/preferences.rs
+msgid "3 days"
+msgstr ""
+
+#: src/preferences.rs
+msgid "3 hours"
+msgstr ""
+
+#: src/preferences.rs
+msgid "3 months"
+msgstr ""
+
+#: src/preferences.rs
+msgid "3 weeks"
+msgstr ""
+
+#: src/preferences.rs
+msgid "30 minutes"
+msgstr ""
+
+#: src/preferences.rs
+msgid "4 days"
+msgstr ""
+
+#: src/preferences.rs
+msgid "4 months"
+msgstr ""
+
+#: src/preferences.rs
+msgid "5 days"
+msgstr ""
+
+#: src/preferences.rs
+msgid "5 months"
+msgstr ""
+
+#: src/preferences.rs
+msgid "6 days"
+msgstr ""
+
+#: src/preferences.rs
+msgid "6 months"
+msgstr ""
+
+#: src/preferences.rs
+msgid "7 months"
+msgstr ""
+
+#: src/preferences.rs
+msgid "8 hours"
+msgstr ""
+
+#: src/preferences.rs
+msgid "8 months"
+msgstr ""
+
+#: src/preferences.rs
+msgid "9 months"
+msgstr ""
+
+#: src/store.rs
+msgid "A note cannot be empty"
+msgstr ""
+
+#: src/ui.rs
+msgid "About"
+msgstr ""
+
+#: src/ui.rs
+msgid "About GnomeClipNotes"
+msgstr ""
+
+#: src/preferences.rs
+msgid "Activate"
+msgstr ""
+
+#: src/preferences.rs
+msgid "Add"
+msgstr ""
+
+#: src/preferences.rs
+msgid "Add Identifier Manually"
+msgstr ""
+
+#: src/preferences.rs
+msgid "Add Installed Application"
+msgstr ""
+
+#: src/export_ui.rs
+msgid "Additional metadata"
+msgstr ""
+
+#: src/preferences.rs
+msgid "Add…"
+msgstr ""
+
+#: src/export_ui.rs
+msgid "After export"
+msgstr ""
+
+#: src/ui.rs
+msgid "All apps"
+msgstr ""
+
+#: src/export_ui.rs
+msgid "All items and folders were kept in the application."
+msgstr ""
+
+#: src/ui.rs
+msgid "All types"
+msgstr ""
+
+#: src/ui.rs
+msgid "Already open"
+msgstr ""
+
+#: src/ui.rs
+msgid "Any time"
+msgstr ""
+
+#: src/preferences.rs
+msgid "Application identifier"
+msgstr ""
+
+#: src/preferences.rs
+msgid "Application identifier cannot be empty."
+msgstr ""
+
+#: src/preferences.rs
+msgid "Applies only to History. Notes and your folders are never deleted automatically. Months are 30 days; a year is 365 days."
+msgstr ""
+
+#: src/preferences.rs
+msgid "Applies to newly opened note editors."
+msgstr ""
+
+#: src/preferences.rs
+msgid "Apply"
+msgstr ""
+
+#: src/preferences.rs
+msgid "Automatic cleanup"
+msgstr ""
+
+#: src/store.rs
+msgid "Backup destination already exists; choose a new file"
+msgstr ""
+
+#: src/preferences.rs
+msgid "Basic Markdown formatting. Uses less memory."
+msgstr ""
+
+#: extension/extension.js
+msgid "Both dates included. Changes apply immediately."
+msgstr ""
+
+#: src/store.rs
+msgid "Built-in folders cannot be deleted"
+msgstr ""
+
+#: src/preferences.rs
+msgid "Calendar shortcuts are locked by your system administrator."
+msgstr ""
+
+#: src/preferences.rs src/ui.rs
+msgid "Cancel"
+msgstr ""
+
+#: src/editor_process.rs
+msgid "Cannot open the editor. An update may be in progress."
+msgstr ""
+
+#: src/lib.rs
+msgid "Cannot start GnomeClipNotes. An update may be in progress."
+msgstr ""
+
+#: src/preferences.rs
+msgid "Capture and paste"
+msgstr ""
+
+#: src/preferences.rs
+msgid "Capture is active"
+msgstr ""
+
+#: src/export_ui.rs
+msgid "Changed items and items open in an editor will be kept."
+msgstr ""
+
+#: src/preferences.rs
+msgid "Changes are written to the installed Shell extension settings"
+msgstr ""
+
+#: src/ui.rs
+msgid "Check for Updates"
+msgstr ""
+
+#: src/ui.rs
+msgid "Checking for updates…"
+msgstr ""
+
+#: src/export_ui.rs
+msgid "Checking which exported items can be removed…"
+msgstr ""
+
+#: src/ui.rs
+msgid "Checks GitHub for a public release only when requested. Notes and clipboard contents are never sent."
+msgstr ""
+
+#: src/export_ui.rs
+msgid "Choose Export Folder"
+msgstr ""
+
+#: src/export_ui.rs
+msgid "Choose Folder and Export…"
+msgstr ""
+
+#: src/store.rs
+msgid "Choose a folder name of 1–100 bytes"
+msgstr ""
+
+#: src/export_ui.rs
+msgid "Choose a local folder or a mounted drive for export."
+msgstr ""
+
+#: extension/extension.js
+msgid "Choose date"
+msgstr ""
+
+#: src/preferences.rs
+msgid "Choose from desktop applications visible to this user"
+msgstr ""
+
+#: src/preferences.rs
+msgid "Choose…"
+msgstr ""
+
+#: src/export_ui.rs
+#, rust-format
+msgid "Cleanup could not be checked. Nothing was deleted: {error}"
+msgstr ""
+
+#: src/export_ui.rs
+#, rust-format
+msgid ""
+"Cleanup errors:\n"
+"{errors}"
+msgstr ""
+
+#: src/export_ui.rs
+#, rust-format
+msgid "Cleanup failed; the database transaction was rolled back. Exported files remain saved. Error: {error}"
+msgstr ""
+
+#: src/export_ui.rs
+msgid "Cleanup was cancelled. All items and folders were kept in the application."
+msgstr ""
+
+#: src/ui.rs
+msgid "Clear filters"
+msgstr ""
+
+#: src/ui.rs
+msgid "Clipboard"
+msgstr ""
+
+#: src/preferences.rs
+msgid "Clipboard changes from matching application identifiers are not stored"
+msgstr ""
+
+#: src/ui.rs
+msgid ""
+"Clipboard history and Markdown notes.\n"
+"Stored privately on this device."
+msgstr ""
+
+#: src/preferences.rs
+msgid "Clipboard overlay"
+msgstr ""
+
+#: extension/extension.js
+msgid "Close"
+msgstr ""
+
+#: src/preferences.rs
+msgid "Close overlay"
+msgstr ""
+
+#: src/export_ui.rs
+msgid "Collection"
+msgstr ""
+
+#: src/export.rs
+#, rust-format
+msgid "Collection {id} no longer exists"
+msgstr ""
+
+#: src/export_ui.rs src/ui.rs
+msgid "Collections"
+msgstr ""
+
+#: src/preferences.rs
+msgid "Continue a Markdown list"
+msgstr ""
+
+#: src/preferences.rs
+msgid "Copy selected card without pasting"
+msgstr ""
+
+#: src/preferences.rs
+msgid "Copy selected text"
+msgstr ""
+
+#: src/ui.rs
+msgid "Copy text or create a note to get started."
+msgstr ""
+
+#: extension/extension.js
+msgid "Copy text, create a note, or adjust your filters."
+msgstr ""
+
+#: src/ui.rs
+msgid "Could not check for updates. Check your connection and try again."
+msgstr ""
+
+#: src/export_ui.rs
+#, rust-format
+msgid "Could not confirm files were saved safely: {error}"
+msgstr ""
+
+#: src/export_ui.rs
+#, rust-format
+msgid ""
+"Could not open the export folder. Exported files are unchanged.\n"
+"{error}"
+msgstr ""
+
+#: src/ui.rs
+msgid "Could not open the link in your browser."
+msgstr ""
+
+#: src/preferences.rs
+msgid "Create Note"
+msgstr ""
+
+#: src/preferences.rs
+msgid "Create another place for pinned items"
+msgstr ""
+
+#: src/ui.rs
+msgid "Created"
+msgstr ""
+
+#: src/export.rs
+#, rust-format
+msgid "Created: {date}"
+msgstr ""
+
+#: src/preferences.rs
+#, rust-format
+msgid "Currently applied: {period}"
+msgstr ""
+
+#: src/preferences.rs
+msgid "Custom folders"
+msgstr ""
+
+#: src/ui.rs
+msgid "Custom range"
+msgstr ""
+
+#: extension/extension.js
+msgid "Custom…"
+msgstr ""
+
+#: src/preferences.rs
+msgid "Cut selected text"
+msgstr ""
+
+#: src/preferences.rs
+msgid "Dark"
+msgstr ""
+
+#: src/preferences.rs
+msgid "Data"
+msgstr ""
+
+#: src/store.rs
+msgid "Database was created by a newer application; refusing to open it"
+msgstr ""
+
+#: src/preferences.rs
+msgid "Defaults"
+msgstr ""
+
+#: src/preferences.rs
+msgid "Delete"
+msgstr ""
+
+#: src/preferences.rs
+msgid "Delete (alternative)"
+msgstr ""
+
+#: src/export_ui.rs
+msgid "Delete Exported Items"
+msgstr ""
+
+#: src/export_ui.rs
+msgid "Delete exported folders if empty"
+msgstr ""
+
+#: src/export_ui.rs
+msgid "Delete exported items"
+msgstr ""
+
+#: src/export_ui.rs
+msgid "Delete exported items?"
+msgstr ""
+
+#: src/ui.rs
+msgid "Delete this item?"
+msgstr ""
+
+#: src/export_ui.rs
+#, rust-format
+msgid "Delete {count} empty custom folder from the application."
+msgid_plural "Delete {count} empty custom folders from the application."
+msgstr[0] ""
+msgstr[1] ""
+
+#: src/export_ui.rs
+#, rust-format
+msgid "Delete {count} exported item from the application."
+msgid_plural "Delete {count} exported items from the application."
+msgstr[0] ""
+msgstr[1] ""
+
+#: src/export_ui.rs
+#, rust-format
+msgid "Deleted {count} custom folder."
+msgid_plural "Deleted {count} custom folders."
+msgstr[0] ""
+msgstr[1] ""
+
+#: src/export_ui.rs
+#, rust-format
+msgid "Deleted {count} item."
+msgid_plural "Deleted {count} items."
+msgstr[0] ""
+msgstr[1] ""
+
+#: src/preferences.rs src/ui.rs
+msgid "Delete…"
+msgstr ""
+
+#: src/export_ui.rs
+msgid "Deletion requires separate confirmation after all files are saved. These options are never remembered."
+msgstr ""
+
+#: src/export_ui.rs
+#, rust-format
+msgid "Destination: {destination}"
+msgstr ""
+
+#: src/ui.rs
+msgid "Discard"
+msgstr ""
+
+#: src/ui.rs
+msgid "Discard unsaved changes?"
+msgstr ""
+
+#: src/export_ui.rs
+msgid "Document"
+msgstr ""
+
+#: src/preferences.rs src/ui.rs
+msgid "Edit"
+msgstr ""
+
+#: src/ui.rs
+msgid "Edit Item"
+msgstr ""
+
+#: src/ui.rs
+msgid "Edited"
+msgstr ""
+
+#: src/ui.rs
+msgid "Editor"
+msgstr ""
+
+#: src/export_ui.rs
+msgid "Empty"
+msgstr ""
+
+#: extension/extension.js
+msgid "Enter both dates as YYYY-MM-DD. Previous filter stays active."
+msgstr ""
+
+#: src/preferences.rs
+msgid "Expired History entries are permanently deleted at startup and every 6 hours. A shorter period is applied only after confirmation. Notes and custom folders are kept."
+msgstr ""
+
+#: src/export_ui.rs
+msgid "Export Here"
+msgstr ""
+
+#: src/export_ui.rs
+msgid "Export Markdown"
+msgstr ""
+
+#: src/preferences.rs
+msgid "Export Notes and Folders"
+msgstr ""
+
+#: src/export_ui.rs
+msgid "Export complete"
+msgstr ""
+
+#: src/export_ui.rs
+msgid "Export complete — cleanup failed"
+msgstr ""
+
+#: src/export_ui.rs
+msgid "Export complete — items kept"
+msgstr ""
+
+#: src/export_ui.rs
+msgid "Export could not start"
+msgstr ""
+
+#: src/export_ui.rs
+msgid "Export incomplete"
+msgstr ""
+
+#: src/export_ui.rs
+msgid "Export interrupted"
+msgstr ""
+
+#: src/export_ui.rs
+msgid "Export is incomplete. Nothing was deleted from the application. Partial files, if listed above, must not be treated as complete exports."
+msgstr ""
+
+#: src/export_ui.rs
+msgid "Exported files will remain on disk. Deletion from the application cannot be undone."
+msgstr ""
+
+#: src/preferences.rs
+msgid "Export…"
+msgstr ""
+
+#: src/export_ui.rs
+#, rust-format
+msgid "Files were saved, but the export folder could not be remembered: {error}"
+msgstr ""
+
+#: src/ui.rs
+msgid "Filter Items"
+msgstr ""
+
+#: src/ui.rs
+msgid "Filters"
+msgstr ""
+
+#: src/ui.rs
+#, rust-format
+msgid "Filters ({count})"
+msgid_plural "Filters ({count})"
+msgstr[0] ""
+msgstr[1] ""
+
+#: src/preferences.rs
+msgid "Folders"
+msgstr ""
+
+#: src/preferences.rs
+msgid "Forever"
+msgstr ""
+
+#: extension/extension.js
+msgid "From"
+msgstr ""
+
+#: src/ui.rs
+msgid "From YYYY-MM-DD"
+msgstr ""
+
+#: extension/extension.js
+msgid "From must not be after To. Previous filter stays active."
+msgstr ""
+
+#: src/preferences.rs
+msgid "Full · WebKit"
+msgstr ""
+
+#: src/preferences.rs
+msgid "GNOME Shell shortcuts"
+msgstr ""
+
+#: src/preferences.rs
+msgid "GNOME also uses Super+V for the calendar and notifications. Remove only that calendar shortcut? Other shortcuts, including Super+M if assigned, will be kept. You can always open the calendar by clicking the clock."
+msgstr ""
+
+#: src/preferences.rs
+msgid "GNOME calendar shortcuts are unavailable."
+msgstr ""
+
+#: src/preferences.rs
+msgid "General"
+msgstr ""
+
+#: src/ui.rs
+msgid "GitHub refused or limited this request. Try again later."
+msgstr ""
+
+#: src/ui.rs
+msgid "GitHub returned unexpected release information."
+msgstr ""
+
+#: extension/extension.js
+msgid "Gnome Clip Notes"
+msgstr ""
+
+#: extension/extension.js
+msgid "Gnome Clip Notes is starting…"
+msgstr ""
+
+#: src/ui.rs
+msgid "GnomeClipNotes"
+msgstr ""
+
+#: src/lib.rs
+msgid "GnomeClipNotes is stopping for an update."
+msgstr ""
+
+#: src/preferences.rs src/ui.rs
+msgid "History"
+msgstr ""
+
+#: src/preferences.rs
+msgid "History and Notes are built in. Deleting a custom folder moves its items to Notes; the items are not deleted."
+msgstr ""
+
+#: src/export.rs
+msgid "History cannot be exported; collection IDs must be positive"
+msgstr ""
+
+#: src/preferences.rs
+msgid "History retention"
+msgstr ""
+
+#: src/preferences.rs
+msgid "Ignore Installed Application"
+msgstr ""
+
+#: src/preferences.rs
+msgid "Ignore Passwords and Sensitive Content"
+msgstr ""
+
+#: src/preferences.rs
+msgid "Ignored applications"
+msgstr ""
+
+#: src/preferences.rs
+msgid "In the library, click a card or focus it with the keyboard; use arrows to move across cards and pages. In the overlay, commands use the highlighted card. Delete in the search field edits text. Deletion always asks for confirmation."
+msgstr ""
+
+#: src/export_ui.rs
+msgid "Include source, origin and internal identifiers. Basic dates are always included."
+msgstr ""
+
+#: src/export_ui.rs
+#, rust-format
+msgid "Incomplete file: {path}"
+msgstr ""
+
+#: src/preferences.rs src/ui.rs
+msgid "Info"
+msgstr ""
+
+#: src/ui.rs
+msgid "Invalid date"
+msgstr ""
+
+#: src/ui.rs
+msgid "Item Details"
+msgstr ""
+
+#: src/preferences.rs
+msgid "Items in this folder will be moved to Notes. The items themselves will not be deleted."
+msgstr ""
+
+#: src/preferences.rs
+msgid "Keep GNOME Shortcut"
+msgstr ""
+
+#: src/preferences.rs
+msgid "Keep History"
+msgstr ""
+
+#: src/preferences.rs
+msgid "Keep clipboard capture available after signing in"
+msgstr ""
+
+#: src/export_ui.rs
+msgid "Keep in App"
+msgstr ""
+
+#: src/preferences.rs
+msgid "Language"
+msgstr ""
+
+#: src/ui.rs
+msgid "Last 30 days"
+msgstr ""
+
+#: src/ui.rs
+msgid "Last Copied"
+msgstr ""
+
+#: src/ui.rs
+msgid "Legal"
+msgstr ""
+
+#: src/ui.rs
+msgid "Length"
+msgstr ""
+
+#: src/preferences.rs
+msgid "Light"
+msgstr ""
+
+#: src/preferences.rs
+msgid "Lightweight · Native"
+msgstr ""
+
+#: src/ui.rs
+msgid "Link"
+msgstr ""
+
+#: src/ui.rs
+msgid "Links"
+msgstr ""
+
+#: extension/extension.js
+msgid "Loading…"
+msgstr ""
+
+#: src/preferences.rs
+msgid "Log out and back in to apply."
+msgstr ""
+
+#: src/ui.rs
+msgid "Main Menu"
+msgstr ""
+
+#: src/preferences.rs
+msgid "Markdown export"
+msgstr ""
+
+#: src/preview_html.rs
+msgid "Markdown preview"
+msgstr ""
+
+#: src/ui.rs
+msgid "More Actions"
+msgstr ""
+
+#: src/ui.rs
+msgid "More Folders…"
+msgstr ""
+
+#: extension/extension.js
+msgid "More…"
+msgstr ""
+
+#: src/ui.rs
+msgid "Move"
+msgstr ""
+
+#: src/preferences.rs
+msgid "Move down"
+msgstr ""
+
+#: src/ui.rs
+msgid "Move to Folder"
+msgstr ""
+
+#: src/ui.rs
+msgid "Move to Notes"
+msgstr ""
+
+#: src/ui.rs
+msgid "Move to folder"
+msgstr ""
+
+#: src/preferences.rs
+msgid "Move up"
+msgstr ""
+
+#: src/ui.rs
+msgid "Name is optional."
+msgstr ""
+
+#: src/preferences.rs src/ui.rs
+msgid "New Folder"
+msgstr ""
+
+#: src/ui.rs
+msgid "New Folder…"
+msgstr ""
+
+#: src/preferences.rs
+#, rust-format
+msgid "New History retention: {period}."
+msgstr ""
+
+#: src/lib.rs src/ui.rs
+msgid "New Note"
+msgstr ""
+
+#: src/ui.rs
+msgid "Next"
+msgstr ""
+
+#: extension/extension.js
+msgid "Next Items"
+msgstr ""
+
+#: src/ui.rs
+msgid "No Items Yet"
+msgstr ""
+
+#: src/ui.rs
+msgid "No Matching Items"
+msgstr ""
+
+#: src/ui.rs
+msgid "No Notes Yet"
+msgstr ""
+
+#: src/preferences.rs
+msgid "No installed applications were found."
+msgstr ""
+
+#: src/ui.rs
+msgid "No public release found. The repository may not be available yet."
+msgstr ""
+
+#: src/preferences.rs
+msgid "None"
+msgstr ""
+
+#: src/ui.rs
+msgid "Note"
+msgstr ""
+
+#: src/preferences.rs
+msgid "Note editor"
+msgstr ""
+
+#: src/preferences.rs
+msgid "Note preview"
+msgstr ""
+
+#: src/export.rs
+#, rust-format
+msgid "Note {number}"
+msgstr ""
+
+#: src/export.rs src/export_ui.rs src/ui.rs
+msgid "Notes"
+msgstr ""
+
+#: src/export_ui.rs
+msgid "Nothing could be removed safely."
+msgstr ""
+
+#: extension/extension.js
+msgid "Nothing here yet"
+msgstr ""
+
+#: src/export_ui.rs
+msgid "Nothing to export"
+msgstr ""
+
+#: src/ui.rs
+msgid "OK"
+msgstr ""
+
+#: src/preferences.rs
+msgid "One Markdown file per collection, ready to read and edit"
+msgstr ""
+
+#: src/export_ui.rs
+msgid "One Markdown file per collection. All saved items are included, regardless of filters. History is excluded."
+msgstr ""
+
+#: src/preferences.rs
+msgid "Only History is affected. Notes and your folders will not be deleted. Future History entries will expire after the selected period."
+msgstr ""
+
+#: src/export_ui.rs
+msgid "Only selected custom folders. The Notes collection is never deleted."
+msgstr ""
+
+#: src/ui.rs
+msgid "Open Clipboard"
+msgstr ""
+
+#: src/export_ui.rs
+msgid "Open Export Folder"
+msgstr ""
+
+#: extension/extension.js
+msgid "Open Library"
+msgstr ""
+
+#: src/preferences.rs
+msgid "Open at Login"
+msgstr ""
+
+#: src/ui.rs
+msgid "Origin"
+msgstr ""
+
+#: extension/extension.js
+msgid "Paste"
+msgstr ""
+
+#: src/preferences.rs
+msgid "Paste History items 1–9"
+msgstr ""
+
+#: src/preferences.rs src/ui.rs
+msgid "Paste Item"
+msgstr ""
+
+#: src/preferences.rs
+msgid "Paste selected card"
+msgstr ""
+
+#: src/preferences.rs
+msgid "Paste text"
+msgstr ""
+
+#: src/preferences.rs
+msgid "Paste visible card 1–9"
+msgstr ""
+
+#: extension/extension.js
+msgid "Pause Capture"
+msgstr ""
+
+#: src/preferences.rs
+msgid "Pause Clipboard Capture"
+msgstr ""
+
+#: src/preferences.rs
+#, rust-format
+msgid "Paused for about {count} more minute"
+msgid_plural "Paused for about {count} more minutes"
+msgstr[0] ""
+msgstr[1] ""
+
+#: src/preferences.rs
+#, rust-format
+msgid "Paused for {count} minute"
+msgid_plural "Paused for {count} minutes"
+msgstr[0] ""
+msgstr[1] ""
+
+#: extension/extension.js
+msgid "Paused until {time}"
+msgstr ""
+
+#: src/ui.rs
+msgid "Preview"
+msgstr ""
+
+#: src/ui.rs
+msgid "Previous"
+msgstr ""
+
+#: src/preferences.rs
+msgid "Previous / next card, across pages"
+msgstr ""
+
+#: extension/extension.js
+msgid "Previous Items"
+msgstr ""
+
+#: src/preferences.rs
+msgid "Privacy"
+msgstr ""
+
+#: src/preferences.rs
+msgid "Quick Paste Alt+1…9"
+msgstr ""
+
+#: src/export_ui.rs
+msgid "Rechecking files and removing confirmed items…"
+msgstr ""
+
+#: src/preferences.rs
+msgid "Redo in the note editor"
+msgstr ""
+
+#: src/preferences.rs
+msgid "Rename"
+msgstr ""
+
+#: src/ui.rs
+msgid "Rename Item"
+msgstr ""
+
+#: src/preferences.rs src/ui.rs
+msgid "Rename…"
+msgstr ""
+
+#: src/preferences.rs
+msgid "Reset All Settings"
+msgstr ""
+
+#: src/preferences.rs
+msgid "Reset…"
+msgstr ""
+
+#: src/preferences.rs
+msgid "Resolve…"
+msgstr ""
+
+#: src/preferences.rs
+msgid "Restore capture, privacy, retention, theme, language, and shortcut defaults"
+msgstr ""
+
+#: extension/extension.js
+msgid "Resume Capture"
+msgstr ""
+
+#: src/preferences.rs
+msgid "Resume capture"
+msgstr ""
+
+#: src/preferences.rs
+msgid "Richer Markdown formatting, including tables. Uses more memory."
+msgstr ""
+
+#: src/ui.rs
+msgid "Save"
+msgstr ""
+
+#: src/ui.rs
+msgid "Save Note"
+msgstr ""
+
+#: src/ui.rs
+msgid "Save Note (Ctrl+S)"
+msgstr ""
+
+#: src/preferences.rs
+msgid "Save Notes and custom folders as readable Markdown documents. History is not exported."
+msgstr ""
+
+#: src/preferences.rs
+msgid "Save note"
+msgstr ""
+
+#: src/export_ui.rs
+msgid "Saving Markdown files…"
+msgstr ""
+
+#: extension/extension.js
+msgid "Search clipboard and notes"
+msgstr ""
+
+#: src/ui.rs
+msgid "Search this folder…"
+msgstr ""
+
+#: src/preferences.rs
+msgid "Select all text"
+msgstr ""
+
+#: src/export.rs
+msgid "Select at least one collection"
+msgstr ""
+
+#: src/preferences.rs
+msgid "Selected card"
+msgstr ""
+
+#: src/preferences.rs
+msgid "Sensitive content"
+msgstr ""
+
+#: extension/extension.js
+msgid "Service running"
+msgstr ""
+
+#: extension/extension.js
+msgid "Service stopped"
+msgstr ""
+
+#: src/preferences.rs src/ui.rs
+msgid "Settings"
+msgstr ""
+
+#: src/preferences.rs
+msgid "Shift+Alt+N"
+msgstr ""
+
+#: src/preferences.rs
+msgid "Shift+Alt+V"
+msgstr ""
+
+#: src/preferences.rs
+msgid "Shortcuts"
+msgstr ""
+
+#: src/ui.rs
+msgid "Show Collections"
+msgstr ""
+
+#: src/ui.rs
+msgid "Source"
+msgstr ""
+
+#: src/preferences.rs
+msgid "Standard GTK shortcuts in editable text fields, including library search and the note editor. In the overlay, Ctrl+C copies the selected card instead."
+msgstr ""
+
+#: src/ui.rs
+msgid "Start date must be before end date"
+msgstr ""
+
+#: src/preferences.rs
+msgid "Startup and appearance"
+msgstr ""
+
+#: src/preferences.rs
+msgid "Super+Shift+N"
+msgstr ""
+
+#: src/preferences.rs
+msgid "Super+V"
+msgstr ""
+
+#: src/preferences.rs
+msgid "Super+V conflicts with GNOME"
+msgstr ""
+
+#: src/preferences.rs
+msgid "System"
+msgstr ""
+
+#: src/preferences.rs
+msgid "System default"
+msgstr ""
+
+#: src/ui.rs
+msgid "Text"
+msgstr ""
+
+#: src/preferences.rs
+msgid "Text editing"
+msgstr ""
+
+#: src/store.rs
+msgid "Text must be at most 1 MiB and contain no NUL characters"
+msgstr ""
+
+#: src/preferences.rs
+msgid "The GNOME Shell extension schema is not installed. Run the installer first."
+msgstr ""
+
+#: src/preferences.rs
+msgid "The calendar also uses this shortcut. You can resolve the conflict or choose another Activate shortcut above."
+msgstr ""
+
+#: src/export_ui.rs
+msgid "The export worker stopped unexpectedly. Some files may have been created in the selected folder. Nothing was deleted from the application."
+msgstr ""
+
+#: src/export_ui.rs
+msgid "The selected collections are now empty. No files were created and nothing was deleted."
+msgstr ""
+
+#: src/ui.rs
+msgid "The update check timed out. Try again later."
+msgstr ""
+
+#: src/preferences.rs
+msgid "Theme"
+msgstr ""
+
+#: src/export_ui.rs
+msgid "There are no saved items to export. History is not included."
+msgstr ""
+
+#: src/ui.rs
+msgid "This build is newer than the latest public release."
+msgstr ""
+
+#: src/store.rs
+msgid "This folder cannot be renamed"
+msgstr ""
+
+#: src/store.rs
+msgid "This item no longer exists. No folder was created."
+msgstr ""
+
+#: src/store.rs
+msgid "This item was removed. Copy your text into a new note before closing the editor."
+msgstr ""
+
+#: src/ui.rs
+msgid "This permanently removes the item from your local library."
+msgstr ""
+
+#: src/preferences.rs
+msgid "This restores every setting to its original value."
+msgstr ""
+
+#: src/ui.rs
+msgid "This week"
+msgstr ""
+
+#: extension/extension.js
+msgid "To"
+msgstr ""
+
+#: src/ui.rs
+msgid "To YYYY-MM-DD"
+msgstr ""
+
+#: src/preferences.rs
+msgid "To active application"
+msgstr ""
+
+#: src/preferences.rs
+msgid "To clipboard"
+msgstr ""
+
+#: src/ui.rs
+msgid "Today"
+msgstr ""
+
+#: src/ui.rs
+msgid "Try a different search or clear the filters."
+msgstr ""
+
+#: src/preferences.rs
+msgid "Undo in the note editor"
+msgstr ""
+
+#: src/ui.rs
+msgid "Unknown"
+msgstr ""
+
+#: src/ui.rs
+msgid "Up to date"
+msgstr ""
+
+#: src/ui.rs
+#, rust-format
+msgid "Update available: {version}"
+msgstr ""
+
+#: src/preferences.rs
+msgid "Use Super+V for ClipNotes?"
+msgstr ""
+
+#: src/ui.rs
+msgid "Use dates in YYYY-MM-DD format"
+msgstr ""
+
+#: src/preferences.rs
+msgid "Use for ClipNotes"
+msgstr ""
+
+#: src/preferences.rs
+msgid "Useful for applications not listed above"
+msgstr ""
+
+#: src/preferences.rs
+msgid "Uses sensitivity hints supplied by the source application"
+msgstr ""
+
+#: src/ui.rs
+#, rust-format
+msgid "Version {version}"
+msgstr ""
+
+#: src/preferences.rs src/ui.rs
+msgid "View"
+msgstr ""
+
+#: src/ui.rs
+msgid "View Release"
+msgstr ""
+
+#: src/ui.rs
+msgid "Website"
+msgstr ""
+
+#: src/preferences.rs
+msgid "When the overlay has focus and its context menu is closed."
+msgstr ""
+
+#: src/preferences.rs
+msgid "While typing in the Editor tab. Save is available only when there are changes."
+msgstr ""
+
+#: extension/extension.js
+msgid "YYYY-MM-DD"
+msgstr ""
+
+#: src/ui.rs
+msgid "Yesterday"
+msgstr ""
+
+#: src/ui.rs
+msgid "Your changes have not been saved."
+msgstr ""
+
+#: src/export.rs
+msgid "export file is missing or changed"
+msgstr ""
+
+#: src/export.rs
+msgid "export file is missing, changed, or was not written"
+msgstr ""
+
+#: src/export.rs
+msgid "folder changed or is not empty"
+msgstr ""
+
+#: src/export.rs
+msgid "folder contains items that will be kept"
+msgstr ""
+
+#: src/export.rs
+msgid "folder was changed or deleted"
+msgstr ""
+
+#: src/export.rs
+msgid "item is open in an editor"
+msgstr ""
+
+#: src/export.rs
+msgid "item was deleted"
+msgstr ""
+
+#: src/export.rs
+msgid "item was modified"
+msgstr ""
+
+#: src/export.rs
+msgid "item was moved"
+msgstr ""
+
+#: src/ui.rs
+#, rust-format
+msgid "{characters} · {words}"
+msgstr ""
+
+#: src/ui.rs
+#, rust-format
+msgid "{collection} · Nothing here yet"
+msgstr ""
+
+#: src/ui.rs
+#, rust-format
+msgid "{collection} · {first}–{last}"
+msgstr ""
+
+#: src/export_ui.rs
+#, rust-format
+msgid "{collection}: Empty — skipped; no file created"
+msgstr ""
+
+#: src/export_ui.rs
+#, rust-format
+msgid "{collection}: delete {count} item"
+msgid_plural "{collection}: delete {count} items"
+msgstr[0] ""
+msgstr[1] ""
+
+#: src/export_ui.rs
+#, rust-format
+msgid "{collection}: delete {count} item and its empty folder"
+msgid_plural "{collection}: delete {count} items and their empty folder"
+msgstr[0] ""
+msgstr[1] ""
+
+#: src/export_ui.rs
+#, rust-format
+msgid "{collection}: {count} folder kept — {reason}"
+msgid_plural "{collection}: {count} folders kept — {reason}"
+msgstr[0] ""
+msgstr[1] ""
+
+#: src/export_ui.rs
+#, rust-format
+msgid "{collection}: {count} item kept — {reason}"
+msgid_plural "{collection}: {count} items kept — {reason}"
+msgstr[0] ""
+msgstr[1] ""
+
+#: src/export_ui.rs
+#, rust-format
+msgid "{collection}: {count} item → {file}"
+msgid_plural "{collection}: {count} items → {file}"
+msgstr[0] ""
+msgstr[1] ""
+
+#: src/preferences.rs
+#, rust-format
+msgid "{count} History entry is currently due for permanent deletion."
+msgid_plural "{count} History entries are currently due for permanent deletion."
+msgstr[0] ""
+msgstr[1] ""
+
+#: src/ui.rs
+#, rust-format
+msgid "{count} character"
+msgid_plural "{count} characters"
+msgstr[0] ""
+msgstr[1] ""
+
+#: src/preferences.rs
+#, rust-format
+msgid "{count} day"
+msgid_plural "{count} days"
+msgstr[0] ""
+msgstr[1] ""
+
+#: src/export_ui.rs src/lib.rs
+#, rust-format
+msgid "{count} item"
+msgid_plural "{count} items"
+msgstr[0] ""
+msgstr[1] ""
+
+#: src/ui.rs
+#, rust-format
+msgid "{count} word"
+msgid_plural "{count} words"
+msgstr[0] ""
+msgstr[1] ""
+
+#: src/export_ui.rs
+#, rust-format
+msgid ""
+"{details}\n"
+"\n"
+"{skipped}"
+msgstr ""
+
+#: src/preferences.rs
+#, rust-format
+msgid ""
+"{error}\n"
+"Could not restore settings: {restore_error}"
+msgstr ""
+
+#: src/export_ui.rs
+#, rust-format
+msgid "{file}: {error}"
+msgstr ""
+
+#: src/ui.rs
+#, rust-format
+msgid "{message}. The previous date filter stays active."
+msgstr ""

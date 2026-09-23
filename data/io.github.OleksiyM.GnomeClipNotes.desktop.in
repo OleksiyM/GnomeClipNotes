@@ -1,0 +1,11 @@
+[Desktop Entry]
+Name=GnomeClipNotes
+Comment=Clipboard history and Markdown notes
+Exec="@BINARY@"
+Icon=io.github.OleksiyM.GnomeClipNotes
+Terminal=false
+Type=Application
+Categories=Utility;GTK;
+Keywords=Clipboard;Notes;Paste;Markdown;
+StartupNotify=true
+DBusActivatable=true

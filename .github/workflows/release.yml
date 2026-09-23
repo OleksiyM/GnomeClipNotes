@@ -1,0 +1,293 @@
+name: Prepare draft release
+
+on:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  guard:
+    name: Validate release tag
+    if: github.repository == 'OleksiyM/GnomeClipNotes'
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: read
+    outputs:
+      version: ${{ steps.version.outputs.version }}
+    steps:
+      - name: Check out the tagged source
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          persist-credentials: false
+
+      - name: Validate version and first-release history
+        id: version
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          RELEASE_TAG: ${{ github.ref_name }}
+        run: |
+          set -euo pipefail
+          version=${RELEASE_TAG#v}
+          [[ "$RELEASE_TAG" == "v$version" ]]
+          [[ "$version" =~ ^(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)$ ]] || {
+            printf 'Release tag must be a stable vMAJOR.MINOR.PATCH version: %s\n' "$RELEASE_TAG" >&2
+            exit 1
+          }
+          cargo_version=$(sed -n 's/^version[[:space:]]*=[[:space:]]*"\([^"]*\)"/\1/p' Cargo.toml | head -n 1)
+          [[ "$version" == "$cargo_version" ]] || {
+            printf 'Tag %s does not match Cargo version %s\n' "$RELEASE_TAG" "$cargo_version" >&2
+            exit 1
+          }
+          release_count=$(gh api "repos/${GH_REPO}/releases?per_page=1" --jq 'length')
+          if [[ "$release_count" == 0 && "$version" != "1.0.0" ]]; then
+            printf 'The first public release must be v1.0.0, not %s\n' "$RELEASE_TAG" >&2
+            exit 1
+          fi
+          printf 'version=%s\n' "$version" >> "$GITHUB_OUTPUT"
+
+  build:
+    name: Build ${{ matrix.os_id }} ${{ matrix.os_version }} x86_64
+    needs: guard
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: read
+      id-token: write
+      attestations: write
+      artifact-metadata: write
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os_id: ubuntu
+            os_version: "24.04"
+            mode: host
+          - os_id: fedora
+            os_version: "44"
+            mode: container
+    env:
+      GCN_PACKAGE_OS_ID: ${{ matrix.os_id }}
+      GCN_PACKAGE_OS_VERSION: ${{ matrix.os_version }}
+      GCN_PACKAGE_ARCH: x86_64
+      VERSION: ${{ needs.guard.outputs.version }}
+    steps:
+      - name: Check out the tagged source
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          persist-credentials: false
+
+      - name: Install Ubuntu build dependencies
+        if: matrix.mode == 'host'
+        run: |
+          set -euo pipefail
+          sudo apt-get update
+          sudo apt-get install -y libgtk-4-dev libadwaita-1-dev libsoup-3.0-dev libwebkitgtk-6.0-dev gettext desktop-file-utils
+          rustup toolchain install stable --profile minimal --component clippy,rustfmt
+          rustup default stable
+
+      - name: Check and package on Ubuntu
+        if: matrix.mode == 'host'
+        run: |
+          set -euo pipefail
+          cargo fmt --all -- --check
+          cargo clippy --locked --all-targets -- -D warnings
+          ./scripts/translations.py check
+          ./scripts/build-package.sh
+
+      - name: Check and package in Fedora 44
+        if: matrix.mode == 'container'
+        run: |
+          set -euo pipefail
+          workspace_uid=$(stat -c %u "$GITHUB_WORKSPACE")
+          workspace_gid=$(stat -c %g "$GITHUB_WORKSPACE")
+          docker run --rm \
+            -e GCN_PACKAGE_OS_ID \
+            -e GCN_PACKAGE_OS_VERSION \
+            -e GCN_PACKAGE_ARCH \
+            -e WORKSPACE_UID="$workspace_uid" \
+            -e WORKSPACE_GID="$workspace_gid" \
+            -v "$GITHUB_WORKSPACE:/workspace" \
+            -w /workspace \
+            fedora:44 \
+            bash -euxo pipefail -c '
+              dnf install -y git cargo rust rustfmt clippy gtk4-devel libadwaita-devel libsoup3-devel webkitgtk6.0-devel gettext desktop-file-utils findutils tar gzip python3
+              cargo fmt --all -- --check
+              cargo clippy --locked --all-targets -- -D warnings
+              ./scripts/translations.py check
+              ./scripts/build-package.sh
+              chown -R "$WORKSPACE_UID:$WORKSPACE_GID" target dist
+            '
+
+      - name: Validate archive contract
+        id: archive
+        run: |
+          set -euo pipefail
+          archive="gnome-clip-notes-${VERSION}-${GCN_PACKAGE_OS_ID}-${GCN_PACKAGE_OS_VERSION}-${GCN_PACKAGE_ARCH}.tar.gz"
+          [[ -f "dist/$archive" ]] || {
+            printf 'Packager did not produce required archive: dist/%s\n' "$archive" >&2
+            exit 1
+          }
+          printf 'name=%s\n' "$archive" >> "$GITHUB_OUTPUT"
+
+      - name: Attest archive provenance
+        id: attest
+        uses: actions/attest@508db95dd578ae2727ebd6217d5ba78e4fbda05d # v4.2.1
+        with:
+          subject-path: dist/${{ steps.archive.outputs.name }}
+
+      - name: Preserve local attestation bundle
+        env:
+          ARCHIVE: ${{ steps.archive.outputs.name }}
+          BUNDLE_PATH: ${{ steps.attest.outputs.bundle-path }}
+        run: |
+          set -euo pipefail
+          install -m 0644 "$BUNDLE_PATH" "dist/${ARCHIVE}.sigstore.json"
+
+      - name: Attest standalone Shell extension
+        if: matrix.mode == 'host'
+        id: attest_extension
+        uses: actions/attest@508db95dd578ae2727ebd6217d5ba78e4fbda05d # v4.2.1
+        with:
+          subject-path: dist/gnome-clip-notes-${{ env.VERSION }}.shell-extension.zip
+
+      - name: Preserve extension attestation bundle
+        if: matrix.mode == 'host'
+        env:
+          BUNDLE_PATH: ${{ steps.attest_extension.outputs.bundle-path }}
+        run: install -m 0644 "$BUNDLE_PATH" "dist/gnome-clip-notes-${VERSION}.shell-extension.zip.sigstore.json"
+
+      - name: Stage standalone extension
+        if: matrix.mode == 'host'
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: release-extension
+          path: |
+            dist/gnome-clip-notes-${{ env.VERSION }}.shell-extension.zip
+            dist/gnome-clip-notes-${{ env.VERSION }}.shell-extension.zip.sigstore.json
+          if-no-files-found: error
+          retention-days: 7
+
+      - name: Stage release assets
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: release-${{ matrix.os_id }}-${{ matrix.os_version }}-${{ env.GCN_PACKAGE_ARCH }}
+          path: |
+            dist/${{ steps.archive.outputs.name }}
+            dist/${{ steps.archive.outputs.name }}.sigstore.json
+          if-no-files-found: error
+          retention-days: 7
+
+  draft:
+    name: Create draft release
+    needs: [guard, build]
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: write
+      id-token: write
+      attestations: write
+      artifact-metadata: write
+    steps:
+      - name: Check out full history at the release tag
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          ref: ${{ github.ref }}
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Download staged release assets
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4.3.0
+        with:
+          pattern: release-*
+          path: dist
+          merge-multiple: true
+
+      - name: Create and verify checksums
+        working-directory: dist
+        run: |
+          set -euo pipefail
+          mapfile -t archives < <(find . -maxdepth 1 -type f -name '*.tar.gz' -printf '%f\n' | LC_ALL=C sort)
+          [[ ${#archives[@]} -eq 2 ]] || {
+            printf 'Expected two release archives, found %s\n' "${#archives[@]}" >&2
+            exit 1
+          }
+          sha256sum -- "${archives[@]}" > SHA256SUMS
+          mapfile -t extensions < <(find . -maxdepth 1 -type f -name '*.shell-extension.zip' -printf '%f\n')
+          [[ ${#extensions[@]} -eq 1 ]]
+          sha256sum -- "${extensions[@]}" >> SHA256SUMS
+          sha256sum --check SHA256SUMS
+
+      - name: Attest checksum manifest
+        id: attest_checksums
+        uses: actions/attest@508db95dd578ae2727ebd6217d5ba78e4fbda05d # v4.2.1
+        with:
+          subject-path: dist/SHA256SUMS
+
+      - name: Preserve checksum attestation bundle
+        env:
+          BUNDLE_PATH: ${{ steps.attest_checksums.outputs.bundle-path }}
+        run: install -m 0644 "$BUNDLE_PATH" dist/SHA256SUMS.sigstore.json
+
+      - name: Refuse to overwrite an existing release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          RELEASE_TAG: ${{ github.ref_name }}
+        run: |
+          set -euo pipefail
+          if gh release view "$RELEASE_TAG" >/dev/null 2>&1; then
+            printf 'Release %s already exists; refusing to overwrite its assets.\n' "$RELEASE_TAG" >&2
+            exit 1
+          fi
+
+      - name: Write commit-based release notes
+        env:
+          GH_REPO: ${{ github.repository }}
+          RELEASE_TAG: ${{ github.ref_name }}
+        run: |
+          set -euo pipefail
+          previous_tag=''
+          if [[ "$RELEASE_TAG" != v1.0.0 ]]; then
+            while IFS= read -r candidate; do
+              [[ "$candidate" =~ ^v(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)$ ]] || continue
+              [[ "$candidate" != "$RELEASE_TAG" ]] || continue
+              if [[ $(printf '%s\n' "$candidate" "$RELEASE_TAG" | sort -V | head -n 1) == "$candidate" ]]; then
+                previous_tag=$candidate
+                break
+              fi
+            done < <(git for-each-ref --merged "$RELEASE_TAG" --sort=-version:refname --format='%(refname:short)' refs/tags)
+            [[ -n "$previous_tag" ]] || {
+              printf 'No earlier stable release tag is reachable from %s.\n' "$RELEASE_TAG" >&2
+              exit 1
+            }
+          fi
+
+          printf '## What’s New\n\n' > release-notes.md
+          if [[ -n "$previous_tag" ]]; then
+            printf '[Compare changes](https://github.com/%s/compare/%s...%s)\n\n' "$GH_REPO" "$previous_tag" "$RELEASE_TAG" >> release-notes.md
+            range="${previous_tag}..${RELEASE_TAG}"
+          else
+            printf 'First public release. See the [Changelog](https://github.com/%s/blob/%s/CHANGELOG.md) for the feature overview.\n\n' "$GH_REPO" "$RELEASE_TAG" >> release-notes.md
+            range=$RELEASE_TAG
+          fi
+          git log --no-merges --format='- %s (`%h`)' "$range" >> release-notes.md
+
+      - name: Create draft release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          RELEASE_TAG: ${{ github.ref_name }}
+        run: |
+          set -euo pipefail
+          mapfile -t assets < <(find dist -maxdepth 1 -type f -printf '%p\n' | LC_ALL=C sort)
+          gh release create "$RELEASE_TAG" "${assets[@]}" \
+            --draft \
+            --verify-tag \
+            --notes-file release-notes.md \
+            --title "GnomeClipNotes ${RELEASE_TAG#v}"

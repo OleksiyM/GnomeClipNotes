@@ -1,0 +1,10 @@
+{
+  "uuid": "gnome-clip-notes@oleksiym.github.io",
+  "url": "https://github.com/OleksiyM/GnomeClipNotes",
+  "name": "GnomeClipNotes",
+  "description": "Clipboard history and notes integration for GNOME Shell",
+  "version": 2,
+  "shell-version": ["46", "47", "48", "49", "50"],
+  "settings-schema": "org.gnome.shell.extensions.gnome-clip-notes",
+  "gettext-domain": "gnome-clip-notes"
+}
