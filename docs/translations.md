@@ -12,6 +12,17 @@ and `po/shell-messages.json`, and records the exact source set in `po/POTFILES.i
 `scripts/translations.py check` verifies that generated files are current, checks
 GNU gettext format metadata and named placeholders, and rejects missing catalogs.
 
+Rust extraction (`update` and the full `check`) requires **GNU gettext 0.24 or
+newer**. Ubuntu 24.04's distribution tools can build existing catalogs but cannot
+extract Rust messages. Use a system with a recent gettext for source-message
+changes; do not replace Rust extraction with a different language parser.
+
+`scripts/translations.py check-catalogs` validates the checked-in catalogs and
+named placeholders without re-extracting source strings. Archive builds use this
+check with the distribution's gettext, then compile catalogs normally. Fedora CI
+additionally runs the full `check`, including source/template freshness; passing
+the catalog-only check does not establish that the extracted messages are current.
+
 To add a language, add its locale to `po/LINGUAS`, create `po/<locale>.po`, and add
 the same locale and its native display name to `po/languages.json`. English is
 always the first registry entry and is not listed in `LINGUAS`. Build installable
@@ -27,7 +38,8 @@ installer copies `target/locales` beneath the application and Shell extension
 locale directories. Release archives include these compiled catalogs, so installing
 a prebuilt archive does not require gettext extraction tools. A source-tree install
 compiles catalogs only when a locale listed in `LINGUAS` is missing; that path needs
-`msgfmt`, while `update`, `check`, and `pseudo` need the complete gettext toolchain.
+`msgfmt`. `update` and the full `check` need the recent extraction toolchain;
+`check-catalogs` needs `msginit`/`msgfmt`, and `pseudo` additionally needs `msgfilter`.
 
 A developer-only catalog can be generated in an explicitly temporary location:
 

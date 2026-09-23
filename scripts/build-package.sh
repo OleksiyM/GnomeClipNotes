@@ -7,6 +7,6 @@ python3 -m unittest discover -s "${project_dir}/tests" -p 'test_*release.py'
 python3 -m unittest discover -s "${project_dir}/tests" -p 'test_bootstrap.py'
 cargo test --manifest-path "${project_dir}/Cargo.toml" --locked
 cargo build --manifest-path "${project_dir}/Cargo.toml" --release --locked
-"${project_dir}/scripts/translations.py" check
+"${project_dir}/scripts/translations.py" check-catalogs
 "${project_dir}/scripts/translations.py" build --output "${project_dir}/target/locales"
 python3 "${project_dir}/scripts/package-release.py" --project-dir "${project_dir}" --output-dir "${dist_dir}"

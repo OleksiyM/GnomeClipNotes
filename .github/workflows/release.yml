@@ -98,7 +98,7 @@ jobs:
           set -euo pipefail
           cargo fmt --all -- --check
           cargo clippy --locked --all-targets -- -D warnings
-          ./scripts/translations.py check
+          ./scripts/translations.py check-catalogs
           ./scripts/build-package.sh
 
       - name: Check and package in Fedora 44

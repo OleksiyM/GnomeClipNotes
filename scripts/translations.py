@@ -39,6 +39,15 @@ def tools(required=("xgettext", "msgcat", "msgattrib", "msginit", "msgfmt", "msg
         raise SystemExit("Install GNU gettext tools: " + ", ".join(missing))
 
 
+def require_rust_gettext():
+    version = subprocess.run(("xgettext", "--version"), cwd=ROOT, check=True,
+                             capture_output=True, text=True).stdout.splitlines()[0]
+    match = re.search(r"\b(\d+)\.(\d+)(?:\.\d+)?\b", version)
+    if not match or tuple(map(int, match.groups())) < (0, 24):
+        raise SystemExit("Rust extraction requires GNU gettext >= 0.24 "
+                         f"(found: {version})")
+
+
 def source_files():
     rust = []
     for path in sorted((ROOT / "src").rglob("*.rs")):
@@ -175,6 +184,7 @@ def linguas():
 
 def update():
     tools()
+    require_rust_gettext()
     rust, js = source_files()
     with tempfile.TemporaryDirectory(prefix="gcn-i18n-") as raw:
         tmp = Path(raw)
@@ -206,6 +216,25 @@ def validate_registry(locales):
             raise SystemExit(f"Missing catalog listed by LINGUAS: {po_file}")
 
 
+def check_catalogs():
+    tools(("msginit", "msgfmt"))
+    if not POT.is_file() or not SHELL_MESSAGES.is_file() or not (PO / "POTFILES.in").is_file():
+        raise SystemExit("Run scripts/translations.py update first")
+    with tempfile.TemporaryDirectory(prefix="gcn-i18n-catalog-") as raw:
+        catalog = english_catalog(POT, Path(raw))
+    messages = json.loads(SHELL_MESSAGES.read_text(encoding="utf-8"))
+    if (not isinstance(messages, list) or
+            any(not isinstance(message, str) or not message for message in messages) or
+            messages != sorted(set(messages)) or
+            any(message not in catalog for message in messages)):
+        raise SystemExit("po/shell-messages.json must contain sorted, unique POT messages")
+    locales = linguas()
+    validate_registry(locales)
+    for locale in locales:
+        validate_placeholders(PO / f"{locale}.po")
+    selftest()
+
+
 def check():
     tools()
     if not POT.exists() or not SHELL_MESSAGES.exists():
@@ -221,12 +250,7 @@ def check():
             path.write_bytes(saved[path])
     if changed:
         raise SystemExit("Generated translation files are stale: " + ", ".join(changed))
-    locales = linguas()
-    validate_registry(locales)
-    for locale in locales:
-        po_file = PO / f"{locale}.po"
-        validate_placeholders(po_file)
-    selftest()
+    check_catalogs()
 
 
 def build(output):
@@ -243,7 +267,7 @@ def build(output):
 
 
 def pseudo(output):
-    tools()
+    tools(("msginit", "msgfmt", "msgfilter"))
     output.mkdir(parents=True, exist_ok=True)
     with tempfile.TemporaryDirectory(prefix="gcn-pseudo-") as raw:
         tmp = Path(raw)
@@ -276,13 +300,15 @@ def main():
     sub = parser.add_subparsers(dest="action", required=True)
     sub.add_parser("update")
     sub.add_parser("check")
+    sub.add_parser("check-catalogs")
     sub.add_parser("selftest")
     build_parser = sub.add_parser("build")
     build_parser.add_argument("--output", type=Path, default=ROOT / "target" / "locales")
     pseudo_parser = sub.add_parser("pseudo")
     pseudo_parser.add_argument("--output", type=Path, required=True)
     args = parser.parse_args()
-    actions = {"update": update, "check": check, "selftest": selftest}
+    actions = {"update": update, "check": check, "check-catalogs": check_catalogs,
+               "selftest": selftest}
     actions.get(args.action, lambda: globals()[args.action](args.output))()
 
 

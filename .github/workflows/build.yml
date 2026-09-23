@@ -40,6 +40,8 @@ jobs:
     steps:
       - run: dnf install -y git cargo rust rustfmt clippy gtk4-devel libadwaita-devel libsoup3-devel webkitgtk6.0-devel gettext desktop-file-utils findutils tar gzip python3
       - uses: actions/checkout@v4
+      - name: Verify translation extraction with Rust-capable gettext
+        run: ./scripts/translations.py check
       - run: cargo fmt --all -- --check
       - run: cargo clippy --locked --all-targets -- -D warnings
       - run: cargo test --locked
