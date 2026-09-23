@@ -111,19 +111,21 @@ def make_package(root: Path, version="1.0.0") -> Path:
 
 class InstallerTest(unittest.TestCase):
     def setUp(self):
+        # Exercise real ownership, not a mocked UID that disagrees with the
+        # files created by CI. Container jobs may start as root; run fixtures
+        # unprivileged there and restore credentials only after cleanup.
+        original_euid = os.geteuid()
+        if original_euid == 0:
+            os.seteuid(65534)
+            self.addCleanup(os.seteuid, original_euid)
         self.temp = tempfile.TemporaryDirectory()
+        self.addCleanup(self.temp.cleanup)
         self.root = Path(self.temp.name)
         self.home = self.root / "home"
         self.data = self.root / "data"
         self.config = self.root / "config"
         self.app = self.home / "Applications/GnomeClipNotes"
         self.commands = FakeCommands()
-        self.euid = mock.patch.object(install_release.os, "geteuid", return_value=1000)
-        self.euid.start()
-
-    def tearDown(self):
-        self.euid.stop()
-        self.temp.cleanup()
 
     def installer(self, package, app=None, hook=None):
         return install_release.Installer(
