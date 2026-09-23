@@ -13,14 +13,7 @@ __pycache__/
 *.log
 *~
 .DS_Store
-/New_App.txt
-/123.md
-/tokens.md
-# Local conversations, working notes and environment-owned agent metadata.
-/Alex.md
-/Final-step.md
-/PRODUCT_REVIEW.md
-/codex
+# Environment-owned agent metadata.
 /.agents/
 /.codex/
 /extension/schemas/gschemas.compiled
