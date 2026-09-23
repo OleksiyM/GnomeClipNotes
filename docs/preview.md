@@ -80,5 +80,8 @@ The worker driver's selection test temporarily detaches the buffer from PRIMARY:
 programmatic selection in its headless Wayland session can otherwise collapse
 before activation. It tests buffer preservation, not PRIMARY clipboard ownership.
 
-The earlier experiment under `prototypes/webkit-preview` remains as historical
-measurements. Its intermediate lifecycle is not the production implementation.
+The earlier experiment is preserved in the
+[`archive/prototype-webkit-preview` branch](https://github.com/OleksiyM/GnomeClipNotes/tree/archive/prototype-webkit-preview/prototypes/webkit-preview),
+including its source, README and historical measurements. Its intermediate
+lifecycle is not the production implementation. It is not required to build or
+test the application on `main`.

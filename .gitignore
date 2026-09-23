@@ -1,4 +1,5 @@
 /target/
+/prototypes/webkit-preview/target/
 /dist/
 /.private/
 __pycache__/
