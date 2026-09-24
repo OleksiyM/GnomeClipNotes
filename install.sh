@@ -3,7 +3,7 @@
 gcn_install() (
     set -euo pipefail
     local repo=OleksiyM/GnomeClipNotes tag='' app_dir='' accept=no require_provenance=no verify_provenance=no install_deps=no
-    local version platform_label archive_name package_name temporary latest help_text
+    local version platform_label arch archive_name package_name temporary latest help_text
     while (($#)); do
         case "$1" in
             --yes) accept=yes; shift ;;
@@ -57,7 +57,7 @@ for line in Path('/etc/os-release').read_text().splitlines():
         key, value = line.split('=', 1)
         values[key] = value.strip().strip('\"\'')
 label = '-'.join((values.get('ID', ''), values.get('VERSION_ID', ''), platform.machine()))
-if label not in ('fedora-44-x86_64', 'ubuntu-24.04-x86_64'):
+if label != 'fedora-44-x86_64':
     raise SystemExit('No release package configured for this platform: ' + label)
 print(label)
 PY
@@ -74,7 +74,8 @@ PY
         printf 'Expected a stable release tag, for example v1.0.0.\n' >&2; exit 1;
     }
     version=${tag#v}
-    package_name="gnome-clip-notes-$version-$platform_label"
+    arch=${platform_label##*-}
+    package_name="gnome-clip-notes-$version-$arch"
     archive_name="$package_name.tar.gz"
     temporary=$(mktemp -d /tmp/gnome-clip-notes-download.XXXXXXXX)
     # Only our exact, freshly-created private download directory is cleaned up.

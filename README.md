@@ -12,10 +12,10 @@ can expire automatically; deliberately saved material stays until you remove it.
 No account, cloud storage or synchronization service is required.
 
 This is preparation for the first public release, **1.0.0**, not a published
-release. GNOME 46–50 is the intended compatibility
-range, but the complete matrix still needs real-session testing. Current
-headless-session tests passed on Fedora 44 with GNOME 50.4; Ubuntu has not been
-tested yet.
+release. Fedora 44 x86_64 is the release build target; development use and
+isolated app/Shell tests run on GNOME 50.4. The public release download-to-install
+path has not yet been verified. Ubuntu has no prebuilt release target, and its
+desktop compatibility is unverified.
 
 ## Build
 
@@ -31,7 +31,7 @@ sudo dnf install gtk4-devel libadwaita-devel libsoup3-devel webkitgtk6.0-devel g
 cargo build --release --locked
 ```
 
-Ubuntu (not tested yet):
+Ubuntu (source build only; desktop use unverified):
 
 ```sh
 sudo apt install libgtk-4-dev libadwaita-1-dev libsoup-3.0-dev libwebkitgtk-6.0-dev gettext desktop-file-utils
@@ -42,8 +42,8 @@ cargo build --release --locked
 
 **1.0.0 has not been published.** For prebuilt archives, see the
 [manual installation steps and runtime packages](docs/installation.md#manual-installation-from-an-archive).
-No Rust toolchain is needed for that path. Fedora 44 is locally exercised;
-Ubuntu 24.04 remains an untested candidate.
+No Rust toolchain is needed for that path. Fedora 44 x86_64 is the planned
+release target; a public release archive is not available yet.
 
 The one-command installer and signed release workflow are prepared locally, not
 yet verified against a public release. For a trusted source checkout:
@@ -160,7 +160,10 @@ available when a change benefits from isolation. Release notes include commit
 subjects, so use clear messages such as `fix: keep source filter on screen` or
 `feat: export selected folders as Markdown`. Do not put personal notes in commits.
 Public releases start at 1.0.0: fixes normally use patch versions, new features
-minor versions. Tagging prepares a draft; publication is a separate decision.
+minor versions. Pushing a version tag is intended to run checks, build and attest
+the archive, publish the GitHub Release, and deploy the website. This workflow
+has not yet run for a public release. Before the first tag, complete the one-time
+[Pages setup](site/README.md); main pushes run checks without publishing.
 
 The public checkout is self-contained. Maintainers may attach an optional private
 context repository at the ignored `.private/` directory; it is not required for

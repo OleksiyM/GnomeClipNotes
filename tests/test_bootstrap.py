@@ -19,7 +19,7 @@ VERSION = "1.0.0"
 TAG = "v" + VERSION
 OS_RELEASE = platform.freedesktop_os_release()
 PLATFORM = f"{OS_RELEASE['ID']}-{OS_RELEASE['VERSION_ID']}-{platform.machine()}"
-PACKAGE = f"gnome-clip-notes-{VERSION}-{PLATFORM}"
+PACKAGE = f"gnome-clip-notes-{VERSION}-{platform.machine()}"
 ARCHIVE = PACKAGE + ".tar.gz"
 
 
@@ -58,8 +58,8 @@ pathlib.Path(os.environ['BOOTSTRAP_MARKER']).write_text(json.dumps(sys.argv[1:])
 
 class BootstrapTests(unittest.TestCase):
     def setUp(self):
-        if PLATFORM not in ('fedora-44-x86_64', 'ubuntu-24.04-x86_64'):
-            self.skipTest("bootstrap integration fixture requires a candidate platform")
+        if PLATFORM != 'fedora-44-x86_64':
+            self.skipTest("bootstrap integration fixture requires Fedora 44 x86_64")
         self.temp = tempfile.TemporaryDirectory()
         self.root = Path(self.temp.name)
         self.bin = self.root / "mock bin"
@@ -200,6 +200,15 @@ if os.environ.get('GH_FAIL') == '1':
         result = self.run_bootstrap('--require-provenance')
         self.assertNotEqual(result.returncode, 0)
         self.assertIn('gh is missing', result.stderr)
+        self.assertFalse(self.curl_log.exists())
+        self.assertFalse(self.marker.exists())
+
+    def test_unsupported_architecture_stops_before_download(self):
+        (self.root / 'sitecustomize.py').write_text(
+            'import platform\nplatform.machine = lambda: "aarch64"\n', encoding='utf-8')
+        result = self.run_bootstrap(env={'PYTHONPATH': str(self.root)})
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn('No release package configured for this platform: fedora-44-aarch64', result.stderr)
         self.assertFalse(self.curl_log.exists())
         self.assertFalse(self.marker.exists())
 

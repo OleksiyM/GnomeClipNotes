@@ -6,7 +6,6 @@ import tarfile
 import tempfile
 import unittest
 from unittest import mock
-import zipfile
 
 import importlib.util
 
@@ -17,6 +16,14 @@ SPEC.loader.exec_module(PACKAGE)
 
 
 class PackageReleaseTests(unittest.TestCase):
+    def setUp(self):
+        # Host fixtures must not inherit release-job platform assertions.
+        environment = mock.patch.dict(os.environ)
+        environment.start()
+        self.addCleanup(environment.stop)
+        for key in ("GCN_PACKAGE_OS_ID", "GCN_PACKAGE_OS_VERSION", "GCN_PACKAGE_ARCH"):
+            os.environ.pop(key, None)
+
     def fixture(self):
         temp = tempfile.TemporaryDirectory()
         root = Path(temp.name)
@@ -39,23 +46,23 @@ class PackageReleaseTests(unittest.TestCase):
         (root / "target/locales/en/LC_MESSAGES.mo").write_bytes(b"locale")
         return temp, root
 
-    @mock.patch.object(PACKAGE, "os_release", return_value={"ID": "ubuntu", "VERSION_ID": "24.04"})
+    @mock.patch.object(PACKAGE, "os_release", return_value={"ID": "fedora", "VERSION_ID": "44"})
     @mock.patch.object(PACKAGE.platform, "machine", return_value="x86_64")
     def test_manifest_inventory_and_deterministic_names(self, _machine, _release):
         temp, root = self.fixture()
         with temp, mock.patch.dict(os.environ, {}, clear=False):
             output = root / "dist"
-            archive, shell_zip = PACKAGE.package(root, output)
-            self.assertEqual(archive.name, "gnome-clip-notes-1.0.0-ubuntu-24.04-x86_64.tar.gz")
-            self.assertEqual(shell_zip.name, "gnome-clip-notes-1.0.0.shell-extension.zip")
+            archive = PACKAGE.package(root, output)
+            self.assertEqual(archive.name, "gnome-clip-notes-1.0.0-x86_64.tar.gz")
+            self.assertEqual(sorted(path.name for path in output.iterdir()), [archive.name])
             with tarfile.open(archive, "r:gz") as tar:
                 names = tar.getnames()
-                release = json.loads(tar.extractfile("gnome-clip-notes-1.0.0-ubuntu-24.04-x86_64/release.json").read())
+                release = json.loads(tar.extractfile("gnome-clip-notes-1.0.0-x86_64/release.json").read())
             self.assertNotIn("docs/private", " ".join(names))
             self.assertIn("extension/schemas/gschemas.compiled", release["files"])
             self.assertEqual(release["extension_uuid"], "gnome-clip-notes@oleksiym.github.io")
-            with zipfile.ZipFile(shell_zip) as extension:
-                self.assertIn("schemas/gschemas.compiled", extension.namelist())
+            self.assertEqual(release["platform"], {"id": "fedora", "version_id": "44", "arch": "x86_64"})
+            self.assertIn("gnome-clip-notes-1.0.0-x86_64/extension/schemas/gschemas.compiled", names)
 
     @mock.patch.object(PACKAGE, "os_release", return_value={"ID": "fedora", "VERSION_ID": "42"})
     @mock.patch.object(PACKAGE.platform, "machine", return_value="aarch64")
@@ -65,6 +72,17 @@ class PackageReleaseTests(unittest.TestCase):
                 PACKAGE.platform_labels()
 
     @mock.patch.object(PACKAGE, "os_release", return_value={"ID": "ubuntu", "VERSION_ID": "24.04"})
+    @mock.patch.object(PACKAGE.platform, "machine", return_value="x86_64")
+    def test_local_archive_records_other_build_host(self, _machine, _release):
+        temp, root = self.fixture()
+        with temp:
+            archive = PACKAGE.package(root, root / "dist")
+            self.assertEqual(archive.name, "gnome-clip-notes-1.0.0-x86_64.tar.gz")
+            with tarfile.open(archive, "r:gz") as tar:
+                release = json.loads(tar.extractfile("gnome-clip-notes-1.0.0-x86_64/release.json").read())
+            self.assertEqual(release["platform"], {"id": "ubuntu", "version_id": "24.04", "arch": "x86_64"})
+
+    @mock.patch.object(PACKAGE, "os_release", return_value={"ID": "fedora", "VERSION_ID": "44"})
     @mock.patch.object(PACKAGE.platform, "machine", return_value="x86_64")
     def test_symlink_binary_rejected(self, _machine, _release):
         temp, root = self.fixture()

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Build deterministic, platform-labelled release archives from ready binaries."""
+"""Build deterministic release archives from ready binaries."""
 
 from __future__ import annotations
 
@@ -16,7 +16,6 @@ import subprocess
 import tarfile
 import tempfile
 import tomllib
-import zipfile
 
 APP_ID = "io.github.OleksiyM.GnomeClipNotes"
 EXTENSION_UUID = "gnome-clip-notes@oleksiym.github.io"
@@ -77,11 +76,11 @@ def reject_special_tree(root: Path) -> None:
             raise ValueError(f"unsupported package input: {path}")
 
 
-def package(project: Path, output: Path) -> tuple[Path, Path]:
+def package(project: Path, output: Path) -> Path:
     with (project / "Cargo.toml").open("rb") as stream:
         version = tomllib.load(stream)["package"]["version"]
     os_id, version_id, arch = platform_labels()
-    package_name = f"gnome-clip-notes-{version}-{os_id}-{version_id}-{arch}"
+    package_name = f"gnome-clip-notes-{version}-{arch}"
     required = [project / "target/release/gnome-clip-notes", project / "target/release/gnome-clip-notes-editor"]
     required += [project / "target/locales"]
     required += [project / path for path in ROOT_FILES]
@@ -140,16 +139,7 @@ def package(project: Path, output: Path) -> tuple[Path, Path]:
                     info.mode = 0o755 if info.isdir() or os.access(path, os.X_OK) else 0o644
                     with path.open("rb") if info.isfile() else tempfile.TemporaryFile() as stream:
                         tar.addfile(info, stream if info.isfile() else None)
-        shell_zip = output / f"gnome-clip-notes-{version}.shell-extension.zip"
-        with zipfile.ZipFile(shell_zip, "w", compression=zipfile.ZIP_DEFLATED, compresslevel=9) as archive_zip:
-            for path in sorted((stage / "extension").rglob("*")):
-                if path.is_file():
-                    name = path.relative_to(stage / "extension").as_posix()
-                    info = zipfile.ZipInfo(name, (1980, 1, 1, 0, 0, 0))
-                    info.compress_type = zipfile.ZIP_DEFLATED
-                    info.external_attr = (0o755 if path.suffix == ".js" else 0o644) << 16
-                    archive_zip.writestr(info, path.read_bytes())
-    return archive, shell_zip
+    return archive
 
 
 def main() -> None:
@@ -159,11 +149,10 @@ def main() -> None:
     args = parser.parse_args()
     output = args.output_dir or args.project_dir / "dist"
     try:
-        archive, shell_zip = package(args.project_dir.resolve(), output.resolve())
+        archive = package(args.project_dir.resolve(), output.resolve())
     except (OSError, ValueError, json.JSONDecodeError, tomllib.TOMLDecodeError) as error:
         parser.error(str(error))
     print(f"Created {archive}")
-    print(f"Created {shell_zip}")
 
 
 if __name__ == "__main__":

@@ -56,7 +56,7 @@ def main():
             metadata_path.write_text(json.dumps(metadata, indent=2) + '\n')
         subprocess.run(['cargo', 'build', '--release', '--locked', '--offline', '-j', '2'],
                        cwd=source, env=env, check=True)
-        archive, _ = packager.package(source, root / 'archives')
+        archive = packager.package(source, root / 'archives')
         archives.append(str(archive))
         print(f'Built test-only {version}: {archive}', flush=True)
     (root / 'fixtures.json').write_text(json.dumps({

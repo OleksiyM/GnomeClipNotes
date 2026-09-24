@@ -55,8 +55,10 @@ Build success does not establish GNOME-version/distribution compatibility.
   `docs/distribution.md` before changing active IDs, installers, autostart or D-Bus endpoints.
 - Discuss installation/update behavior with the user before implementing that
   workflow. No background self-updater is planned for 1.0.
-- CI release automation prepares a draft with tested, platform-labelled artifacts,
-  checksums and readable release notes. Publication is a separate verified step.
+- Pushes to main run CI. An approved stable version tag runs checks, builds the
+  Fedora 44 x86_64 archive, and publishes a GitHub Release and website. The archive
+  name includes version and architecture; exact platform metadata stays inside.
+  Sending the tag is the publication decision, not a request to prepare a draft.
 - Do not publish, push tags, create a public repository, or enable Pages merely
   because local preparation is complete; confirm readiness and exact targets.
 - Archive the WebKit prototype in the verified archive branch before removing

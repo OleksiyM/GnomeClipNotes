@@ -26,8 +26,8 @@ module = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(module)
 with (project / "Cargo.toml").open("rb") as stream:
     version = tomllib.load(stream)["package"]["version"]
-os_id, version_id, arch = module.platform_labels()
-print(Path(os.environ["DIST_DIR"]) / f"gnome-clip-notes-{version}-{os_id}-{version_id}-{arch}.tar.gz")
+_, _, arch = module.platform_labels()
+print(Path(os.environ["DIST_DIR"]) / f"gnome-clip-notes-{version}-{arch}.tar.gz")
 PY
 )
 [[ -f "${archive}" ]] || { printf 'Local package was not produced: %s\n' "${archive}" >&2; exit 1; }

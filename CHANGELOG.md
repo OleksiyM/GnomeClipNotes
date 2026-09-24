@@ -31,12 +31,16 @@ builds, not public releases.
   navigation keeps keyboard focus aligned with the highlighted card.
 - Explicit release availability checks, opening downloads in the system browser.
 - English UI with System default / English selection and localization groundwork.
-- Platform-labelled archives and per-user installation/update tooling.
+- A Fedora 44 x86_64 archive containing the application and matching Shell
+  extension, with per-user installation/update tooling.
 
 ### Release status
 
-No public 1.0.0 artifacts or verified download endpoints yet. Fedora 44 is locally
-exercised; Ubuntu 24.04 remains a candidate. See [installation requirements and
-verification limits](docs/installation.md). The release workflow prepares a draft;
-publication is a separate step. Subsequent release notes include commit subjects
+No public 1.0.0 artifacts or verified download endpoints yet. Fedora 44 x86_64
+is the only planned release build; the actual public download-to-install path is
+not verified. Ubuntu has no prebuilt release target; desktop compatibility is
+unverified. See [installation requirements and verification limits](docs/installation.md).
+Pushing a version tag is intended to run checks, build and attest the archive,
+publish the GitHub Release, and deploy the website. This workflow has not yet
+run for a public release. Subsequent release notes include commit subjects
 since the previous stable tag, including changes committed directly to `main`.

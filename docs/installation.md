@@ -1,20 +1,20 @@
 # Installation
 
-**1.0.0 is not published yet.** Release filenames below describe the planned
-first release, not downloads that are available today. Local archives use their
-actual version and platform label instead.
+**1.0.0 is not published yet.** The planned release archive is
+`gnome-clip-notes-VERSION-x86_64.tar.gz` and contains the application, helper,
+and matching Shell extension. No public archive is available to install yet.
 
 ## Requirements
 
 Use a GNOME **Wayland** desktop with a working systemd user session. The Shell
-extension is required for clipboard capture and the bottom panel. Prebuilt
-archives are distribution-specific; do not use a Fedora archive on Ubuntu.
+extension is required for clipboard capture and the bottom panel. The release
+archive is for Fedora 44 x86_64; do not use it on Ubuntu or another distribution.
 
 | Platform | Current verification |
 | --- | --- |
-| Fedora 44, x86_64, GNOME 50.4 | Development use and isolated app/Shell tests; local archive install/update/restore tests with session commands mocked |
-| Ubuntu 24.04, x86_64, GNOME 46 | Candidate build target; not yet tested on the target system |
-| Other distributions, architectures or GNOME versions | No verified prebuilt support; building from source does not establish compatibility |
+| Fedora 44, x86_64, GNOME 50.4 | Development use and isolated app/Shell tests; local archive lifecycle tests with session commands mocked; public download-to-install path not yet verified |
+| Ubuntu 24.04 | No prebuilt release target; earlier CI compilation passed, desktop use unverified |
+| ARM64 and other systems | Not supported by a release build; compatibility is unverified |
 
 ### Runtime packages
 
@@ -24,7 +24,7 @@ On an existing Fedora 44 GNOME desktop:
 sudo dnf install gtk4 libadwaita libsoup3 webkitgtk6.0 glib2 glibc-common systemd gnome-shell python3 curl ca-certificates tar coreutils
 ```
 
-Ubuntu 24.04 candidate (not yet installation-tested):
+Ubuntu 24.04 runtime packages for a source installation (desktop use unverified):
 
 ```sh
 sudo apt update
@@ -50,10 +50,10 @@ not for installing a release archive.
    and `SHA256SUMS` from the **same** [GitHub release](https://github.com/OleksiyM/GnomeClipNotes/releases).
    Put them in an otherwise empty working directory. If using `gh` verification,
    also download the archive's `.sigstore.json` bundle.
-2. Check the download before extracting. For example, a future Fedora 44 release:
+2. Check the download before extracting. For example, a future x86_64 release:
 
    ```sh
-   archive=gnome-clip-notes-1.0.0-fedora-44-x86_64.tar.gz
+   archive=gnome-clip-notes-1.0.0-x86_64.tar.gz
    sha256sum --check --ignore-missing SHA256SUMS
    ```
 
@@ -98,7 +98,7 @@ The intended install/update entry point is:
 curl -fsSL https://raw.githubusercontent.com/OleksiyM/GnomeClipNotes/main/install.sh | bash
 ```
 
-The bootstrap downloads a platform-matched stable release, checks SHA256
+The bootstrap downloads the Fedora 44 x86_64 stable release, checks SHA256
 integrity **before extraction**, additionally verifies signed build provenance
 when GitHub CLI is present, and runs that release's installation
 helper. See [Artifact verification](artifact-verification.md) for the verification
@@ -111,12 +111,11 @@ after the release is verified. GitHub CLI
 is optional: without it the installer explicitly reports skipped provenance
 verification. SHA256 alone does not authenticate a jointly replaced archive and
 manifest. No GitHub login is needed for the local attestation bundle.
-On candidate Fedora 44 and Ubuntu 24.04, the installer lists missing runtime
-packages and prints equivalent manual commands. With separate consent, it uses
-the system's configured package repositories via DNF or APT. It never adds a
-repository or installs development toolchains or GitHub CLI. APT refreshes its
-package index first. Dependencies may be added or updated by the package manager;
-these system changes are not part of ClipNotes rollback or uninstall.
+On Fedora 44, the installer lists missing runtime packages and prints equivalent
+manual commands. With separate consent, it uses the system's configured DNF
+repositories. It never adds a repository or installs development toolchains or
+GitHub CLI. Dependencies may be added or updated by DNF; these system changes
+are not part of ClipNotes rollback or uninstall.
 
 Both package consent and final application confirmation, followed by sudo
 authorization, precede package installation. Application files remain untouched
@@ -137,9 +136,10 @@ binaries, using a stable child-process locale without changing the session
 language. `systemd-run` must be present for Full editors; command availability
 alone does not prove the user systemd manager is operational.
 
-Fedora 44 and Ubuntu 24.04 x86_64 are **candidate build targets**, not a verified
-support matrix. Remote builds and real artifact installation are release gates;
-an older distribution-provided `gh` may lack the required verification flags.
+Fedora 44 x86_64 is the only planned release target. It does not imply support
+for every Fedora 44 configuration, and ARM64 is not supported yet. The public
+release artifact and real download-to-install path remain unverified. An older
+distribution-provided `gh` may lack the required verification flags.
 
 The per-user installer uses these locations by default:
 
@@ -215,14 +215,14 @@ shortcut there. The installer itself does not change GNOME shortcuts.
 The approved calendar change persists after uninstall; the clock remains
 clickable, and calendar shortcuts can be changed in GNOME Keyboard Settings.
 
-Create a platform-labelled release archive from a trusted checkout with:
+Create a Fedora 44 x86_64 release archive from a trusted checkout with:
 
 ```sh
 ./scripts/build-package.sh
 ```
 
 The archive is written below `dist/` as
-`gnome-clip-notes-VERSION-OS-OSVERSION-ARCH.tar.gz`. It includes both binaries,
+`gnome-clip-notes-VERSION-x86_64.tar.gz`. It includes both binaries,
 the matching extension, desktop integration, selected public documentation,
 `release.json`, and the versioned installer. A local build has no GitHub
 attestation; do not mistake local packaging for authenticated release provenance.

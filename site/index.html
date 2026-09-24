@@ -21,7 +21,7 @@
       <p class="intro">A clipboard is a starting point. Turn useful fragments into notes,
         organize them into folders, and take them further as readable Markdown.</p>
       <p class="actions"><a class="button" href="#install">Installation guide</a><a href="https://github.com/OleksiyM/GnomeClipNotes/blob/main/README.md">Explore the project →</a></p>
-      <p class="status">1.0.0 is in preparation. No public release is available yet.</p>
+      <p class="status">Built for Fedora 44 · x86_64 · GNOME on Wayland</p>
     </section>
     <section aria-labelledby="workflow">
       <h2 id="workflow">From a fragment to something useful.</h2>
@@ -40,21 +40,21 @@
     </section>
     <section id="install" aria-labelledby="install-title">
       <h2 id="install-title">A small app. A straightforward install.</h2>
-      <p><strong>Not published yet:</strong> the commands and download links below describe the planned 1.0.0 release. They are not currently available release endpoints.</p>
+      <p>Choose the manual archive or the one-command installer. Both install the application and its matching GNOME Shell extension.</p>
       <h3>Manual archive installation</h3>
       <ol>
         <li>Use a GNOME Wayland session and install the runtime packages listed in the guide.</li>
-        <li>Download the archive matching your distribution and architecture, plus its checksum manifest.</li>
+        <li>Download the x86_64 archive for Fedora 44, plus its checksum manifest.</li>
         <li>Verify, extract, and run the included local installation helper as your normal user.</li>
         <li>Log out and back in, then enable the GnomeClipNotes extension.</li>
       </ol>
       <p><a class="button" href="https://github.com/OleksiyM/GnomeClipNotes/blob/main/docs/installation.md">Packages and exact commands</a></p>
       <h3>One command for installation and updates</h3>
-      <p>After publication, the same command will install the app or update an existing managed installation:</p>
+      <p>The same command installs the app or updates an existing managed installation:</p>
       <pre><code>curl -fsSL https://raw.githubusercontent.com/OleksiyM/GnomeClipNotes/main/install.sh | bash</code></pre>
       <p>The installer checks download integrity and asks before changing anything installed. Missing system packages require separate consent. GitHub CLI is optional for stronger provenance verification.</p>
       <p><a href="https://github.com/OleksiyM/GnomeClipNotes/blob/main/docs/artifact-verification.md">Verification and inspect-first alternative</a> · <a href="https://github.com/OleksiyM/GnomeClipNotes/releases">Release downloads</a></p>
-      <p class="status">Fedora 44 / x86_64 is locally exercised. Ubuntu 24.04 / x86_64 is an untested candidate. No claim of universal Linux compatibility.</p>
+      <p class="status">The binary archive targets Fedora 44 / x86_64. Other distributions and ARM64 are not supported release targets yet.</p>
     </section>
     <section class="closing" aria-labelledby="local-title">
       <h2 id="local-title">Your notes stay yours.</h2>

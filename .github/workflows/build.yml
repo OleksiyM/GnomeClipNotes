@@ -2,6 +2,7 @@ name: Build
 
 on:
   push:
+    branches: [main]
   pull_request:
   workflow_dispatch:
 
@@ -9,46 +10,23 @@ permissions:
   contents: read
 
 jobs:
-  rust:
-    name: ubuntu-24.04
-    runs-on: ubuntu-24.04
-    steps:
-      - uses: actions/checkout@v4
-      - name: Install native dependencies
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y libgtk-4-dev libadwaita-1-dev libsoup-3.0-dev libwebkitgtk-6.0-dev gettext desktop-file-utils
-      - uses: dtolnay/rust-toolchain@stable
-        with:
-          components: clippy,rustfmt
-      - uses: Swatinem/rust-cache@v2
-      - run: cargo fmt --all -- --check
-      - run: cargo clippy --locked --all-targets -- -D warnings
-      - run: cargo test --locked
-      - run: cargo build --locked --release
-      - name: Assemble release archive
-        run: ./scripts/build-package.sh
-      - uses: actions/upload-artifact@v4
-        with:
-          name: gnome-clip-notes-ubuntu-24.04
-          path: dist/*.tar.gz
-
   fedora:
-    name: fedora-44
+    name: Fedora 44 / x86_64
     runs-on: ubuntu-24.04
     container: fedora:44
     steps:
       - run: dnf install -y git cargo rust rustfmt clippy gtk4-devel libadwaita-devel libsoup3-devel webkitgtk6.0-devel gettext desktop-file-utils findutils tar gzip python3
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
       - name: Verify translation extraction with Rust-capable gettext
         run: ./scripts/translations.py check
       - run: cargo fmt --all -- --check
       - run: cargo clippy --locked --all-targets -- -D warnings
-      - run: cargo test --locked
-      - run: cargo build --locked --release
-      - name: Assemble release archive
+      - name: Test and assemble archive
         run: ./scripts/build-package.sh
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
-          name: gnome-clip-notes-fedora-44
+          name: gnome-clip-notes-x86_64
           path: dist/*.tar.gz
+          if-no-files-found: error

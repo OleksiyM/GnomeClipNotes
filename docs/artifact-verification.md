@@ -25,7 +25,7 @@ For example, to verify version `1.0.0`:
 
 ```sh
 tag=v1.0.0
-archive=gnome-clip-notes-1.0.0-ubuntu-24.04-x86_64.tar.gz
+archive=gnome-clip-notes-1.0.0-x86_64.tar.gz
 
 gh attestation verify "$archive" \
   --bundle "$archive.sigstore.json" \
@@ -71,7 +71,8 @@ For a reviewable path, download the installer without executing it, inspect it,
 and run the saved file only when satisfied. Never download an unverified copy of
 `gh` or another verifier and then treat that same download as the root of trust.
 
-The Ubuntu 24.04 and Fedora 44 x86_64 labels identify the environments used to
-build candidate artifacts. They are not, by themselves, claims that every GNOME
-or distribution configuration is supported; platform installation and upgrade
-testing remains a separate release gate.
+The planned archive is built on Fedora 44 x86_64. That label does not establish
+compatibility with every Fedora desktop configuration. The public release
+download and installation path have not yet been verified. ARM64 is not a
+supported release architecture yet. Ubuntu has no prebuilt release target;
+desktop compatibility is unverified.

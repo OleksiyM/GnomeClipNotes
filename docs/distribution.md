@@ -1,8 +1,9 @@
 # Installation and update design
 
-Status: local bootstrap, package helper and draft workflow implemented; not
-published or validated against a genuine signed GitHub release yet. See
-[Installation](installation.md) for the user-facing route and verified platforms.
+Status: local bootstrap, package helper and release workflow implemented; no
+release has been published, and the public download-to-install path has not
+been verified. Fedora 44 x86_64 is the only planned release build. See
+[Installation](installation.md) for user-facing instructions and limits.
 
 Safety contract: all questions and consents must be completed before changing
 the installed application, desktop integration or system dependencies. Read-only
