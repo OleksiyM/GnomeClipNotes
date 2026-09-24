@@ -14,7 +14,7 @@ archive is for Fedora 44 x86_64; do not use it on Ubuntu or another distribution
 
 | Platform | Current verification |
 | --- | --- |
-| Fedora 44, x86_64, GNOME 50.4 | Development use and isolated app/Shell tests; local archive lifecycle tests with session commands mocked; public download-to-install path not yet verified |
+| Fedora 44, x86_64, GNOME 50.4 | Development use and isolated app/Shell tests; published 1.0.0 bootstrap, SHA256/provenance checks, installation and Library launch verified in an isolated session |
 | Ubuntu 24.04 | No prebuilt release target; earlier CI compilation passed, desktop use unverified |
 | ARM64 and other systems | Not supported by a release build; compatibility is unverified |
 
@@ -139,8 +139,10 @@ language. `systemd-run` must be present for Full editors; command availability
 alone does not prove the user systemd manager is operational.
 
 Fedora 44 x86_64 is the only binary release target. It does not imply support
-for every Fedora 44 configuration, and ARM64 is not supported yet. The public
-release artifact and real download-to-install path remain unverified. An older
+for every Fedora 44 configuration, and ARM64 is not supported yet. The published
+1.0.0 download-to-install path was verified with a temporary profile and isolated
+D-Bus/Xvfb session; this does not replace the logout/login and Shell activation
+step on a normal Wayland desktop. An older
 distribution-provided `gh` may lack the required verification flags.
 
 The per-user installer uses these locations by default:

@@ -72,7 +72,9 @@ and run the saved file only when satisfied. Never download an unverified copy of
 `gh` or another verifier and then treat that same download as the root of trust.
 
 The release archive is built on Fedora 44 x86_64. That label does not establish
-compatibility with every Fedora desktop configuration. The public release
-download and installation path have not yet been verified. ARM64 is not a
+compatibility with every Fedora desktop configuration. The published 1.0.0
+bootstrap was verified end-to-end with SHA256 and required provenance checks,
+without GitHub login, followed by installation and basic Library launch in an
+isolated session. Normal Wayland Shell activation is a separate step. ARM64 is not a
 supported release architecture yet. Ubuntu has no prebuilt release target;
 desktop compatibility is unverified.

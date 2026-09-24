@@ -6,7 +6,8 @@ Open `index.html` locally or serve this directory with a static HTTP server.
 Publish **only this directory**, never the workspace root. GitHub Pages uses
 `.github/workflows/pages.yml`, called by the release workflow after a stable
 tag's GitHub Release is published. The site is checked out from that same tag.
-This checkout has not deployed a public site yet.
+The first deployment accompanied v1.0.0 on 2026-09-24:
+https://oleksiym.github.io/GnomeClipNotes/
 
 Before the first tag, configure repository Settings → Pages → Source as **GitHub
 Actions** and allow `v*` tags in the `github-pages` environment's deployment

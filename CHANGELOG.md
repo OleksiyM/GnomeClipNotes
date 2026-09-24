@@ -3,7 +3,7 @@
 Release availability and publication dates are recorded in
 [GitHub Releases](https://github.com/OleksiyM/GnomeClipNotes/releases).
 
-## 1.0.0
+## 1.0.0 — 2026-09-24
 
 First public version. Earlier 0.x builds were private development builds,
 not public releases.
