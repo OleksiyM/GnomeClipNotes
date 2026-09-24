@@ -1,8 +1,10 @@
 # Installation
 
-**1.0.0 is not published yet.** The planned release archive is
+Published archives are listed in
+[GitHub Releases](https://github.com/OleksiyM/GnomeClipNotes/releases). The archive is
 `gnome-clip-notes-VERSION-x86_64.tar.gz` and contains the application, helper,
-and matching Shell extension. No public archive is available to install yet.
+and matching Shell extension. Use only a version listed there; if no release is
+listed, build from a trusted source checkout instead.
 
 ## Requirements
 
@@ -50,7 +52,7 @@ not for installing a release archive.
    and `SHA256SUMS` from the **same** [GitHub release](https://github.com/OleksiyM/GnomeClipNotes/releases).
    Put them in an otherwise empty working directory. If using `gh` verification,
    also download the archive's `.sigstore.json` bundle.
-2. Check the download before extracting. For example, a future x86_64 release:
+2. Check the download before extracting. For version 1.0.0, for example:
 
    ```sh
    archive=gnome-clip-notes-1.0.0-x86_64.tar.gz
@@ -92,7 +94,7 @@ reports version 0.2.0.
 
 ## One-command installation and updates
 
-The intended install/update entry point is:
+The install/update entry point for published releases is:
 
 ```sh
 curl -fsSL https://raw.githubusercontent.com/OleksiyM/GnomeClipNotes/main/install.sh | bash
@@ -136,7 +138,7 @@ binaries, using a stable child-process locale without changing the session
 language. `systemd-run` must be present for Full editors; command availability
 alone does not prove the user systemd manager is operational.
 
-Fedora 44 x86_64 is the only planned release target. It does not imply support
+Fedora 44 x86_64 is the only binary release target. It does not imply support
 for every Fedora 44 configuration, and ARM64 is not supported yet. The public
 release artifact and real download-to-install path remain unverified. An older
 distribution-provided `gh` may lack the required verification flags.

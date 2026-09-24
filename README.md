@@ -11,11 +11,10 @@ export readable Markdown to develop and reuse in your preferred tools. History
 can expire automatically; deliberately saved material stays until you remove it.
 No account, cloud storage or synchronization service is required.
 
-This is preparation for the first public release, **1.0.0**, not a published
-release. Fedora 44 x86_64 is the release build target; development use and
-isolated app/Shell tests run on GNOME 50.4. The public release download-to-install
-path has not yet been verified. Ubuntu has no prebuilt release target, and its
-desktop compatibility is unverified.
+Fedora 44 x86_64 is the binary release target; development use and isolated
+app/Shell tests run on GNOME 50.4. Ubuntu has no prebuilt release target, and its
+desktop compatibility is unverified. Published versions and downloads are listed
+in [GitHub Releases](https://github.com/OleksiyM/GnomeClipNotes/releases).
 
 ## Build
 
@@ -40,13 +39,22 @@ cargo build --release --locked
 
 ## Install
 
-**1.0.0 has not been published.** For prebuilt archives, see the
-[manual installation steps and runtime packages](docs/installation.md#manual-installation-from-an-archive).
-No Rust toolchain is needed for that path. Fedora 44 x86_64 is the planned
-release target; a public release archive is not available yet.
+For a published Fedora 44 x86_64 release, install or update with:
 
-The one-command installer and signed release workflow are prepared locally, not
-yet verified against a public release. For a trusted source checkout:
+```sh
+curl -fsSL https://raw.githubusercontent.com/OleksiyM/GnomeClipNotes/main/install.sh | bash
+```
+
+The installer verifies the archive, asks before installation, and separately
+offers missing runtime packages. If GitHub CLI is available, it also verifies
+signed build provenance. Without a published release, use a trusted source
+checkout instead; a version in this repository is not itself a released download.
+
+Prefer downloading an archive yourself? See the
+[manual installation steps and runtime packages](docs/installation.md#manual-installation-from-an-archive).
+No Rust toolchain is needed for a prebuilt archive.
+
+For a trusted source checkout:
 
 ```sh
 ./scripts/install.sh
@@ -94,7 +102,7 @@ on this computer and is not synchronized or sent over the network.
 manually queries GitHub for a public stable release; an available update offers
 **View Release** in your browser. No background checks, note uploads or in-app
 installation. No published release and a failed check are reported separately
-from “Up to date”. The linked project pages are not yet verified public endpoints.
+from “Up to date”.
 
 Settings → General → **Note preview** offers two modes, applied to newly opened
 editors:
@@ -160,10 +168,14 @@ available when a change benefits from isolation. Release notes include commit
 subjects, so use clear messages such as `fix: keep source filter on screen` or
 `feat: export selected folders as Markdown`. Do not put personal notes in commits.
 Public releases start at 1.0.0: fixes normally use patch versions, new features
-minor versions. Pushing a version tag is intended to run checks, build and attest
-the archive, publish the GitHub Release, and deploy the website. This workflow
-has not yet run for a public release. Before the first tag, complete the one-time
+minor versions. Pushing a version tag runs checks, builds and attests
+the archive, publishes the GitHub Release, and deploys the website. Before the
+first tag, complete the one-time
 [Pages setup](site/README.md); main pushes run checks without publishing.
+For a release, synchronize `Cargo.toml`, the application's `Cargo.lock` entry
+and `extension/metadata.json`'s `version-name`, then run
+`scripts/translations.py update`. Only send `vVERSION` after checking the build;
+that tag is the publication decision.
 
 The public checkout is self-contained. Maintainers may attach an optional private
 context repository at the ignored `.private/` directory; it is not required for

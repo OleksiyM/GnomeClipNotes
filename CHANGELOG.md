@@ -1,9 +1,12 @@
 # Changelog
 
-## 1.0.0 — unreleased
+Release availability and publication dates are recorded in
+[GitHub Releases](https://github.com/OleksiyM/GnomeClipNotes/releases).
 
-First public release, in preparation. Earlier 0.x builds were private development
-builds, not public releases.
+## 1.0.0
+
+First public version. Earlier 0.x builds were private development builds,
+not public releases.
 
 ### Capture and collect
 
@@ -34,13 +37,10 @@ builds, not public releases.
 - A Fedora 44 x86_64 archive containing the application and matching Shell
   extension, with per-user installation/update tooling.
 
-### Release status
+### Platform and distribution
 
-No public 1.0.0 artifacts or verified download endpoints yet. Fedora 44 x86_64
-is the only planned release build; the actual public download-to-install path is
-not verified. Ubuntu has no prebuilt release target; desktop compatibility is
-unverified. See [installation requirements and verification limits](docs/installation.md).
-Pushing a version tag is intended to run checks, build and attest the archive,
-publish the GitHub Release, and deploy the website. This workflow has not yet
-run for a public release. Subsequent release notes include commit subjects
-since the previous stable tag, including changes committed directly to `main`.
+- Fedora 44 x86_64 build, with the matching Shell extension inside one archive.
+- SHA256 checksums and GitHub build-provenance attestations.
+- Manual archive installation and one entry point for installation and updates.
+- Ubuntu desktop compatibility and ARM64 builds are unverified; neither is a
+  prebuilt release target. See [installation requirements](docs/installation.md).

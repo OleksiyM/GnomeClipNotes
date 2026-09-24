@@ -6,8 +6,8 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: GnomeClipNotes 0.2.0\n"
-"Report-Msgid-Bugs-To: https://github.com/\n"
+"Project-Id-Version: GnomeClipNotes 1.0.0\n"
+"Report-Msgid-Bugs-To: https://github.com/OleksiyM/GnomeClipNotes/issues\n"
 "POT-Creation-Date: 1970-01-01 00:00+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"

@@ -71,7 +71,7 @@ For a reviewable path, download the installer without executing it, inspect it,
 and run the saved file only when satisfied. Never download an unverified copy of
 `gh` or another verifier and then treat that same download as the root of trust.
 
-The planned archive is built on Fedora 44 x86_64. That label does not establish
+The release archive is built on Fedora 44 x86_64. That label does not establish
 compatibility with every Fedora desktop configuration. The public release
 download and installation path have not yet been verified. ARM64 is not a
 supported release architecture yet. Ubuntu has no prebuilt release target;

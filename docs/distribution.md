@@ -1,9 +1,10 @@
 # Installation and update design
 
-Status: local bootstrap, package helper and release workflow implemented; no
-release has been published, and the public download-to-install path has not
-been verified. Fedora 44 x86_64 is the only planned release build. See
-[Installation](installation.md) for user-facing instructions and limits.
+The bootstrap, package helper and release workflow implement the contract below.
+Fedora 44 x86_64 is the binary release target. See [Installation](installation.md)
+for user-facing instructions and verification limits, and
+[GitHub Releases](https://github.com/OleksiyM/GnomeClipNotes/releases) for published
+versions. A source version or local archive is not proof of a published release.
 
 Safety contract: all questions and consents must be completed before changing
 the installed application, desktop integration or system dependencies. Read-only
@@ -13,7 +14,7 @@ installer does not ask for additional prompts; it either completes, reports a
 failure, or presents the defined recovery path. This cannot promise resistance
 to a forced process kill, power loss, or user tampering.
 
-The intended public command is:
+The public command for published releases is:
 
 ```sh
 curl -fsSL https://raw.githubusercontent.com/OleksiyM/GnomeClipNotes/main/install.sh | bash

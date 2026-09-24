@@ -11,6 +11,7 @@ import shutil
 import subprocess
 import sys
 import tempfile
+import tomllib
 
 ROOT = Path(__file__).resolve().parent.parent
 PO = ROOT / "po"
@@ -60,6 +61,7 @@ def source_files():
 
 
 def extract(output, language, keywords, files):
+    version = tomllib.loads((ROOT / "Cargo.toml").read_text())["package"]["version"]
     by_name = {}
     for keyword in keywords:
         by_name.setdefault(keyword.split(":", 1)[0], []).append(keyword)
@@ -72,7 +74,8 @@ def extract(output, language, keywords, files):
         args = ["xgettext", f"--language={language}", "--from-code=UTF-8", "--keyword",
             "--force-po", "--no-wrap", "--add-location=file",
             "--add-comments=Translators:", "--package-name=GnomeClipNotes",
-            "--package-version=0.2.0", "--msgid-bugs-address=https://github.com/",
+            f"--package-version={version}",
+            "--msgid-bugs-address=https://github.com/OleksiyM/GnomeClipNotes/issues",
             "--copyright-holder=GnomeClipNotes contributors", "--output", str(chunk)]
         for keyword in pass_keywords:
             args.append(f"--keyword={keyword}")
