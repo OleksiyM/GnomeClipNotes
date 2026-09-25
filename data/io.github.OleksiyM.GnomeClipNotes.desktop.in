@@ -1,7 +1,7 @@
 [Desktop Entry]
 Name=GnomeClipNotes
 Comment=Clipboard history and Markdown notes
-Exec="@BINARY@"
+Exec="@BINARY@" --library
 Icon=io.github.OleksiyM.GnomeClipNotes
 Terminal=false
 Type=Application

@@ -26,8 +26,9 @@ mod update_lock;
 #[cfg(debug_assertions)]
 mod update_smoke;
 
+use crate::i18n::tr;
 use adw::prelude::*;
-use glib::variant::ToVariant;
+use glib::{translate::ToGlibPtr, variant::ToVariant};
 use std::{cell::RefCell, rc::Rc};
 
 pub const APP_ID: &str = "io.github.OleksiyM.GnomeClipNotes";
@@ -289,6 +290,28 @@ fn register_service(state: &Rc<State>) -> store::Result<()> {
     Ok(())
 }
 
+fn command_line_message(command: &gio::ApplicationCommandLine, message: &str, error: bool) {
+    // This API forwards output to the invoking terminal even when another
+    // process owns the application. The safe literal bindings need GLib 2.80.
+    let message =
+        std::ffi::CString::new(format!("{message}\n")).expect("command-line message contains NUL");
+    unsafe {
+        if error {
+            gio::ffi::g_application_command_line_printerr(
+                command.to_glib_none().0,
+                c"%s".as_ptr(),
+                message.as_ptr(),
+            );
+        } else {
+            gio::ffi::g_application_command_line_print(
+                command.to_glib_none().0,
+                c"%s".as_ptr(),
+                message.as_ptr(),
+            );
+        }
+    }
+}
+
 pub fn run() -> glib::ExitCode {
     i18n::init();
     let args: Vec<String> = std::env::args().collect();
@@ -298,7 +321,7 @@ pub fn run() -> glib::ExitCode {
             "{}",
             serde_json::json!({
                 "language": i18n::active_language(),
-                "simple": i18n::tr("New Note"),
+                "simple": tr("New Note"),
                 "plural_one": i18n::ntrf("{count} item", "{count} items", 1, &[]),
                 "plural_many": i18n::ntrf("{count} item", "{count} items", 2, &[]),
                 "shell": i18n::shell_catalog(),
@@ -307,7 +330,7 @@ pub fn run() -> glib::ExitCode {
         return glib::ExitCode::SUCCESS;
     }
     if args.iter().any(|s| s == "--help" || s == "-h") {
-        println!("GnomeClipNotes\n\nUsage: gnome-clip-notes [OPTION]\n\n  --daemon        Keep the clipboard service running\n  --library       Open the library window\n  --new-note      Open a new Markdown note\n  --settings      Open settings\n  --about         Show application information\n  --backup PATH   Create a consistent SQLite snapshot (new file)\n  --quit          Stop the running application\n  --version       Print version\n\nWithout an option, open the clipboard panel.");
+        println!("GnomeClipNotes\n\nUsage: gnome-clip-notes [OPTION]\n\n  --daemon        Keep the clipboard service running\n  --library       Open the library window\n  --new-note      Open a new Markdown note\n  --settings      Open settings\n  --about         Open the About window\n  --backup PATH   Create a consistent SQLite snapshot (new file)\n  --quit          Stop the background service after editors are closed; the Shell indicator remains available\n  --version       Print version\n\nWithout an option, open the clipboard panel.");
         return glib::ExitCode::SUCCESS;
     }
     if let Some(index) = args.iter().position(|s| s == "--backup") {
@@ -335,7 +358,7 @@ pub fn run() -> glib::ExitCode {
         Err(error) => {
             eprintln!(
                 "{}: {error}",
-                i18n::tr("Cannot start GnomeClipNotes. An update may be in progress.")
+                tr("Cannot start GnomeClipNotes. An update may be in progress.")
             );
             return glib::ExitCode::FAILURE;
         }
@@ -399,14 +422,15 @@ pub fn run() -> glib::ExitCode {
     let activation_slot = state_slot.clone();
     app.connect_activate(move |_| {
         if let Some(state) = activation_slot.borrow().as_ref() {
-            state.open_clipboard();
+            // Desktop/D-Bus activation presents a window; Shell owns the overlay.
+            state.activate("show", 0);
         }
     });
     app.connect_command_line(move |_app, command| {
         if let Some(state) = state_slot.borrow().as_ref() {
             let args = command.arguments();
             if state.update.stopping() {
-                eprintln!("{}", i18n::tr("GnomeClipNotes is stopping for an update."));
+                command_line_message(command, &tr("GnomeClipNotes is already stopping."), true);
                 return glib::ExitCode::FAILURE;
             }
             #[cfg(debug_assertions)]
@@ -435,7 +459,23 @@ pub fn run() -> glib::ExitCode {
                 return glib::ExitCode::SUCCESS;
             }
             if args.iter().any(|s| s == "--quit") {
-                state.app.quit();
+                if !state.update.begin_shutdown() {
+                    command_line_message(
+                        command,
+                        &tr("Save and close all editors before stopping GnomeClipNotes."),
+                        true,
+                    );
+                    return glib::ExitCode::FAILURE;
+                }
+                command_line_message(
+                    command,
+                    &tr("GnomeClipNotes is stopping. The Shell indicator remains available."),
+                    false,
+                );
+                // Let GApplication return the forwarded command-line response
+                // before shutting down the service that owns it.
+                let app = state.app.clone();
+                glib::idle_add_local_once(move || app.quit());
             } else if !args.iter().any(|s| s == "--daemon") {
                 let action = if args.iter().any(|s| s == "--settings") {
                     "settings"

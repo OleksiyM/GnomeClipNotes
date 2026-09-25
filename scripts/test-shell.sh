@@ -20,7 +20,7 @@ if [[ "${1:-}" != "--inside" ]]; then
     export LANGUAGE=en LANG=C.UTF-8
     mkdir -m 700 -p "${XDG_CONFIG_HOME}" "${XDG_DATA_HOME}" "${XDG_CACHE_HOME}" "${XDG_RUNTIME_DIR}"
     printf 'GNOME Shell test logs: %s\n' "${test_dir}"
-    if timeout --foreground 90s dbus-run-session -- bash "${BASH_SOURCE[0]}" --inside 2>"${test_dir}/session.log"; then
+    if timeout --foreground 110s dbus-run-session -- bash "${BASH_SOURCE[0]}" --inside 2>"${test_dir}/session.log"; then
         printf 'PASS: isolated GNOME Shell integration\nLogs: %s\n' "${test_dir}"
     else
         status=$?
@@ -192,4 +192,20 @@ gdbus call --session --dest org.gnome.Shell --object-path /io/github/OleksiyM/Gn
 restarted() { [[ $(gdbus call --session --dest org.freedesktop.DBus --object-path /org/freedesktop/DBus --method org.freedesktop.DBus.NameHasOwner io.github.OleksiyM.GnomeClipNotes) == '(true,)' ]]; }
 wait_for 'explicit D-Bus activation' restarted
 "${GCN_PROJECT_DIR}/target/debug/gnome-clip-notes" --quit
+service_stopped() {
+    [[ $(gdbus call --session --dest org.freedesktop.DBus --object-path /org/freedesktop/DBus \
+        --method org.freedesktop.DBus.NameHasOwner io.github.OleksiyM.GnomeClipNotes) == '(false,)' ]]
+}
+wait_for 'daemon exit after overlay restart' service_stopped
 printf 'PASS: explicit action restarts daemon\n'
+
+step 'service menu lifecycle and editor guard'
+# This is the isolated test profile; Native mode ensures the editor lease is
+# held by the same service process rather than a separately launched WebKit app.
+mkdir -p "${XDG_CONFIG_HOME}/gnome-clip-notes"
+printf '{\n  "preview_mode": "native"\n}\n' >"${XDG_CONFIG_HOME}/gnome-clip-notes/settings.json"
+gjs -m "${GCN_PROJECT_DIR}/tests/service-control.js" \
+    >"${GCN_SHELL_TEST_DIR}/service-control.log" 2>&1 || {
+        tail -80 "${GCN_SHELL_TEST_DIR}/service-control.log" >&2
+        exit 1
+    }

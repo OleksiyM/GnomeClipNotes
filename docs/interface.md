@@ -1,8 +1,13 @@
 # Interface design
 
-The primary interface is the bottom clipboard panel, not the library window.
-Opening the app or using its shortcut brings up the panel. The library remains
-available for browsing larger collections.
+The bottom clipboard panel is the quick capture/reuse interface; Library is the
+application window for browsing and organizing collections. Launching from the
+applications menu (D-Bus activation, or the desktop file's `--library` fallback)
+opens or presents Library. Super+V, the indicator and the no-argument CLI retain
+the overlay behavior. The background `--daemon` entry point opens neither.
+Keep desktop startup notification enabled: launcher activation presents a GTK
+window, not just a Shell actor. Route through `State::activate("show", 0)` to
+preserve update exclusion and shortcut-conflict consent.
 
 The Shell-owned Open Library shortcut defaults to Super+B. Settings → Shortcuts
 offers Ctrl+Alt+B as an alternative and Disabled; it brings forward the existing
@@ -11,6 +16,16 @@ changed to reserve either combination.
 
 ## GNOME Shell panel
 
+- The indicator's Service submenu keeps Start, Stop, Restart, a separator and
+  status in a fixed order. Start is enabled only when stopped; Stop/Restart only
+  when running. All three are disabled during an operation. Status follows the
+  actual D-Bus owner; late replies from an old owner cannot restore Running.
+  Stop/Restart refuse while any note editor is open, including unsaved Native
+  notes and pending Full launches. The indicator remains after stopping; capture
+  stops, but an explicit Open Library/Clipboard action can start the service again.
+  Restart waits for the exact D-Bus owner's process to exit, not a fixed sleep,
+  and starts only the background service, without reopening windows. This does
+  not reload GNOME Shell extension code or replace logout/login after an update.
 - Use Shell's native surface and button styles, rather than imitating GTK.
 - Arrow navigation transfers keyboard focus to the selected card. Delete and F8
   request deletion of that card with confirmation. Delete in a focused nonempty

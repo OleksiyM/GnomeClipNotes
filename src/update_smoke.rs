@@ -93,6 +93,20 @@ pub fn run(state: &Rc<State>) {
             .downcast::<adw::ApplicationWindow>()
             .unwrap();
         assert_eq!(status(&state).await["native_editors"], 1);
+        let executable = std::env::current_exe().unwrap();
+        let quit = gio::Subprocess::newv(
+            &[executable.as_os_str(), std::ffi::OsStr::new("--quit")],
+            gio::SubprocessFlags::STDOUT_PIPE | gio::SubprocessFlags::STDERR_PIPE,
+        )
+        .unwrap();
+        let (stdout, stderr) = quit.communicate_utf8_future(None).await.unwrap();
+        assert_eq!(quit.exit_status(), 1);
+        assert_eq!(stdout.as_deref(), Some(""));
+        assert_eq!(
+            stderr.as_deref(),
+            Some("Save and close all editors before stopping GnomeClipNotes.\n")
+        );
+        assert_eq!(status(&state).await["quitting"], false);
         assert!(
             !call(&state, "QuitForUpdate")
                 .await

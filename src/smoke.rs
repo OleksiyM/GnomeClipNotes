@@ -235,6 +235,31 @@ fn verify_details(state: Rc<State>, dir: PathBuf) {
     });
 }
 
+fn verify_desktop_activation(state: &Rc<State>) {
+    // Exercise the same activate signal as org.freedesktop.Application.Activate.
+    // Suppress onboarding here; its consent behavior is checked separately below.
+    let dismissed = state.store.borrow().settings.super_v_conflict_dismissed;
+    state.store.borrow_mut().settings.super_v_conflict_dismissed = true;
+    assert!(state.window.borrow().is_none());
+    state.app.activate();
+    let window = state
+        .window
+        .borrow()
+        .clone()
+        .expect("Desktop activation must create Library, not toggle the Shell overlay");
+    assert!(window.is_visible());
+    let count = state.app.windows().len();
+    window.set_visible(false);
+    state.app.activate();
+    assert!(
+        window.is_visible(),
+        "Repeated activation must present Library"
+    );
+    assert_eq!(state.window.borrow().as_ref(), Some(&window));
+    assert_eq!(state.app.windows().len(), count, "Do not duplicate Library");
+    state.store.borrow_mut().settings.super_v_conflict_dismissed = dismissed;
+}
+
 pub fn run(state: &Rc<State>) {
     let dir = PathBuf::from(
         std::env::var_os("GCN_SMOKE_DIR").expect("Set GCN_SMOKE_DIR to an isolated test directory"),
@@ -267,7 +292,7 @@ pub fn run(state: &Rc<State>) {
         store.create_group("Projects").unwrap();
         store.create_group("Writing").unwrap();
     }
-    ui::show(state);
+    verify_desktop_activation(state);
     crate::preferences::verify_shortcut_consent(state);
     verify_menus(state, &dir);
     {

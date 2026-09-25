@@ -26,6 +26,10 @@ const XML=`<node><interface name="org.example.ClipNotesTestDriver">
 <method name="Localization"><arg type="s" direction="out"/></method>
 <method name="Screenshot"><arg type="s" direction="in"/></method>
 <method name="TransferProbe"><arg type="s" direction="in"/><arg type="s" direction="out"/></method>
+<method name="ServiceControl"><arg type="s" direction="in"/></method>
+<method name="ServiceInfo"><arg type="s" direction="out"/></method>
+<method name="ServiceMenuOpen"><arg type="s" direction="in"/></method>
+<method name="OpenNativeEditor"/><method name="CloseNativeEditor"/>
 </interface></node>`;
 export default class TestDriver extends Extension {
     enable() {
@@ -455,6 +459,68 @@ export default class TestDriver extends Extension {
                 };
                 this._transferProbe={selection,originalAsync,originalFinish,attempts,timeoutIds};
                 return JSON.stringify({attempts:[]});
+            },
+            ServiceControlAsync:([action],invocation)=>{
+                const extension=Main.extensionManager.lookup('gnome-clip-notes@oleksiym.github.io')?.stateObj;
+                if(!extension){invocation.return_dbus_error('org.example.Error','Missing ClipNotes extension');return;}
+                extension.controlService(action);
+                const indicator=extension._indicator;
+                this._lastServiceBusy={action:extension._serviceAction,
+                    start:indicator?._startService?.sensitive??false,
+                    stop:indicator?._stopService?.sensitive??false,
+                    restart:indicator?._restartService?.sensitive??false};
+                // A duplicate request in the same main-loop turn must be ignored.
+                extension.controlService(action);
+                invocation.return_value(null);
+            },
+            ServiceInfo:()=>{
+                const extension=Main.extensionManager.lookup('gnome-clip-notes@oleksiym.github.io')?.stateObj;
+                const menu=extension?._indicator?._serviceMenu?.menu;
+                return JSON.stringify({
+                    action:extension?._serviceAction??null,
+                    locked:extension?._isLocked(),
+                    ensuring:Boolean(extension?._ensurePromise),
+                    owner:extension?._service?.g_name_owner??null,
+                    entries:menu?._getMenuItems().map(item=>({
+                        label:item.label?.text??null,
+                        separator:item.constructor.name==='PopupSeparatorMenuItem',
+                        sensitive:item.sensitive??null,
+                    }))??[],
+                    start:extension?._indicator?._startService?.sensitive??false,
+                    stop:extension?._indicator?._stopService?.sensitive??false,
+                    restart:extension?._indicator?._restartService?.sensitive??false,
+                    status:extension?._indicator?._serviceStatus?.label?.text??'',
+                    libraryWindows:global.get_window_actors().map(actor=>actor.meta_window)
+                        .filter(window=>window.get_gtk_application_id()==='io.github.OleksiyM.GnomeClipNotes').length,
+                    nativeEditors:global.get_window_actors().map(actor=>actor.meta_window)
+                        .filter(window=>window.get_title().includes('New Note')).length,
+                    lastBusy:this._lastServiceBusy??null,
+                });
+            },
+            ServiceMenuOpen:mode=>{
+                const indicator=Main.extensionManager.lookup('gnome-clip-notes@oleksiym.github.io')?.stateObj?._indicator;
+                if(mode==='open'){
+                    indicator?.menu.open();
+                    indicator?._serviceMenu?.menu.open();
+                }else{
+                    indicator?._serviceMenu?.menu.close();
+                    indicator?.menu.close();
+                }
+            },
+            OpenNativeEditor:()=>{
+                const extension=Main.extensionManager.lookup('gnome-clip-notes@oleksiym.github.io')?.stateObj;
+                extension?._service?.ActivateRemote('new-note',0);
+            },
+            CloseNativeEditor:()=>{
+                const owner=Main.extensionManager.lookup('gnome-clip-notes@oleksiym.github.io')?.stateObj?._service?.g_name_owner;
+                if(!owner)throw new Error('Service has no bus owner');
+                const [pid]=Gio.DBus.session.call_sync('org.freedesktop.DBus','/org/freedesktop/DBus',
+                    'org.freedesktop.DBus','GetConnectionUnixProcessID',new GLib.Variant('(s)',[owner]),
+                    new GLib.VariantType('(u)'),Gio.DBusCallFlags.NONE,3000,null).deepUnpack();
+                const window=global.get_window_actors().map(actor=>actor.meta_window)
+                    .find(candidate=>candidate.get_pid()===pid&&candidate.get_title().includes('New Note'));
+                if(!window)throw new Error('Missing owned Native editor window');
+                window.delete(global.get_current_time());
             },
         });
         this._object.export(Gio.DBus.session,'/org/example/ClipNotesTestDriver');

@@ -56,6 +56,24 @@ reply=$(gdbus call --session --dest io.github.OleksiyM.GnomeClipNotes \
 wait "${app_pid}"
 app_pid=''
 
+"${project_dir}/target/debug/gnome-clip-notes" --daemon >"${test_dir}/cli-daemon.log" 2>&1 &
+app_pid=$!
+for _ in {1..100}; do
+    if gdbus call --session --dest io.github.OleksiyM.GnomeClipNotes \
+        --object-path /io/github/OleksiyM/GnomeClipNotes \
+        --method io.github.OleksiyM.GnomeClipNotes.Service.GetUpdateStatus \
+        >"${test_dir}/cli-status.log" 2>&1; then
+        break
+    fi
+    kill -0 "${app_pid}"
+    sleep .1
+done
+rg -q '"quitting":false' "${test_dir}/cli-status.log"
+quit_output=$(timeout 10s "${project_dir}/target/debug/gnome-clip-notes" --quit)
+[[ "${quit_output}" == 'GnomeClipNotes is stopping. The Shell indicator remains available.' ]]
+wait "${app_pid}"
+app_pid=''
+
 exec 9<>"${lock_path}"
 flock -n -x 9
 database="${XDG_DATA_HOME}/gnome-clip-notes/data.db"

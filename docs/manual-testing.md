@@ -11,19 +11,34 @@ rejection, pause/resume, adaptive card overlay, and on-demand service activation
 The isolated GTK smoke test also passed editor saving and rendered the library,
 Markdown preview, Settings, and About, plus dark styling, a 420-pixel library,
 and narrow adaptive Settings. These do not replace the real-session
-checks below. Ubuntu has
-not been tested yet; record it separately when a real session is available.
+checks below. The maintainer reports application use on Ubuntu 26.04.1;
+the revised installer and new service controls still need testing there.
 
 - Build from a clean checkout with the documented packages.
 - Run `cargo test --locked` and `cargo clippy --all-targets -- -D warnings`.
 - Install as a regular user; log out and in; enable the extension.
-- Open the app from the launcher and with the global shortcut.
+- Open the app from the launcher with the daemon stopped, running without a
+  Library window, and with Library already open. Each launch must present one
+  Library, not the overlay; the launch spinner must settle normally. Check both
+  D-Bus activation and the desktop file's `--library` Exec fallback. Super+V and
+  the indicator must still toggle the overlay; `--daemon` opens no window.
 - Confirm the panel menu opens the app, creates a note, pauses capture, opens
   Settings, and opens About.
 - Uninstall and confirm application data remains.
 
 ## Menus
 
+- In the indicator's Service submenu, check Start / Stop / Restart, separator,
+  then status. Running enables Stop/Restart only; stopped enables Start only.
+  During an operation all three are disabled. Start/Restart open no app windows.
+  Stop closes Library/Settings but keeps the indicator; opening its menu alone
+  must not restart capture. Explicit Open Library/Clipboard may start the service.
+- With a new unsaved Native note, a saved note editor and a Full editor, Stop,
+  Restart and CLI `--quit` must refuse without closing buffers. After closing
+  editors, stop/restart succeeds; CLI prints to the invoking terminal and returns
+  nonzero on refusal. Rapid repeated clicks must not launch duplicate operations.
+- After CLI shutdown, the menu must show Stopped, not a late Running status.
+  Service Restart is not a Shell extension reload; updates still need logout/login.
 - Check the library main menu and each card's More Actions: left-aligned native
   rows, keyboard navigation, Escape dismissal and activation. Cancel Rename
   and Delete confirmations to verify they do not change data.
@@ -136,3 +151,5 @@ not been tested yet; record it separately when a real session is available.
   search text, and partial/invalid dates retaining the last valid range.
   Use `scripts/test-shell.sh --filters` to run only the filter regression and
   service lifecycle checks in that private session.
+  Service checks exercise start/stop/restart, fixed menu order, sensitivity while
+  busy, editor refusal, and a screenshot of the native submenu.

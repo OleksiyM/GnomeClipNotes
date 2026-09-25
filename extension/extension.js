@@ -37,6 +37,17 @@ const BRIDGE_XML = `<node><interface name="io.github.OleksiyM.GnomeClipNotes.Bri
 
 const ServiceProxy = Gio.DBusProxy.makeProxyWrapper(SERVICE_XML);
 
+function busCall(destination, path, iface, method, parameters, replyType, cancellable = null) {
+    return new Promise((resolve, reject) => {
+        Gio.DBus.session.call(destination, path, iface, method, parameters,
+            new GLib.VariantType(replyType), Gio.DBusCallFlags.NO_AUTO_START, 5000,
+            cancellable, (connection, result) => {
+                try { resolve(connection.call_finish(result).deepUnpack()); }
+                catch (error) { reject(error); }
+            });
+    });
+}
+
 const ITEM_SHORTCUTS = {paste: 'Enter', view: 'F3', edit: 'F4', info: 'Alt+Enter', rename: 'F2', delete: 'F8 / Del'};
 
 function ellipsize(text, limit) {
@@ -833,8 +844,15 @@ const Indicator = GObject.registerClass(class Indicator extends PanelMenu.Button
         this._pauseStatus = new PopupMenu.PopupMenuItem('', {reactive: false});
         this.menu.addMenuItem(this._pauseStatus);
         this._resume = this.menu.addAction(_('Resume Capture'), () => extension.pause(0));
-        this._serviceStatus = new PopupMenu.PopupMenuItem(_('Service stopped'), {reactive: false});
-        this.menu.addMenuItem(this._serviceStatus);
+        this._serviceMenu = new PopupMenu.PopupSubMenuMenuItem(_('Service'));
+        this._startService = this._serviceMenu.menu.addAction(_('Start'), () => extension.controlService('start'));
+        this._stopService = this._serviceMenu.menu.addAction(_('Stop'), () => extension.controlService('stop'));
+        this._restartService = this._serviceMenu.menu.addAction(_('Restart'), () => extension.controlService('restart'));
+        this._serviceMenu.menu.addMenuItem(new PopupMenu.PopupSeparatorMenuItem());
+        this._serviceStatus = new PopupMenu.PopupMenuItem('', {reactive: false, can_focus: false});
+        this._serviceMenu.menu.addMenuItem(this._serviceStatus);
+        this.menu.addMenuItem(this._serviceMenu);
+        this.updateServiceStatus();
         this.menu.addMenuItem(new PopupMenu.PopupSeparatorMenuItem());
         this.menu.addAction(_('Settings'), () => extension.activate('settings', 0));
         this.menu.addAction(_('About'), () => extension.activate('about', 0));
@@ -849,13 +867,24 @@ const Indicator = GObject.registerClass(class Indicator extends PanelMenu.Button
         this._pauseStatus.label.text = paused ? trf('Paused until {time}', {time: until.toLocaleTimeString([], {hour: '2-digit', minute: '2-digit'})}) : '';
         this._pauseStatus.visible = paused;
         this._resume.visible = paused;
-        this._serviceStatus.label.text = _('Service running');
+        this.updateServiceStatus();
     }
 
     setStopped() {
         this._pauseStatus.visible = false;
         this._resume.visible = false;
-        this._serviceStatus.label.text = _('Service stopped');
+        this.updateServiceStatus();
+    }
+
+    updateServiceStatus() {
+        const action = this._extension._serviceAction;
+        const running = Boolean(this._extension._service?.g_name_owner);
+        this._startService.sensitive = !action && !running;
+        this._stopService.sensitive = this._restartService.sensitive = !action && running;
+        this._serviceStatus.label.text = action === 'start' ? _('Starting service…')
+            : action === 'stop' ? _('Stopping service…')
+            : action === 'restart' ? _('Restarting service…')
+            : running ? _('Service running') : _('Service stopped');
     }
 });
 
@@ -865,6 +894,8 @@ export default class GnomeClipNotesExtension extends Extension {
         this._overlayNeedsLocalization = false;
         this._lifecycle = Symbol('enabled');
         this._alive = true;
+        this._serviceAction = null;
+        this._serviceControlCancellable = null;
         this._captureAttempts=0;
         this._privacy = null;
         this._settings = this.getSettings();
@@ -947,6 +978,7 @@ export default class GnomeClipNotesExtension extends Extension {
 
     _onServiceOwnerChanged() {
         if (!this._alive) return;
+        this._indicator?.updateServiceStatus();
         if (this._service.g_name_owner) {
             this._reloadServiceSettings(20);
         } else {
@@ -972,9 +1004,12 @@ export default class GnomeClipNotesExtension extends Extension {
         const query = {search: '', group_id: 0, kind: '', source: '', since: 0, until: 0, limit: 1, offset: 0, metadata_only: true};
         for (let attempt = 0; attempt <= retries; attempt++) {
             if (!this._alive || lifecycle !== this._lifecycle || !this._service.g_name_owner) return false;
+            const owner = this._service.g_name_owner;
             try {
                 const [json] = await this._service.QueryAsync(JSON.stringify(query));
-                if (!this._alive || lifecycle !== this._lifecycle) return false;
+                // A reply queued by the old process must not restore its status
+                // or privacy cache after stop/restart.
+                if (!this._alive || lifecycle !== this._lifecycle || owner !== this._service.g_name_owner) return false;
                 const result = JSON.parse(json);
                 const settings = result.settings ?? {};
                 this._privacy = {
@@ -1031,7 +1066,7 @@ export default class GnomeClipNotesExtension extends Extension {
     }
 
     async ensureService() {
-        if (this._isLocked()) return false;
+        if (this._isLocked() || this._serviceAction) return false;
         if (this._ensurePromise) return this._ensurePromise;
         const lifecycle = this._lifecycle;
         this._ensurePromise = (async () => {
@@ -1055,11 +1090,72 @@ export default class GnomeClipNotesExtension extends Extension {
         if (await this.ensureService()) this._service.ActivateRemote(action, id);
     }
 
+    async controlService(action) {
+        if (this._isLocked() || this._serviceAction) return;
+        if (!['start', 'stop', 'restart'].includes(action)) return;
+        let owner = this._service.g_name_owner;
+        if ((action === 'start') === Boolean(owner)) return;
+        const lifecycle = this._lifecycle;
+        const cancellable = new Gio.Cancellable();
+        this._serviceControlCancellable = cancellable;
+        this._serviceAction = action;
+        this._indicator?.updateServiceStatus();
+        this._overlay?.hide();
+        try {
+            // Finish an already requested overlay/library activation before
+            // controlling its process; do not silently ignore an enabled Start.
+            if (this._ensurePromise) await this._ensurePromise;
+            if (!this._alive || lifecycle !== this._lifecycle || this._isLocked()) return;
+            owner = this._service.g_name_owner;
+            if ((action === 'start') === Boolean(owner)) return;
+            if (owner) {
+                // Address the inspected unique bus owner, never a replacement
+                // process and never an auto-activated service.
+                const [pid] = await busCall('org.freedesktop.DBus', '/org/freedesktop/DBus',
+                    'org.freedesktop.DBus', 'GetConnectionUnixProcessID',
+                    new GLib.Variant('(s)', [owner]), '(u)', cancellable);
+                if (!this._alive || lifecycle !== this._lifecycle || owner !== this._service.g_name_owner) return;
+                const [accepted] = await busCall(owner, SERVICE_PATH, SERVICE_IFACE,
+                    'QuitForUpdate', null, '(b)', cancellable);
+                if (!accepted) throw new Error(_('Save and close all note editors before stopping or restarting GnomeClipNotes.'));
+                // Name loss is not process exit. Linux /proc tracks this exact
+                // bus owner's PID; do not guess by executable/process name.
+                const process = Gio.File.new_for_path(`/proc/${pid}`);
+                const deadline = GLib.get_monotonic_time() + 10 * GLib.USEC_PER_SEC;
+                while (process.query_exists(null) || this._service?.g_name_owner === owner) {
+                    if (GLib.get_monotonic_time() >= deadline)
+                        throw new Error(_('The service has not finished stopping. Try again shortly.'));
+                    if (!await this._delay(100, lifecycle)) return;
+                }
+            }
+            if (!this._alive || lifecycle !== this._lifecycle || this._isLocked()) return;
+            if (this._service.g_name_owner)
+                throw new Error(_('Another service instance started. Check its status before trying again.'));
+            if (action !== 'stop') {
+                await this._startService();
+                for (let attempt = 0; attempt < 30 && !this._service?.g_name_owner; attempt++)
+                    if (!await this._delay(100, lifecycle)) return;
+                if (!this._alive || lifecycle !== this._lifecycle) return;
+                if (!this._service.g_name_owner || !await this._reloadServiceSettings(20))
+                    throw new Error(_('The service did not become ready. Try starting it again.'));
+            }
+        } catch (error) {
+            if (this._alive && lifecycle === this._lifecycle && !this._isLocked())
+                Main.notify(_('GnomeClipNotes'), error.message);
+        } finally {
+            if (lifecycle === this._lifecycle) {
+                this._serviceAction = this._serviceControlCancellable = null;
+                this.refreshPassiveStatus();
+            }
+        }
+    }
+
     async pause(minutes) {
         if (await this.ensureService()) this._service.PauseRemote(minutes);
     }
 
     refreshPassiveStatus() {
+        this._indicator?.updateServiceStatus();
         if (this._service?.g_name_owner) this._reloadServiceSettings(2);
         else this._indicator?.setStopped();
     }
@@ -1271,6 +1367,7 @@ export default class GnomeClipNotesExtension extends Extension {
     disable() {
         this._lifecycle = Symbol('disabled');
         this._alive = false;
+        this._serviceControlCancellable?.cancel();
         this._captureGeneration = (this._captureGeneration ?? 0) + 1;
         this._captureCancellable?.cancel();
         for (const name of ['activate-shortcut', 'note-shortcut', 'library-shortcut', ...Array.from({length: 9}, (_, i) => `quick-paste-${i + 1}`)])
