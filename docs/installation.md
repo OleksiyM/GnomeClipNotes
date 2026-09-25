@@ -1,266 +1,218 @@
 # Installation
 
-Published archives are listed in
-[GitHub Releases](https://github.com/OleksiyM/GnomeClipNotes/releases). The archive is
-`gnome-clip-notes-VERSION-x86_64.tar.gz` and contains the application, helper,
-and matching Shell extension. Use only a version listed there; if no release is
-listed, build from a trusted source checkout instead.
+## Choose your path
 
-## Requirements
+Both paths install the same application, Full preview helper and GNOME Shell
+extension. These are installation methods, not different editions of the app.
 
-Use a GNOME **Wayland** desktop with a working systemd user session. The Shell
-extension is required for clipboard capture and the bottom panel. The release
-archive is for Fedora 44 x86_64; do not use it on Ubuntu or another distribution.
+| | Standard — recommended | Guided |
+| --- | --- | --- |
+| Entry point | `install.sh` | `guided-install.sh` |
+| Best for | You manage dependencies and close the app yourself | You want help with dependencies and coordinated updates |
+| Implementation | Standalone Bash; no Python | Bash bootstrap and packaged Python helper |
+| System packages | Never installed by the script | Offered with separate consent on listed systems |
+| Closing editors/service | Your responsibility | Refuses open editors, then requests safe service shutdown |
+| Recovery of program files | None; fix the error and rerun | One previous owned-file snapshot |
+| Uninstall | Standalone `uninstall.sh` | Installed `install-release.py --uninstall` |
 
-| Platform | Current verification |
+Use the same method for updates. To switch, uninstall with the previous method
+first, **without purging data**. Standard refuses an existing Guided receipt rather
+than leaving its file inventory stale; Guided refuses an unowned Standard install.
+Neither method automatically logs you out.
+
+These installation paths are available with 1.1.0. Published 1.0.0 contains the
+earlier Guided helper; its platform check still accepts Fedora 44 x86_64 only.
+
+## Requirements and verification
+
+Use GNOME on **Wayland**, with a working systemd user session. Install the full
+runtime, including WebKitGTK 6.0, even if you prefer Native preview. The clipboard
+service itself does not load WebKit. Rust is not needed for prebuilt archives.
+
+| System | Evidence / scope |
 | --- | --- |
-| Fedora 44, x86_64, GNOME 50.4 | Development use and isolated app/Shell tests; published 1.0.0 bootstrap, SHA256/provenance checks, installation and Library launch verified in an isolated session |
-| Ubuntu 24.04 | No prebuilt release target; earlier CI compilation passed, desktop use unverified |
-| ARM64 and other systems | Not supported by a release build; compatibility is unverified |
+| Fedora 44 x86_64, GNOME 50.4 | Development use, public 1.0.0 install/launch and live Standard install/uninstall verified; clipboard capture confirmed after login |
+| Ubuntu 26.04.1 x86_64 | Maintainer reports working application and shell-script install/uninstall, including provenance verification; revised scripts still need live retesting |
+| Fedora 44 ARM64 | Native CI build target since 1.1.0; desktop validation remains pending |
+| Ubuntu 24.04 / 22.04, other distributions | Not verified for the published binary; do not assume compatibility |
+
+Archives are built on Fedora 44. Standard selects by CPU architecture, not
+distribution: this makes it usable on compatible systems, **not a universal Linux
+binary**. Native library/ABI requirements still apply. Ubuntu 22.04's standard
+desktop stack is below the application's GTK 4.12 / libadwaita 1.5 minimums.
+Use only archives actually listed in [Releases](https://github.com/OleksiyM/GnomeClipNotes/releases);
+1.0.0 has no ARM64 archive.
+
+The 1.1.0 Guided helper explicitly allows Fedora 44 x86_64/ARM64 and Ubuntu
+26.04 x86_64 (including 26.04.1, which reports `VERSION_ID=26.04`).
+It uses the Fedora build without relabelling it, and chooses dependency packages
+for the **host OS**. An allowlist is not proof of desktop testing on every target.
 
 ### Runtime packages
 
-On an existing Fedora 44 GNOME desktop:
+Fedora 44 GNOME desktop:
 
 ```sh
-sudo dnf install gtk4 libadwaita libsoup3 webkitgtk6.0 glib2 glibc-common systemd gnome-shell python3 curl ca-certificates tar coreutils
+sudo dnf install gtk4 libadwaita libsoup3 webkitgtk6.0 glib2 glibc-common systemd gnome-shell curl ca-certificates tar gzip coreutils gawk sed
 ```
 
-Ubuntu 24.04 runtime packages for a source installation (desktop use unverified):
+Ubuntu 26.04 GNOME desktop:
 
 ```sh
-sudo apt update
-sudo apt install libgtk-4-1 libadwaita-1-0 libsoup-3.0-0 libwebkitgtk-6.0-4 libglib2.0-bin libglib2.0-0t64 libc-bin systemd gnome-shell python3 curl ca-certificates tar coreutils
+sudo apt install libgtk-4-1 libadwaita-1-0 libsoup-3.0-0 libwebkitgtk-6.0-4 libglib2.0-bin libglib2.0-0t64 libc-bin systemd gnome-shell curl ca-certificates tar gzip coreutils gawk sed
 ```
 
-These are runtime packages, not compilers or development headers. The package
-manager resolves their dependencies. Full preview uses WebKitGTK 6.0, named
-[`webkitgtk6.0` on Fedora](https://packages.fedoraproject.org/pkgs/webkitgtk/webkitgtk6.0/)
-and [`libwebkitgtk-6.0-4` on Ubuntu](https://packages.ubuntu.com/noble/libwebkitgtk-6.0-4).
-The packaged installer currently checks the complete application, including the
-Full helper, even if you intend to use Native preview. A non-GNOME desktop does
-not become supported merely by installing `gnome-shell`.
+Guided additionally needs Python 3. GitHub CLI (`gh`) and the Extensions GUI
+are optional. Installing `gnome-shell` on another desktop does not by itself
+make that desktop supported. Older distributions may require building from source
+and a newer desktop stack, not just these package names.
 
-GitHub CLI (`gh`) is **optional**, for signed provenance verification. The GNOME
-Extensions application is also optional; the activation command below works
-without it. Rust, Cargo and gettext tools are needed only for a source build,
-not for installing a release archive.
+## Standard installation and updates
 
-## Manual installation from an archive
+**Before running:** install dependencies, save and close every note editor, disable
+the extension, and quit the app. Closing Library does not stop the background service:
 
-1. Install the runtime packages above. Download the matching `.tar.gz` archive
-   and `SHA256SUMS` from the **same** [GitHub release](https://github.com/OleksiyM/GnomeClipNotes/releases).
-   Put them in an otherwise empty working directory. If using `gh` verification,
-   also download the archive's `.sigstore.json` bundle.
-2. Check the download before extracting. For version 1.0.0, for example:
+```sh
+gnome-extensions disable gnome-clip-notes@oleksiym.github.io
+"$HOME/Applications/GnomeClipNotes/gnome-clip-notes" --quit
+```
 
-   ```sh
-   archive=gnome-clip-notes-1.0.0-x86_64.tar.gz
-   sha256sum --check --ignore-missing SHA256SUMS
-   ```
+On a first installation there is nothing to stop. `--quit` does not save open
+editors: save and close them first. Then run as your normal user, never with sudo:
 
-   The selected archive must be reported as **OK**. Stop on any failure, missing
-   match or different filename. A checksum detects corruption; it does not prove
-   authenticity if both files were replaced. Optional stronger verification is
-   described in [Artifact verification](artifact-verification.md).
-3. Extract the verified archive, enter its directory and run its local helper:
-
-   ```sh
-   tar -xzf "$archive" --no-same-owner &&
-   cd "${archive%.tar.gz}" &&
-   python3 scripts/install-release.py --package-dir .
-   ```
-
-   Run this as your normal user, **not with sudo**. This route uses no network
-   bootstrap and builds nothing. With dependencies installed, the helper installs
-   only the application and desktop integration in your user directories. Read
-   the proposed locations and confirm once; close note editors before an update.
-4. Log out and back in, then enable the extension:
-
-   ```sh
-   gnome-extensions enable gnome-clip-notes@oleksiym.github.io
-   ```
-
-   Open GnomeClipNotes from the application launcher. If GNOME's global user
-   extension switch is off, turn it on in Extensions. The installer does not log
-   you out or activate cached extension code in the old session.
-
-To update, repeat these steps with a newer matching archive. Notes and settings
-are retained; installing the same version again is a no-op. Missing libraries or
-an unsupported platform should be resolved before retrying, not bypassed with a
-different distribution's binary. Private **legacy-ID** 0.2.0 installations are
-not automatically migrated; this is distinct from a managed dev build that also
-reports version 0.2.0.
-
-## One-command installation and updates
-
-The install/update entry point for published releases is:
+In builds with the indicator's **Service** submenu, you can instead save/close
+editors, choose **Service → Stop**, then disable the extension. The indicator
+remaining visible does not mean the service is running; check its submenu status.
 
 ```sh
 curl -fsSL https://raw.githubusercontent.com/OleksiyM/GnomeClipNotes/main/install.sh | bash
 ```
 
-The bootstrap downloads the Fedora 44 x86_64 stable release, checks SHA256
-integrity **before extraction**, additionally verifies signed build provenance
-when GitHub CLI is present, and runs that release's installation
-helper. See [Artifact verification](artifact-verification.md) for the verification
-policy and download/inspect-first alternative. Running a script from `main`
-still trusts the repository and HTTPS delivery.
+The same command updates an existing Standard installation. It downloads a stable
+release, verifies SHA256, optionally verifies provenance, stages the archive, and
+copies binaries, translations and desktop integration. It does not install
+dependencies, stop processes, make database backups or provide rollback.
+A failure after replacement starts may leave a partial installation: resolve the
+reported cause and rerun. Notes and settings are not installation targets.
 
-The bootstrap needs `curl` and Python 3 already installed from trusted package
-sources. Missing application/desktop runtime packages are offered separately
-after the release is verified. GitHub CLI
-is optional: without it the installer explicitly reports skipped provenance
-verification. SHA256 alone does not authenticate a jointly replaced archive and
-manifest. No GitHub login is needed for the local attestation bundle.
-On Fedora 44, the installer lists missing runtime packages and prints equivalent
-manual commands. With separate consent, it uses the system's configured DNF
-repositories. It never adds a repository or installs development toolchains or
-GitHub CLI. Dependencies may be added or updated by DNF; these system changes
-are not part of ClipNotes rollback or uninstall.
-
-Both package consent and final application confirmation, followed by sudo
-authorization, precede package installation. Application files remain untouched
-until packages and runtime checks succeed. Refusal prints the manual route and
-stops; package failure leaves ClipNotes files unchanged but may leave system
-package changes. Commands after authorization use noninteractive sudo; expired
-credentials cause failure rather than a late password prompt. System package
-hooks remain the distribution's responsibility, not a transactional part of our
-installer.
-
-For unattended use, `--yes` alone does not authorize system changes:
-`--yes --install-deps` explicitly permits missing runtime packages and requires
-pre-authorized noninteractive sudo. Normal interactive use needs no extra flags.
-An installed but broken/incompatible runtime is reported for manual repair;
-the installer does not perform a general system upgrade to try to fix it.
-The check lists missing commands and missing/incompatible libraries for both
-binaries, using a stable child-process locale without changing the session
-language. `systemd-run` must be present for Full editors; command availability
-alone does not prove the user systemd manager is operational.
-
-Fedora 44 x86_64 is the only binary release target. It does not imply support
-for every Fedora 44 configuration, and ARM64 is not supported yet. The published
-1.0.0 download-to-install path was verified with a temporary profile and isolated
-D-Bus/Xvfb session; this does not replace the logout/login and Shell activation
-step on a normal Wayland desktop. An older
-distribution-provided `gh` may lack the required verification flags.
-
-The per-user installer uses these locations by default:
-
-| Component | Location |
-| --- | --- |
-| Executable | `~/Applications/GnomeClipNotes/gnome-clip-notes` |
-| Full preview editor | `~/Applications/GnomeClipNotes/gnome-clip-notes-editor` |
-| Launcher and icon | `$XDG_DATA_HOME` (normally `~/.local/share`) |
-| D-Bus activation | `$XDG_DATA_HOME/dbus-1/services` |
-| Login startup | `$XDG_CONFIG_HOME/autostart` |
-| Shell extension | `$XDG_DATA_HOME/gnome-shell/extensions/gnome-clip-notes@oleksiym.github.io` |
-
-Use `--app-dir PATH`, `XDG_DATA_HOME`, or `XDG_CONFIG_HOME` to override these
-roots. Repeat the same overrides when updating. Paths containing spaces are
-supported; shell/desktop-sensitive characters are rejected. The bootstrap accepts
-`--version v1.0.0` to select a stable tag, `--install-deps` for explicit runtime
-package consent, `--require-provenance` to require
-GitHub CLI verification, and `--yes` for explicit noninteractive acceptance.
-Otherwise, the final confirmation reads `/dev/tty`, not the piped
-script's standard input. All questions precede replacement.
-
-Full preview requires the WebKitGTK 6.0 runtime (`webkitgtk6.0` on Fedora,
-`libwebkitgtk-6.0-4` on Ubuntu) and a working systemd user manager. Keep the editor
-helper alongside the main executable. The clipboard service and Native preview
-do not load WebKit. See [Note preview](preview.md) for process lifetime and limits.
-The main application also links libsoup 3 (`libsoup3` on Fedora,
-`libsoup-3.0-0` on Ubuntu) for the optional manual update check. It is included
-in the installer's explicit runtime-package list; GitHub CLI is not needed for
-this check.
-
-Save and close all Native and Full editors before updating. New builds expose
-exact editor counts over D-Bus; the installer refuses open editors and unknown
-protocols, requests safe service shutdown, then takes the application's exclusive
-update lock before replacing owned files. It never uses unconditional `--quit`.
-An installation receipt identifies owned program/integration paths; unrelated
-files, notes and preferences are preserved. Same-version installation is a no-op;
-implicit downgrades and unowned existing installations are refused.
-
-The current implementation leaves the extension disabled after replacement to
-avoid running cached Shell code against a different application version. Log out
-and back in, then enable GnomeClipNotes in Extensions. This remaining manual
-activation step is explicit; the installer never logs you out or claims capture
-is active immediately after replacement.
-
-After logging back in, enable the extension in Extensions or run:
+If `gh` is missing **or lacks the required flags**, Standard explicitly skips
+provenance. To require it:
 
 ```sh
-gnome-extensions enable gnome-clip-notes@oleksiym.github.io
+curl -fsSL https://raw.githubusercontent.com/OleksiyM/GnomeClipNotes/main/install.sh | bash -s -- --require-provenance
 ```
 
-If GNOME has globally disabled user extensions, first turn on the main Extensions
-switch. The installer does not change this global preference. Enabling cached
-code in the old session is not a substitute for loading changed code after login;
-see [GNOME's extension development guide](https://gjs.guide/extensions/development/creating.html).
+Once verification is attempted, a missing bundle or failed verification stops
+installation. Select a specific stable release with `--version v1.1.0`.
+An unavailable architecture asset fails before application files are replaced.
 
-One previous owned-file snapshot is retained, not a version history or database
-backup. Ordinary replacement errors attempt restoration. An incomplete
-transaction blocks another update and reports how to run the saved recovery
-helper; recovery is also guarded by the runtime lock. Forced termination or power
-loss cannot be made equivalent to a normal completed operation.
+For inspect-first use, download the script, read it, then run `bash install.sh`.
+HTTPS/repository delivery of the bootstrap is trusted; checking archive integrity
+does not authenticate the script itself. See [artifact verification](artifact-verification.md).
 
-## Super+V on a new device
+### Standard uninstall
 
-Launch the installed app once. If both ClipNotes and GNOME's calendar use
-Super+V, the app offers to free that shortcut with explicit confirmation.
-Accepting removes only Super+V from the calendar; Super+M and any other assigned
-calendar shortcuts remain unchanged. Background daemon startup never prompts
-or changes system shortcuts. Declining is remembered.
-
-Settings → Shortcuts also shows a Resolve action while this conflict exists,
-including after a previous refusal. Alternatively, choose another Activate
-shortcut there. The installer itself does not change GNOME shortcuts.
-The approved calendar change persists after uninstall; the clock remains
-clickable, and calendar shortcuts can be changed in GNOME Keyboard Settings.
-
-Create a Fedora 44 x86_64 release archive from a trusted checkout with:
+Save/close editors and quit the service as above, then:
 
 ```sh
-./scripts/build-package.sh
+curl -fsSL https://raw.githubusercontent.com/OleksiyM/GnomeClipNotes/main/uninstall.sh | bash
 ```
 
-The archive is written below `dist/` as
-`gnome-clip-notes-VERSION-x86_64.tar.gz`. It includes both binaries,
-the matching extension, desktop integration, selected public documentation,
-`release.json`, and the versioned installer. A local build has no GitHub
-attestation; do not mistake local packaging for authenticated release provenance.
-It is not a universal Linux binary.
+This is standalone: no clone, Python helper or installation receipt is needed.
+It disables the extension and removes known application files; notes, folders,
+History, settings and backups remain. Unrelated files in the app directory remain.
 
-For installation from your trusted source checkout, `bash scripts/install.sh`
-builds this package and uses the same local helper as the manual archive path.
+`--purge` is deliberately **not** part of the normal command. Explicitly supplying
+it also deletes all contents of the app's data/config directories, including
+notes, History, folders and backups stored there. There is no extra confirmation
+or undo. Keep any backup you need outside those directories.
 
-## Uninstall without deleting notes
+## Guided installation and updates
 
-The installer saves its helper alongside the binaries, so removal works offline
-without the original archive or source checkout:
+```sh
+curl -fsSL https://raw.githubusercontent.com/OleksiyM/GnomeClipNotes/main/guided-install.sh | bash
+```
+
+Save and close all editors first. Guided verifies the archive, checks runtime
+dependencies, proposes missing packages and asks before replacing application
+files. All consent precedes mutation. Package installation requires separate
+consent and sudo authorization; the application itself is installed per user.
+No repositories, compiler toolchains or GitHub CLI are added.
+
+Guided uses exact editor counts and the application's shared/exclusive update lock,
+not process-name guessing. It keeps one recoverable previous set of owned program
+files, not a database backup or system-package rollback. An incomplete transaction
+reports the saved recovery command. Same-version installation is a no-op; implicit
+downgrades and private legacy-ID installations are refused.
+
+Guided verifies provenance automatically when gh is present; an installed but
+incompatible gh stops installation. Without gh it reports skipped provenance.
+`--require-provenance` makes verification mandatory. For unattended use, `--yes`
+accepts app changes only; `--install-deps` additionally authorizes missing system
+packages and needs pre-authorized noninteractive sudo. See [distribution](distribution.md).
+
+Guided uninstall works offline from the installed helper:
 
 ```sh
 python3 "$HOME/Applications/GnomeClipNotes/install-release.py" --uninstall
 ```
 
-For a custom location, pass the same `--app-dir PATH` and XDG overrides as at
-installation. A trusted checkout also provides `bash scripts/uninstall.sh`.
-Confirmation uses `/dev/tty`; `--yes` is explicit noninteractive acceptance.
+The source-checkout wrapper `scripts/uninstall.sh` is **not** a curl-pipe installer.
+It requires the repository; normal users should use the installed helper above.
+Notes and settings are preserved.
 
-Uninstall checks the receipt and exact recorded file inventory, refuses open
-editors, suspends only this extension, requests safe shutdown and takes the
-exclusive runtime lock. It removes recorded program/integration files only;
-notes, preferences, shortcut consent and unrecorded files are retained. Empty
-extension/locale directories may be removed; directories containing unrecorded
-files remain. Missing or incomplete ownership records cause refusal rather
-than guessed deletion. Private legacy installations are not managed by this tool.
+## After installation — enable clipboard capture
 
-One recovery snapshot remains in the application's XDG data directory. A failed
-uninstall attempts automatic rollback. After a hard interruption, the reported
-saved helper supports `--restore`; uninstall recovery restores recorded files
-individually, preserving unrecorded files added after the interruption. If the
-interruption happened while stopping capture but before file replacement, recovery
-leaves program files intact. Restore reports the logout/login and extension-enable
-step explicitly; it does not promise automatic capture resumption. No user data
-is purged and no automatic logout is performed.
+1. **Log out and back in** to load new Shell extension code.
+2. Open the **Extensions** application and enable **GnomeClipNotes**. If the global
+   user-extension switch is off, enable it too.
+3. Without the Extensions GUI, run this after signing back in:
+
+   ```sh
+   gnome-extensions enable gnome-clip-notes@oleksiym.github.io
+   ```
+
+You can return to this guide after login. Opening Library alone does not activate
+the Shell extension. Neither installer claims capture is active immediately after
+replacement or enables cached extension code in the old session.
+
+## Manual installation from an archive
+
+Download the matching archive, `SHA256SUMS` and optional attestation bundle from
+the same release into an otherwise empty directory. For example:
+
+```sh
+archive=gnome-clip-notes-1.1.0-x86_64.tar.gz
+sha256sum --check --ignore-missing SHA256SUMS
+```
+
+The selected archive must report **OK**. Stop if its entry is missing or any check
+fails. Verify provenance as described in [artifact verification](artifact-verification.md)
+if desired. Then:
+
+```sh
+tar -xzf "$archive" --no-same-owner
+cd "${archive%.tar.gz}"
+python3 scripts/install-release.py --package-dir .
+```
+
+This runs the packaged **Guided** helper without a network bootstrap. Its platform
+rules belong to that release, not to a newer script from main. Then follow the
+logout/login and extension-enable steps above.
+
+## Locations, source builds and shortcuts
+
+Default binaries live in `~/Applications/GnomeClipNotes`; both methods keep
+`gnome-clip-notes` XDG data/config paths and the same desktop ID/extension UUID.
+Standard accepts `GNOME_CLIP_NOTES_APP_DIR`; Guided accepts `--app-dir PATH`.
+Both honor `XDG_DATA_HOME` and `XDG_CONFIG_HOME`; repeat the same overrides for
+updates and removal.
+
+A source checkout can run `bash scripts/install.sh` to build an archive and use
+the Guided helper. `scripts/build-package.sh` creates local archives; they have
+no GitHub provenance attestation.
+
+If Super+V conflicts with GNOME's calendar, the app offers to free just that
+binding with consent. Settings → Shortcuts also offers Resolve. Super+M and other
+calendar bindings remain. The installer never changes GNOME shortcuts; an accepted
+calendar change persists after uninstall.

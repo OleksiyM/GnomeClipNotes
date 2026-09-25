@@ -146,6 +146,48 @@ class InstallerTest(unittest.TestCase):
         receipt = json.loads((app / install_release.RECEIPT).read_text())
         self.assertEqual(receipt["version"], "1.0.0")
 
+    def test_ubuntu_2604_accepts_fedora_release_and_uses_apt_platform(self):
+        package = make_package(self.root)
+        release = json.loads((package / 'release.json').read_text())
+        release['platform'] = {'id': 'fedora', 'version_id': '44', 'arch': 'x86_64'}
+        (package / 'release.json').write_text(json.dumps(release))
+        host = {'id': 'ubuntu', 'version_id': '26.04', 'arch': 'x86_64'}
+        with mock.patch.object(install_release, 'host_platform', return_value=host), \
+             mock.patch.object(self.commands, 'dependency_plan', wraps=self.commands.dependency_plan) as plan:
+            self.assertIn('installed 1.0.0', self.installer(package).install())
+        self.assertEqual(plan.call_args.args[1], host)
+
+    def test_other_ubuntu_releases_reject_fedora_binary(self):
+        package = make_package(self.root)
+        release = json.loads((package / 'release.json').read_text())
+        release['platform'] = {'id': 'fedora', 'version_id': '44', 'arch': 'x86_64'}
+        (package / 'release.json').write_text(json.dumps(release))
+        for version in ('22.04', '24.04', '26.04.1'):
+            with self.subTest(version=version), \
+                 mock.patch.object(install_release, 'host_platform', return_value={
+                     'id': 'ubuntu', 'version_id': version, 'arch': 'x86_64'}):
+                with self.assertRaisesRegex(install_release.InstallError, 'verified OS version'):
+                    self.installer(package).validate_package()
+
+    def test_ubuntu_manifest_must_still_identify_fedora_build(self):
+        package = make_package(self.root)
+        release = json.loads((package / 'release.json').read_text())
+        release['platform'] = {'id': 'ubuntu', 'version_id': '26.04', 'arch': 'x86_64'}
+        (package / 'release.json').write_text(json.dumps(release))
+        with mock.patch.object(install_release, 'host_platform', return_value={
+                'id': 'ubuntu', 'version_id': '26.04', 'arch': 'x86_64'}):
+            with self.assertRaisesRegex(install_release.InstallError, 'verified OS version'):
+                self.installer(package).validate_package()
+
+    def test_fedora_aarch64_accepts_matching_release(self):
+        package = make_package(self.root)
+        release = json.loads((package / 'release.json').read_text())
+        release['platform'] = {'id': 'fedora', 'version_id': '44', 'arch': 'aarch64'}
+        (package / 'release.json').write_text(json.dumps(release))
+        with mock.patch.object(install_release, 'host_platform', return_value={
+                'id': 'fedora', 'version_id': '44', 'arch': 'aarch64'}):
+            self.installer(package).validate_package()
+
     def test_preserves_unrelated_app_and_user_data(self):
         self.app.mkdir(parents=True)
         (self.app / "mine.txt").write_text("keep")
@@ -555,7 +597,7 @@ class RuntimeDiagnosticsTest(unittest.TestCase):
             return subprocess.CompletedProcess(argv, 0, status, '')
         with mock.patch.object(commands, 'check_dependencies', side_effect=install_release.InstallError('missing')), \
              mock.patch.object(commands, 'run', side_effect=query):
-            self.assertEqual(commands.dependency_plan(Path('/unused'), {'id': 'ubuntu', 'version_id': '24.04'}),
+            self.assertEqual(commands.dependency_plan(Path('/unused'), {'id': 'ubuntu', 'version_id': '26.04'}),
                              ('ubuntu', ['libwebkitgtk-6.0-4']))
 
     def test_unsupported_system_and_unknown_packages_are_not_installed(self):

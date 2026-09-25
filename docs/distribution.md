@@ -1,7 +1,26 @@
 # Installation and update design
 
-The bootstrap, package helper and release workflow implement the contract below.
-Fedora 44 x86_64 is the binary release target. See [Installation](installation.md)
+## Two deliberately different paths
+
+`install.sh` / `uninstall.sh` are standalone **Standard** shell scripts, based on
+the maintainer's tested Ubuntu scripts. Users provide dependencies, save/close
+editors, disable capture and stop the service beforehand. No Python, process
+killing, package installation, update-lock protocol or automatic rollback is
+promised for Standard. SHA256 precedes extraction; supported gh verifies provenance,
+missing/old gh is explicitly skipped unless required. A failed verification stops.
+Installation/removal leave user data alone unless uninstall explicitly receives
+`--purge`. A Guided receipt blocks Standard to avoid corrupting ownership records.
+
+The remaining transaction/consent/recovery contract below belongs to **Guided**:
+`guided-install.sh` and the packaged `scripts/install-release.py`. Do not impose
+all of it on Standard or let the two methods silently overwrite one another.
+Switch by uninstalling the previous method without purging data.
+
+Builds target Fedora 44 x86_64 and aarch64 (new ARM CI still needs validation).
+Guided additionally allows the Fedora x86_64 archive on Ubuntu 26.04, where the
+maintainer tested the application. Runtime package planning uses host OS, not
+archive build OS; release metadata stays truthful. The older 1.0.0 helper does
+not include this compatibility mapping. See [Installation](installation.md)
 for user-facing instructions and verification limits, and
 [GitHub Releases](https://github.com/OleksiyM/GnomeClipNotes/releases) for published
 versions. A source version or local archive is not proof of a published release.
@@ -14,10 +33,10 @@ installer does not ask for additional prompts; it either completes, reports a
 failure, or presents the defined recovery path. This cannot promise resistance
 to a forced process kill, power loss, or user tampering.
 
-The public command for published releases is:
+The Guided command for published releases is:
 
 ```sh
-curl -fsSL https://raw.githubusercontent.com/OleksiyM/GnomeClipNotes/main/install.sh | bash
+curl -fsSL https://raw.githubusercontent.com/OleksiyM/GnomeClipNotes/main/guided-install.sh | bash
 ```
 
 One entry point handles first installation and later updates. The user does not
@@ -58,7 +77,7 @@ as root. System dependency changes, if offered, require a clear separate consent
 step. A piped script must not read its own source stream as answers: any interactive
 prompt needs a terminal, and unattended behavior must be explicit and safe.
 
-The public root `install.sh` may act as a small bootstrap around versioned package
+The public `guided-install.sh` acts as a bootstrap around versioned package
 installation logic; the user still has one command, and local/offline installation
 can share that logic. Never execute downloaded release metadata as shell code.
 
@@ -109,11 +128,12 @@ release gate. Genuine future managed two-version upgrades remain required tests.
   explicit consent; the installer itself runs as the ordinary user. Unsupported
   systems receive a clear explanation rather than an untested substitute binary.
 
-The CLI `--quit` branch directly calls `state.app.quit()` (`src/lib.rs`), whereas
-dirty-buffer confirmation belongs to editor-window close handlers. It is not an
-updater shutdown API. Saved-item registries also omit new unsaved notes. The
-installer instead uses the dedicated editor-lifetime protocol below; legacy
-builds without that protocol cannot be stopped automatically by this route.
+The CLI `--quit` and Shell's Service Stop/Restart use the editor-lifetime guard:
+open editors block shutdown, regardless of whether their buffers are dirty.
+The CLI reports acceptance/refusal to its invoking terminal. It is still not an
+updater shutdown API: acceptance does not establish process exit or acquire the
+exclusive installer lock. The installer uses the dedicated protocol below;
+legacy builds without that protocol cannot be stopped automatically by this route.
 
 GNOME caches loaded extension modules; on Wayland a Shell restart requires a new
 login. See the GNOME JavaScript guides on

@@ -45,9 +45,33 @@ class InstallError(RuntimeError):
 # Runtime packages only. No repositories, compiler toolchains or gh are added.
 RUNTIME_PACKAGES = {
     ('fedora', '44'): ('gtk4', 'libadwaita', 'libsoup3', 'webkitgtk6.0', 'glib2', 'glibc-common', 'systemd', 'gnome-shell'),
-    ('ubuntu', '24.04'): ('libgtk-4-1', 'libadwaita-1-0', 'libsoup-3.0-0', 'libwebkitgtk-6.0-4',
+    ('ubuntu', '26.04'): ('libgtk-4-1', 'libadwaita-1-0', 'libsoup-3.0-0', 'libwebkitgtk-6.0-4',
                          'libglib2.0-bin', 'libglib2.0-0t64', 'libc-bin', 'systemd', 'gnome-shell'),
 }
+
+
+def host_platform() -> dict[str, str]:
+    try:
+        os_release = {}
+        for line in Path('/etc/os-release').read_text().splitlines():
+            if '=' in line:
+                key, value = line.split('=', 1)
+                os_release[key] = value.strip().strip('"')
+    except OSError as error:
+        raise InstallError('cannot identify this operating system') from error
+    return {'id': os_release.get('ID', ''),
+            'version_id': os_release.get('VERSION_ID', ''),
+            'arch': platform.machine()}
+
+
+def release_platform_for(host: dict[str, str]) -> dict[str, str] | None:
+    supported = {
+        ('fedora', '44', 'x86_64'): ('fedora', '44', 'x86_64'),
+        ('fedora', '44', 'aarch64'): ('fedora', '44', 'aarch64'),
+        ('ubuntu', '26.04', 'x86_64'): ('fedora', '44', 'x86_64'),
+    }
+    release = supported.get((host['id'], host['version_id'], host['arch']))
+    return dict(zip(('id', 'version_id', 'arch'), release)) if release else None
 
 
 def dependency_commands(os_id: str, packages: list[str]) -> list[list[str]]:
@@ -256,6 +280,7 @@ class Installer:
         self.runtime_lock_path = self.data_home / "gnome-clip-notes/update.lock"
         self.mutation_hook = mutation_hook
         self.manifest: dict[str, object] = {}
+        self.host_platform: dict[str, str] = {}
         self.targets: dict[Path, tuple[str, Path | bytes]] = {}
 
     def _package_file(self, relative: str) -> Path:
@@ -286,19 +311,9 @@ class Installer:
         release_platform = self.manifest.get("platform")
         if not isinstance(release_platform, dict):
             raise InstallError("release platform metadata is missing")
-        os_release = {}
-        try:
-            for line in Path("/etc/os-release").read_text().splitlines():
-                if "=" in line:
-                    key, value = line.split("=", 1)
-                    os_release[key] = value.strip().strip('"')
-        except OSError as error:
-            raise InstallError("cannot identify this operating system") from error
-        actual_arch = platform.machine()
-        if (release_platform.get("id") != os_release.get("ID") or
-                str(release_platform.get("version_id")) != os_release.get("VERSION_ID") or
-                release_platform.get("arch") != actual_arch):
-            raise InstallError("release package does not match this OS version and architecture")
+        self.host_platform = host_platform()
+        if release_platform != release_platform_for(self.host_platform):
+            raise InstallError("release package does not match a verified OS version and architecture")
         for path in ("target/release/gnome-clip-notes",
                      "target/release/gnome-clip-notes-editor",
                      f"data/{APP_ID}.svg", f"data/{APP_ID}.desktop.in",
@@ -702,7 +717,7 @@ class Installer:
         self.validate_package()
         # Reject ownership/legacy problems before offering system changes.
         receipt, owner = self.preflight_installation(skip_session=shutil.which('gdbus') is None)
-        plan = self.commands.dependency_plan(self.package, self.manifest['platform'])
+        plan = self.commands.dependency_plan(self.package, self.host_platform)
         if receipt and receipt["version"] == self.manifest["version"] and plan is None:
             return "already installed"
         if plan:

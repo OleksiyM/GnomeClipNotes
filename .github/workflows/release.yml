@@ -54,9 +54,17 @@ jobs:
           printf 'version=%s\n' "$version" >> "$GITHUB_OUTPUT"
 
   build:
-    name: Build x86_64 on Fedora 44
+    name: Build ${{ matrix.arch }} on Fedora 44
     needs: guard
-    runs-on: ubuntu-24.04
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - arch: x86_64
+            runner: ubuntu-24.04
+          - arch: aarch64
+            runner: ubuntu-24.04-arm
+    runs-on: ${{ matrix.runner }}
     permissions:
       contents: read
       id-token: write
@@ -65,7 +73,7 @@ jobs:
     env:
       GCN_PACKAGE_OS_ID: fedora
       GCN_PACKAGE_OS_VERSION: "44"
-      GCN_PACKAGE_ARCH: x86_64
+      GCN_PACKAGE_ARCH: ${{ matrix.arch }}
       VERSION: ${{ needs.guard.outputs.version }}
     steps:
       - name: Check out the tagged source
@@ -135,6 +143,8 @@ jobs:
     name: Publish release
     needs: [guard, build]
     runs-on: ubuntu-24.04
+    env:
+      VERSION: ${{ needs.guard.outputs.version }}
     permissions:
       contents: write
       id-token: write
@@ -159,9 +169,19 @@ jobs:
         working-directory: dist
         run: |
           set -euo pipefail
-          mapfile -t archives < <(find . -maxdepth 1 -type f -name '*.tar.gz' -printf '%f\n' | LC_ALL=C sort)
-          [[ ${#archives[@]} -eq 1 ]] || {
-            printf 'Expected one release archive, found %s\n' "${#archives[@]}" >&2
+          archives=(
+            "gnome-clip-notes-${VERSION}-aarch64.tar.gz"
+            "gnome-clip-notes-${VERSION}-x86_64.tar.gz"
+          )
+          for archive in "${archives[@]}"; do
+            [[ -f "$archive" && -f "${archive}.sigstore.json" ]] || {
+              printf 'Missing archive or attestation bundle: %s\n' "$archive" >&2
+              exit 1
+            }
+          done
+          mapfile -t staged < <(find . -maxdepth 1 -type f -printf '%f\n' | LC_ALL=C sort)
+          [[ ${#staged[@]} -eq 4 ]] || {
+            printf 'Expected exactly two archives and two attestation bundles, found %s files\n' "${#staged[@]}" >&2
             exit 1
           }
           sha256sum -- "${archives[@]}" > SHA256SUMS

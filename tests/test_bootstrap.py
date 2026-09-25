@@ -11,10 +11,11 @@ import sys
 import tarfile
 import tempfile
 import unittest
+from unittest import mock
 
 
 ROOT = Path(__file__).resolve().parents[1]
-BOOTSTRAP = ROOT / "install.sh"
+BOOTSTRAP = ROOT / "guided-install.sh"
 VERSION = "1.0.0"
 TAG = "v" + VERSION
 OS_RELEASE = platform.freedesktop_os_release()
@@ -203,14 +204,51 @@ if os.environ.get('GH_FAIL') == '1':
         self.assertFalse(self.curl_log.exists())
         self.assertFalse(self.marker.exists())
 
-    def test_unsupported_architecture_stops_before_download(self):
+    def test_fedora_aarch64_uses_matching_release(self):
         (self.root / 'sitecustomize.py').write_text(
             'import platform\nplatform.machine = lambda: "aarch64"\n', encoding='utf-8')
+        arm_package = f'gnome-clip-notes-{VERSION}-aarch64'
+        self.archive = self.root / (arm_package + '.tar.gz')
+        self.bundle = self.root / (self.archive.name + '.sigstore.json')
+        self.bundle.write_text('{}')
+        release = manifest()
+        release['platform']['arch'] = 'aarch64'
+        with mock.patch.dict(globals(), PACKAGE=arm_package):
+            write_archive(self.archive, release=release)
+        result = self.run_bootstrap(env={'PYTHONPATH': str(self.root)})
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertTrue(self.marker.exists())
+
+    def test_ubuntu_2604_uses_fedora_release_metadata(self):
+        (self.root / 'sitecustomize.py').write_text(
+            'from pathlib import Path\n'
+            '_read_text = Path.read_text\n'
+            'def read_text(self, *args, **kwargs):\n'
+            '    if str(self) == "/etc/os-release":\n'
+            '        return "ID=ubuntu\\nVERSION_ID=26.04\\n"\n'
+            '    return _read_text(self, *args, **kwargs)\n'
+            'Path.read_text = read_text\n', encoding='utf-8')
+        release = manifest()
+        release['platform'] = {'id': 'fedora', 'version_id': '44', 'arch': 'x86_64'}
+        write_archive(self.archive, release=release)
+        result = self.run_bootstrap(env={'PYTHONPATH': str(self.root)})
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertIn('fedora-44-x86_64', result.stdout)
+        self.assertTrue(self.marker.exists())
+
+    def test_ubuntu_2404_stops_before_download(self):
+        (self.root / 'sitecustomize.py').write_text(
+            'from pathlib import Path\n'
+            '_read_text = Path.read_text\n'
+            'def read_text(self, *args, **kwargs):\n'
+            '    if str(self) == "/etc/os-release":\n'
+            '        return "ID=ubuntu\\nVERSION_ID=24.04\\n"\n'
+            '    return _read_text(self, *args, **kwargs)\n'
+            'Path.read_text = read_text\n', encoding='utf-8')
         result = self.run_bootstrap(env={'PYTHONPATH': str(self.root)})
         self.assertNotEqual(result.returncode, 0)
-        self.assertIn('No release package configured for this platform: fedora-44-aarch64', result.stderr)
+        self.assertIn('No release package configured for this platform: ubuntu-24.04-x86_64', result.stderr)
         self.assertFalse(self.curl_log.exists())
-        self.assertFalse(self.marker.exists())
 
     def test_checksum_errors_never_verify_or_run_helper(self):
         write_archive(self.archive)

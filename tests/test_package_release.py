@@ -28,7 +28,7 @@ class PackageReleaseTests(unittest.TestCase):
         temp = tempfile.TemporaryDirectory()
         root = Path(temp.name)
         (root / "Cargo.toml").write_text('[package]\nname = "gnome-clip-notes"\nversion = "1.0.0"\n', encoding="utf-8")
-        for path in ("LICENSE", "README.md", "docs/installation.md", "docs/privacy.md", "docs/preview.md", "docs/translations.md", "docs/artifact-verification.md", "scripts/install-release.py", "data/io.github.OleksiyM.GnomeClipNotes.desktop.in", "data/io.github.OleksiyM.GnomeClipNotes-autostart.desktop.in", "data/io.github.OleksiyM.GnomeClipNotes.service.in", "data/io.github.OleksiyM.GnomeClipNotes.svg", "extension/metadata.json", "extension/stylesheet.css", "extension/extension.js", "extension/clipboardFormats.js", "extension/schemas/org.gnome.shell.extensions.gnome-clip-notes.gschema.xml"):
+        for path in ("LICENSE", "README.md", "install.sh", "uninstall.sh", "guided-install.sh", "docs/installation.md", "docs/privacy.md", "docs/preview.md", "docs/translations.md", "docs/artifact-verification.md", "scripts/install-release.py", "data/io.github.OleksiyM.GnomeClipNotes.desktop.in", "data/io.github.OleksiyM.GnomeClipNotes-autostart.desktop.in", "data/io.github.OleksiyM.GnomeClipNotes.service.in", "data/io.github.OleksiyM.GnomeClipNotes.svg", "extension/metadata.json", "extension/stylesheet.css", "extension/extension.js", "extension/clipboardFormats.js", "extension/schemas/org.gnome.shell.extensions.gnome-clip-notes.gschema.xml"):
             target = root / path
             target.parent.mkdir(parents=True, exist_ok=True)
             if path.endswith("metadata.json"):
@@ -58,8 +58,12 @@ class PackageReleaseTests(unittest.TestCase):
             with tarfile.open(archive, "r:gz") as tar:
                 names = tar.getnames()
                 release = json.loads(tar.extractfile("gnome-clip-notes-1.0.0-x86_64/release.json").read())
+                for script in ("install.sh", "uninstall.sh", "guided-install.sh"):
+                    self.assertEqual(tar.getmember(f"gnome-clip-notes-1.0.0-x86_64/{script}").mode, 0o755)
             self.assertNotIn("docs/private", " ".join(names))
             self.assertIn("extension/schemas/gschemas.compiled", release["files"])
+            self.assertIn("install.sh", release["files"])
+            self.assertIn("uninstall.sh", release["files"])
             self.assertEqual(release["extension_uuid"], "gnome-clip-notes@oleksiym.github.io")
             self.assertEqual(release["platform"], {"id": "fedora", "version_id": "44", "arch": "x86_64"})
             self.assertIn("gnome-clip-notes-1.0.0-x86_64/extension/schemas/gschemas.compiled", names)
@@ -70,6 +74,17 @@ class PackageReleaseTests(unittest.TestCase):
         with mock.patch.dict(os.environ, {"GCN_PACKAGE_ARCH": "x86_64"}, clear=False):
             with self.assertRaisesRegex(ValueError, "does not match"):
                 PACKAGE.platform_labels()
+
+    @mock.patch.object(PACKAGE, "os_release", return_value={"ID": "fedora", "VERSION_ID": "44"})
+    @mock.patch.object(PACKAGE.platform, "machine", return_value="aarch64")
+    def test_arm_archive_records_native_architecture(self, _machine, _release):
+        temp, root = self.fixture()
+        with temp, mock.patch.dict(os.environ, {"GCN_PACKAGE_ARCH": "aarch64"}, clear=False):
+            archive = PACKAGE.package(root, root / "dist")
+            self.assertEqual(archive.name, "gnome-clip-notes-1.0.0-aarch64.tar.gz")
+            with tarfile.open(archive, "r:gz") as tar:
+                release = json.loads(tar.extractfile("gnome-clip-notes-1.0.0-aarch64/release.json").read())
+            self.assertEqual(release["platform"], {"id": "fedora", "version_id": "44", "arch": "aarch64"})
 
     @mock.patch.object(PACKAGE, "os_release", return_value={"ID": "ubuntu", "VERSION_ID": "24.04"})
     @mock.patch.object(PACKAGE.platform, "machine", return_value="x86_64")

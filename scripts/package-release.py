@@ -19,7 +19,7 @@ import tomllib
 
 APP_ID = "io.github.OleksiyM.GnomeClipNotes"
 EXTENSION_UUID = "gnome-clip-notes@oleksiym.github.io"
-ROOT_FILES = ("LICENSE", "README.md")
+ROOT_FILES = ("LICENSE", "README.md", "install.sh", "uninstall.sh", "guided-install.sh")
 DOC_FILES = ("installation.md", "privacy.md", "preview.md", "translations.md", "artifact-verification.md")
 IDENTITY_DATA = (
     "io.github.OleksiyM.GnomeClipNotes.desktop.in",
@@ -105,7 +105,7 @@ def package(project: Path, output: Path) -> Path:
         for binary in required[:2]:
             safe_copy(binary, stage / binary.relative_to(project), 0o755)
         for root_file in ROOT_FILES:
-            safe_copy(project / root_file, stage / root_file)
+            safe_copy(project / root_file, stage / root_file, 0o755 if root_file.endswith(".sh") else None)
         for doc in DOC_FILES:
             safe_copy(project / "docs" / doc, stage / "docs" / doc)
         for data_file in IDENTITY_DATA:

@@ -5,6 +5,7 @@ project_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd)
 dist_dir="${project_dir}/dist"
 python3 -m unittest discover -s "${project_dir}/tests" -p 'test_*release.py'
 python3 -m unittest discover -s "${project_dir}/tests" -p 'test_bootstrap.py'
+python3 -m unittest discover -s "${project_dir}/tests" -p 'test_standard_install.py'
 cargo test --manifest-path "${project_dir}/Cargo.toml" --locked
 cargo build --manifest-path "${project_dir}/Cargo.toml" --release --locked
 "${project_dir}/scripts/translations.py" check-catalogs
