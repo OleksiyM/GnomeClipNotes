@@ -6,7 +6,7 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: GnomeClipNotes 1.0.0\n"
+"Project-Id-Version: GnomeClipNotes 1.1.0\n"
 "Report-Msgid-Bugs-To: https://github.com/OleksiyM/GnomeClipNotes/issues\n"
 "POT-Creation-Date: 1970-01-01 00:00+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
@@ -194,6 +194,10 @@ msgstr ""
 
 #: src/ui.rs
 msgid "Already open"
+msgstr ""
+
+#: extension/extension.js
+msgid "Another service instance started. Check its status before trying again."
 msgstr ""
 
 #: src/ui.rs
@@ -720,7 +724,11 @@ msgid "GnomeClipNotes"
 msgstr ""
 
 #: src/lib.rs
-msgid "GnomeClipNotes is stopping for an update."
+msgid "GnomeClipNotes is already stopping."
+msgstr ""
+
+#: src/lib.rs
+msgid "GnomeClipNotes is stopping. The Shell indicator remains available."
 msgstr ""
 
 #: src/preferences.rs src/ui.rs
@@ -1120,6 +1128,14 @@ msgstr ""
 msgid "Resolve…"
 msgstr ""
 
+#: extension/extension.js
+msgid "Restart"
+msgstr ""
+
+#: extension/extension.js
+msgid "Restarting service…"
+msgstr ""
+
 #: src/preferences.rs
 msgid "Restore capture, privacy, retention, theme, language, and shortcut defaults"
 msgstr ""
@@ -1152,6 +1168,14 @@ msgstr ""
 msgid "Save Notes and custom folders as readable Markdown documents. History is not exported."
 msgstr ""
 
+#: src/lib.rs
+msgid "Save and close all editors before stopping GnomeClipNotes."
+msgstr ""
+
+#: extension/extension.js
+msgid "Save and close all note editors before stopping or restarting GnomeClipNotes."
+msgstr ""
+
 #: src/preferences.rs
 msgid "Save note"
 msgstr ""
@@ -1182,6 +1206,10 @@ msgstr ""
 
 #: src/preferences.rs
 msgid "Sensitive content"
+msgstr ""
+
+#: extension/extension.js
+msgid "Service"
 msgstr ""
 
 #: extension/extension.js
@@ -1220,12 +1248,28 @@ msgstr ""
 msgid "Standard GTK shortcuts in editable text fields, including library search and the note editor. In the overlay, Ctrl+C copies the selected card instead."
 msgstr ""
 
+#: extension/extension.js
+msgid "Start"
+msgstr ""
+
 #: src/ui.rs
 msgid "Start date must be before end date"
 msgstr ""
 
+#: extension/extension.js
+msgid "Starting service…"
+msgstr ""
+
 #: src/preferences.rs
 msgid "Startup and appearance"
+msgstr ""
+
+#: extension/extension.js
+msgid "Stop"
+msgstr ""
+
+#: extension/extension.js
+msgid "Stopping service…"
 msgstr ""
 
 #: src/preferences.rs
@@ -1282,6 +1326,14 @@ msgstr ""
 
 #: src/export_ui.rs
 msgid "The selected collections are now empty. No files were created and nothing was deleted."
+msgstr ""
+
+#: extension/extension.js
+msgid "The service did not become ready. Try starting it again."
+msgstr ""
+
+#: extension/extension.js
+msgid "The service has not finished stopping. Try again shortly."
 msgstr ""
 
 #: src/ui.rs

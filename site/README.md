@@ -1,6 +1,8 @@
 # Project website
 
-Plain HTML/CSS; no JavaScript, build system, external fonts or analytics.
+Plain HTML/CSS with a small optional JavaScript enhancement for install tabs and
+copy buttons; no build system, external fonts or analytics. Without JavaScript,
+both installation commands remain visible and selectable.
 Open `index.html` locally or serve this directory with a static HTTP server.
 
 Publish **only this directory**, never the workspace root. GitHub Pages uses
@@ -23,8 +25,24 @@ Runtime package commands and installation details stay authoritative in
 second copy. The static page describes the released product; it is deployed only
 after a published release exists. No separate website build system is needed.
 
-Screenshots are unmodified output from isolated development UI tests on GNOME,
-with synthetic data. `overlay.png` shows the Shell test desktop; `library.png`
-shows the GTK smoke fixture. No personal clipboard contents are used. The icon
-is copied from the project's desktop asset. Refresh screenshots when the visible
-interface changes; they are not generated mockups.
+## Screenshots
+
+The gallery uses eight unmodified screenshots supplied by the maintainer from
+their Ubuntu 26.04.1 application test on 2026-09-24. They show example commands
+and Markdown, not generated mockups. This reports application use, not support
+for every installer path on Ubuntu. The icon is the project's desktop asset.
+
+| Asset | View |
+| --- | --- |
+| `overlay-dark.png` | Full desktop and dark Shell overlay |
+| `library-dark.png`, `library-light.png` | Library in both themes |
+| `editor-dark.png`, `full-preview.png` | Markdown source and Full preview |
+| `settings-dark.png`, `about-light.png` | Preferences and project information |
+| `overlay-light.png` | Light overlay with source filter open |
+
+README reuses three of these assets. The site keeps every frame uncropped and
+links directly to the full-resolution image; smaller windows use a single column.
+Original source captures remain private and are not needed to build the site.
+The older `overlay.png` and `library.png` remain isolated-test reference images,
+but are no longer displayed. Review visible content before adding screenshots;
+never copy the whole private directory into public assets.

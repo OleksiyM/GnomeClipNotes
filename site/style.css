@@ -5,6 +5,9 @@ body { margin: 0; background: var(--bg); color: var(--text); font: 17px/1.65 sys
 a { color: var(--accent); text-underline-offset: .2em; }
 a:hover { text-decoration-thickness: .13em; }
 a:focus-visible { outline: 3px solid var(--accent); outline-offset: 5px; border-radius: 3px; }
+button { font: inherit; cursor: pointer; }
+button:focus-visible { outline: 3px solid var(--accent); outline-offset: 4px; }
+[hidden] { display: none !important; }
 header, main, footer { width: min(1080px, calc(100% - 48px)); margin: auto; }
 header { display: flex; align-items: center; justify-content: space-between; gap: 24px; padding: 26px 0; }
 .brand { display: flex; align-items: center; gap: 10px; font-weight: 750; color: var(--text); text-decoration: none; }
@@ -29,8 +32,20 @@ article p { color: var(--muted); margin-bottom: 0; }
 figure { margin: 30px 0; }
 figure img { display: block; width: 100%; height: auto; border: 1px solid var(--line); border-radius: 16px; box-shadow: 0 12px 35px #18251c12; }
 figcaption { margin-top: 12px; }
+.gallery { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 34px 26px; margin-top: 30px; }
+.gallery figure { margin: 0; min-width: 0; }
+.gallery-wide { grid-column: 1 / -1; }
+.gallery a { display: block; border-radius: 16px; }
+.gallery-frame { aspect-ratio: 4 / 3; padding: 12px; background: var(--surface); border: 1px solid var(--line); }
+.gallery-frame.gallery-portrait { aspect-ratio: 1 / 1; }
+.gallery-frame img { width: 100%; height: 100%; object-fit: contain; border: 0; border-radius: 0; box-shadow: none; }
 #install { border-top: 1px solid var(--line); }
 #install h3 { margin-top: 32px; }
+.install-tabs { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 28px; }
+.install-tabs button, .copy-command { border: 1px solid var(--line); border-radius: 10px; padding: 9px 16px; background: var(--surface); color: var(--text); }
+.install-tabs [aria-selected="true"] { background: var(--accent); border-color: var(--accent); color: var(--bg); }
+.copy-command { margin: 0 0 20px; font-size: .9rem; }
+.activation-note { margin: 28px 0; padding: 0 24px 4px; border: 1px solid var(--line); border-left: 4px solid var(--accent); border-radius: 12px; background: var(--surface); }
 ol { padding-left: 24px; }
 li { padding: 4px 0; }
 pre { overflow-x: auto; padding: 20px; border: 1px solid var(--line); border-radius: 12px; background: var(--surface); font-size: .86rem; }
@@ -44,6 +59,7 @@ footer { border-top: 1px solid var(--line); padding: 26px 0 42px; display: flex;
   .hero { padding: 40px 0; }
   section { padding: 38px 0; }
   .features { grid-template-columns: 1fr; }
+  .gallery { grid-template-columns: 1fr; gap: 28px; }
   footer { flex-direction: column; }
 }
 @media (prefers-color-scheme: dark) {

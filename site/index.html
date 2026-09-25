@@ -7,12 +7,13 @@
   <title>GnomeClipNotes — Keep what matters</title>
   <link rel="icon" href="assets/icon.svg" type="image/svg+xml">
   <link rel="stylesheet" href="style.css">
+  <script src="install.js" defer></script>
 </head>
 <body>
   <a class="skip" href="#main">Skip to content</a>
   <header>
     <a class="brand" href="#"><img src="assets/icon.svg" width="32" height="32" alt="">GnomeClipNotes</a>
-    <nav aria-label="Main navigation"><a href="#screenshots">Look inside</a><a href="#install">Install</a><a href="https://github.com/OleksiyM/GnomeClipNotes">GitHub</a></nav>
+    <nav aria-label="Main navigation"><a href="#screenshots">Gallery</a><a href="#install">Install</a><a href="https://github.com/OleksiyM/GnomeClipNotes">GitHub</a></nav>
   </header>
   <main id="main">
     <section class="hero">
@@ -27,34 +28,84 @@
       <h2 id="workflow">From a fragment to something useful.</h2>
       <p class="flow">Capture → Curate → Organize → Export → Develop → Reuse</p>
       <div class="features">
-        <article><h3>Find it again</h3><p>A bottom clipboard panel with search, filters and keyboard navigation. Keep your work in view.</p></article>
+        <article><h3>Find it again</h3><p>Press Super+V for the clipboard overlay. Search, filter, move with arrow keys and paste with Enter. Keep your work in view.</p></article>
         <article><h3>Keep it deliberately</h3><p>Notes and custom folders stay separate from expiring History. Edit Markdown with a lightweight Native or rich Full preview.</p></article>
         <article><h3>Make it your own</h3><p>Export selected collections as readable Markdown. Develop ideas in the tools you already use. No account or cloud service required.</p></article>
       </div>
     </section>
     <section id="screenshots" aria-labelledby="screenshots-title">
+      <p class="eyebrow">Gallery</p>
       <h2 id="screenshots-title">At home on your desktop.</h2>
-      <figure><a href="assets/overlay.png"><img src="assets/overlay.png" width="1440" height="900" alt="The GNOME clipboard panel with search, filters, collections and a row of text cards." loading="lazy"></a><figcaption>The clipboard panel keeps recent text within reach.</figcaption></figure>
-      <figure><a href="assets/library.png"><img src="assets/library.png" width="1030" height="710" alt="The Library with a collection sidebar, search field and text cards." loading="lazy"></a><figcaption>The Library gives saved material a place of its own.</figcaption></figure>
-      <p class="muted">Real development-build screenshots from isolated test sessions, using synthetic notes — not personal clipboard contents.</p>
+      <p>Clipboard overlay in GNOME Shell, native Library, and Markdown editing — one continuous workflow.</p>
+      <p class="muted">Real screenshots from the maintainer's Ubuntu 26.04.1 test session. Select any image to view it at full resolution.</p>
+      <div class="gallery">
+        <figure class="gallery-wide">
+          <a href="assets/overlay-dark.png"><img src="assets/overlay-dark.png" width="3839" height="2159" alt="Dark GNOME desktop with the clipboard overlay along the bottom, search, filters, folders and nine text cards." loading="lazy"></a>
+          <figcaption><strong>Overlay</strong> — search, filter and paste without leaving the current app.</figcaption>
+        </figure>
+        <figure>
+          <a class="gallery-frame" href="assets/library-dark.png"><img src="assets/library-dark.png" width="2180" height="1540" alt="Dark Library with six history cards and a sidebar containing Notes and custom folders." loading="lazy"></a>
+          <figcaption><strong>Library</strong> — turn clipboard history into persistent notes and folders.</figcaption>
+        </figure>
+        <figure>
+          <a class="gallery-frame" href="assets/library-light.png"><img src="assets/library-light.png" width="2180" height="1540" alt="The same Library in the light theme, with distinct white cards and a collection sidebar." loading="lazy"></a>
+          <figcaption><strong>Light theme</strong> — the same workspace, with native colors and clear card boundaries.</figcaption>
+        </figure>
+        <figure>
+          <a class="gallery-frame gallery-portrait" href="assets/editor-dark.png"><img src="assets/editor-dark.png" width="1660" height="1540" alt="Markdown editor with a named note, Editor and Preview tabs, and heading examples in the text area." loading="lazy"></a>
+          <figcaption><strong>Editor</strong> — shape fragments into Markdown, keeping the source yours.</figcaption>
+        </figure>
+        <figure>
+          <a class="gallery-frame gallery-portrait" href="assets/full-preview.png"><img src="assets/full-preview.png" width="1660" height="2604" alt="Full Markdown preview rendering a code block, a table and external links." loading="lazy"></a>
+          <figcaption><strong>Full preview</strong> — richer Markdown when you need it.</figcaption>
+        </figure>
+        <figure>
+          <a class="gallery-frame" href="assets/settings-dark.png"><img src="assets/settings-dark.png" width="1874" height="1309" alt="Settings with a navigation sidebar, appearance controls and the Full or Lightweight note preview choice." loading="lazy"></a>
+          <figcaption><strong>Settings</strong> — choose your appearance, preview and capture behavior.</figcaption>
+        </figure>
+        <figure>
+          <a class="gallery-frame" href="assets/about-light.png"><img src="assets/about-light.png" width="1020" height="1340" alt="Light About window displaying GnomeClipNotes 1.0.0, a manual update check and project links." loading="lazy"></a>
+          <figcaption><strong>About</strong> — version, project links and an update check when you ask for it.</figcaption>
+        </figure>
+        <figure class="gallery-wide">
+          <a href="assets/overlay-light.png"><img src="assets/overlay-light.png" width="3839" height="2159" alt="Light clipboard overlay with nine cards and the source application filter open above the toolbar." loading="lazy"></a>
+          <figcaption><strong>Source filter</strong> — narrow the view by application, in the light theme too.</figcaption>
+        </figure>
+      </div>
     </section>
     <section id="install" aria-labelledby="install-title">
       <h2 id="install-title">A small app. A straightforward install.</h2>
-      <p>Choose the manual archive or the one-command installer. Both install the application and its matching GNOME Shell extension.</p>
-      <h3>Manual archive installation</h3>
-      <ol>
-        <li>Use a GNOME Wayland session and install the runtime packages listed in the guide.</li>
-        <li>Download the x86_64 archive for Fedora 44, plus its checksum manifest.</li>
-        <li>Verify, extract, and run the included local installation helper as your normal user.</li>
-        <li>Log out and back in, then enable the GnomeClipNotes extension.</li>
-      </ol>
-      <p><a class="button" href="https://github.com/OleksiyM/GnomeClipNotes/blob/main/docs/installation.md">Packages and exact commands</a></p>
-      <h3>One command for installation and updates</h3>
-      <p>The same command installs the app or updates an existing managed installation:</p>
-      <pre><code>curl -fsSL https://raw.githubusercontent.com/OleksiyM/GnomeClipNotes/main/install.sh | bash</code></pre>
-      <p>The installer checks download integrity and asks before changing anything installed. Missing system packages require separate consent. GitHub CLI is optional for stronger provenance verification.</p>
+      <p>Both install the same app. <strong>Standard</strong> installs it directly; <strong>Guided</strong> helps with dependencies, shutdown and recovery.</p>
+      <p>Both check SHA-256 and can verify signed provenance. Use the same path for updates; uninstall the previous method first if switching. Notes are kept by default.</p>
+      <div class="install-tabs" role="tablist" aria-label="Installation method" hidden>
+        <button type="button" id="standard-tab" role="tab" aria-selected="true" aria-controls="standard-install">Standard install</button>
+        <button type="button" id="guided-tab" role="tab" aria-selected="false" aria-controls="guided-install" tabindex="-1">Guided install</button>
+      </div>
+      <div id="standard-install">
+        <h3>Standard — you prepare, the script installs</h3>
+        <p>Install the <a href="https://github.com/OleksiyM/GnomeClipNotes/blob/main/docs/installation.md#runtime-packages">runtime dependencies</a>, save and close editors, disable the extension and quit the app first. No Python, package installation, forced process termination or rollback.</p>
+        <pre><code id="standard-command">curl -fsSL https://raw.githubusercontent.com/OleksiyM/GnomeClipNotes/main/install.sh | bash</code></pre>
+        <button class="copy-command" type="button" data-copy="standard-command" hidden>Copy Standard command</button>
+        <p class="status">If gh is missing or too old, Standard reports skipped provenance verification. Use --require-provenance to require it. Failed verification always stops installation.</p>
+      </div>
+      <div id="guided-install">
+        <h3>Guided — help with setup and updates</h3>
+        <p>Use this if you want a dependency offer, editor-aware shutdown and recovery of the previous program files on installation failure. Requires Python 3. Limited to explicitly listed systems; save and close editors first.</p>
+        <pre><code id="guided-command">curl -fsSL https://raw.githubusercontent.com/OleksiyM/GnomeClipNotes/main/guided-install.sh | bash</code></pre>
+        <button class="copy-command" type="button" data-copy="guided-command" hidden>Copy Guided command</button>
+        <p class="status">Guided stops if an installed gh is incompatible. It does not require gh when absent, unless --require-provenance is supplied.</p>
+      </div>
+      <p id="copy-status" class="status" role="status" aria-live="polite"></p>
+      <aside class="activation-note" aria-label="After installation">
+        <h3>After installation: enable clipboard capture</h3>
+        <ol><li>Log out and back in.</li><li>Open <strong>Extensions</strong> and enable <strong>GnomeClipNotes</strong>. If you do not have that app, use the command below after logging back in.</li></ol>
+        <pre><code id="enable-command">gnome-extensions enable gnome-clip-notes@oleksiym.github.io</code></pre>
+        <button class="copy-command" type="button" data-copy="enable-command" hidden>Copy activation command</button>
+        <p>You can return to this page after login. Opening Library alone does not enable the Shell extension.</p>
+      </aside>
+      <p><a class="button" href="https://github.com/OleksiyM/GnomeClipNotes/blob/main/docs/installation.md">Requirements, manual install and uninstall</a></p>
       <p><a href="https://github.com/OleksiyM/GnomeClipNotes/blob/main/docs/artifact-verification.md">Verification and inspect-first alternative</a> · <a href="https://github.com/OleksiyM/GnomeClipNotes/releases">Release downloads</a></p>
-      <p class="status">The binary archive targets Fedora 44 / x86_64. Other distributions and ARM64 are not supported release targets yet.</p>
+      <p class="status">The x86_64 application has been used on Fedora 44 and Ubuntu 26.04.1. Archives are built on Fedora 44; other distributions still need compatible libraries. Ubuntu 22.04/24.04 are not verified binary targets. Starting with 1.1.0, the release workflow targets x86_64 and ARM64; ARM desktop use remains experimental. Download only assets actually listed in Releases.</p>
     </section>
     <section class="closing" aria-labelledby="local-title">
       <h2 id="local-title">Your notes stay yours.</h2>

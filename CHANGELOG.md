@@ -3,6 +3,38 @@
 Release availability and publication dates are recorded in
 [GitHub Releases](https://github.com/OleksiyM/GnomeClipNotes/releases).
 
+## Unreleased
+
+## 1.1.0 — 2026-09-25
+
+### Service controls
+
+- Indicator Service submenu with Start, Stop and Restart, status and state-aware
+  availability. Stopping or restarting refuses open note editors; the Shell
+  indicator remains available. Restart waits for process exit and opens no windows.
+- CLI `--quit` respects the same editor guard and reports its result; About and
+  stop descriptions in `--help` clarify what the commands do.
+- Discard late service replies after owner changes to avoid stale Running status.
+
+### Installation and presentation
+
+- Standalone Standard install/update and uninstall scripts, with readable stage
+  messages, optional provenance verification and preserved notes by default.
+  Existing transactional setup remains available as Guided.
+- Guided compatibility mapping for Ubuntu 26.04 x86_64 using the Fedora 44 build;
+  dependency offers use Ubuntu packages. Live verification of the revised path
+  remains pending.
+- Native ARM64 CI/release build configuration alongside x86_64; ARM desktop
+  support remains experimental until tested.
+- README screenshots and an eight-image website gallery, plus Standard/Guided
+  installation choices and copy buttons.
+
+### Fixed
+
+- Launching from the applications menu opens or presents Library instead of
+  toggling the Shell overlay. The desktop file's Exec fallback also opens Library;
+  Super+V, the indicator and the no-argument CLI keep their overlay behavior.
+
 ## 1.0.0 — 2026-09-24
 
 First public version. Earlier 0.x builds were private development builds,

@@ -13,11 +13,21 @@ when the store opens. The application uses XDG user directories for data and
 configuration. `--backup PATH` asks SQLite to create a consistent snapshot, so
 the caller does not need to copy a live database and its WAL files.
 
-The `extension/` directory is deliberately small. GNOME Shell owns global
+The `extension/` directory contains the GNOME Shell side. GNOME Shell owns global
 shortcuts, clipboard observation under Wayland, active-window interaction, and
 the panel indicator. The extension sends plain-text events and commands over
 the session D-Bus interface. It does not open SQLite directly. This boundary
 keeps GNOME-version-specific JavaScript out of the storage and UI core.
+The overlay uses St/Clutter widgets and Shell CSS, not HTML or WebKit. Library
+and the overlay share service/store behavior, not one widget implementation.
+
+Storage rules live in `Store`, including for Full editor connections. Group 0 is
+History, group 1 is Notes, and custom folders start at 2. Retention and clipboard
+deduplication affect only History. Normal folder deletion moves its contents to
+Notes; create-folder-and-move is one transaction. Source filters query distinct
+sources of existing items, so there is no independent source registry to prune.
+Schema migrations and export revision triggers are part of the data contract;
+see [export cleanup](export.md) before changing mutation or deletion paths.
 
 Clipboard transfers are bounded to 1 MiB of UTF-8 text. The extension prefers
 the exact advertised `text/plain;charset=utf-8` format, then other advertised
