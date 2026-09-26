@@ -5,6 +5,22 @@ Release availability and publication dates are recorded in
 
 ## Unreleased
 
+## 1.1.1 — 2026-09-26
+
+### Fixed
+
+- Guided interactive install/uninstall and dependency consent now use
+  non-seeking terminal streams, fixing the misleading `/dev/tty` failure.
+  Interactive sudo authorization uses an unbuffered terminal descriptor.
+
+### Documentation
+
+- Website command blocks have visible copy controls with hover/press feedback,
+  inline success states and local manual-copy instructions when access is denied.
+- Version-independent website and README requirements; exact runtime, Shell
+  and verified distribution combinations remain in the installation guide.
+- Record the maintainer's Ubuntu Standard and noninteractive Guided checks.
+
 ## 1.1.0 — 2026-09-25
 
 ### Service controls

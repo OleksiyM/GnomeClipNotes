@@ -16,7 +16,8 @@ The remaining transaction/consent/recovery contract below belongs to **Guided**:
 all of it on Standard or let the two methods silently overwrite one another.
 Switch by uninstalling the previous method without purging data.
 
-Builds target Fedora 44 x86_64 and aarch64 (new ARM CI still needs validation).
+Builds target Fedora 44 x86_64 and aarch64 (both passed native CI for 1.1.0;
+ARM desktop validation remains pending).
 Guided additionally allows the Fedora x86_64 archive on Ubuntu 26.04, where the
 maintainer tested the application. Runtime package planning uses host OS, not
 archive build OS; release metadata stays truthful. The older 1.0.0 helper does

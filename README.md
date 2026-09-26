@@ -49,7 +49,16 @@ Super+V and the panel indicator keep opening the overlay.
 ## Install
 
 Two installation paths, **the same complete app**. Both verify SHA256 and can
-check signed provenance. Use GNOME on Wayland with compatible runtime libraries.
+check signed provenance.
+
+### Requirements
+
+Use a recent GNOME distribution such as Fedora or Ubuntu, on Wayland, with a
+working systemd user session and compatible GTK4, libadwaita, libsoup3 and
+WebKitGTK 6 runtime libraries. Arch and derivatives may work, but compatibility
+needs verification. See [runtime packages, compatibility evidence and manual
+installation](docs/installation.md#requirements-and-verification), or use Guided
+for a dependency offer on its listed platforms.
 
 ### Standard install — recommended
 
@@ -94,11 +103,9 @@ Notes and settings are retained during managed updates.
 See [installation, updates and uninstall](docs/installation.md) and
 [artifact verification](docs/artifact-verification.md) for details.
 
-The x86_64 app has been used on **Fedora 44** and **Ubuntu 26.04.1**; the screenshots
-come from the latter. Standard's file install/uninstall cycle was also checked on
-the Fedora desktop; Ubuntu retesting remains pending. Archives are
-built on Fedora 44, not universal across older distributions. Starting with 1.1.0,
-the release workflow targets x86_64 and ARM64; ARM desktop support is experimental.
+See the [installation guide](docs/installation.md#requirements-and-verification)
+for compatibility evidence and archive limits. ARM64 desktop support remains
+experimental.
 
 [Download releases](https://github.com/OleksiyM/GnomeClipNotes/releases) ·
 [Website](https://oleksiym.github.io/GnomeClipNotes/)

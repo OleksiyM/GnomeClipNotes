@@ -11,8 +11,10 @@ rejection, pause/resume, adaptive card overlay, and on-demand service activation
 The isolated GTK smoke test also passed editor saving and rendered the library,
 Markdown preview, Settings, and About, plus dark styling, a 420-pixel library,
 and narrow adaptive Settings. These do not replace the real-session
-checks below. The maintainer reports application use on Ubuntu 26.04.1;
-the revised installer and new service controls still need testing there.
+checks below. The maintainer reports application use and Standard installation/
+update/removal on Ubuntu 26.04.1. Guided 1.1.0 install/uninstall passed there with
+`--yes`; its interactive terminal bug is fixed in source and still needs a
+patched-release retest. New service controls also need Ubuntu-specific checks.
 
 - Build from a clean checkout with the documented packages.
 - Run `cargo test --locked` and `cargo clippy --all-targets -- -D warnings`.

@@ -29,12 +29,24 @@ Use GNOME on **Wayland**, with a working systemd user session. Install the full
 runtime, including WebKitGTK 6.0, even if you prefer Native preview. The clipboard
 service itself does not load WebKit. Rust is not needed for prebuilt archives.
 
+The intended environment is a recent GNOME distribution, such as Fedora or
+Ubuntu. Distribution names (including Arch and derivatives) alone do not prove
+binary compatibility. Check the runtime, architecture and Shell version below;
+Guided accepts only explicitly listed host platforms. The website keeps this
+summary version-independent; the table records specific testing evidence.
+
+Source-level minimums are GTK 4.12 and libadwaita 1.5, plus libsoup 3 and
+WebKitGTK 6.0. Prebuilt archives also need compatible native libraries/ABI,
+including glibc; those minimums alone do not guarantee a binary will run.
+The bundled extension currently declares GNOME Shell 46–50; a newer Shell
+release needs compatibility review, not merely newer GTK packages.
+
 | System | Evidence / scope |
 | --- | --- |
-| Fedora 44 x86_64, GNOME 50.4 | Development use, public 1.0.0 install/launch and live Standard install/uninstall verified; clipboard capture confirmed after login |
-| Ubuntu 26.04.1 x86_64 | Maintainer reports working application and shell-script install/uninstall, including provenance verification; revised scripts still need live retesting |
-| Fedora 44 ARM64 | Native CI build target since 1.1.0; desktop validation remains pending |
-| Ubuntu 24.04 / 22.04, other distributions | Not verified for the published binary; do not assume compatibility |
+| Fedora 44 x86_64, GNOME 50.4 | Development use, live Standard install/uninstall and update to 1.1.0 verified; extension activation after login confirmed |
+| Ubuntu 26.04.1 x86_64 | Maintainer reports working app and Standard installation/update/removal; 1.1.0 logs confirm Guided install/uninstall with `--yes` and provenance verification during install. Interactive confirmation in published 1.1.0 fails; see below |
+| Fedora 44 ARM64 | Native 1.1.0 build/tests and public archive provenance verified; desktop validation remains pending |
+| Arch, derivatives, older Ubuntu, other distributions | Not verified for the published binary; do not assume compatibility |
 
 Archives are built on Fedora 44. Standard selects by CPU architecture, not
 distribution: this makes it usable on compatible systems, **not a universal Linux
@@ -150,6 +162,13 @@ incompatible gh stops installation. Without gh it reports skipped provenance.
 `--require-provenance` makes verification mandatory. For unattended use, `--yes`
 accepts app changes only; `--install-deps` additionally authorizes missing system
 packages and needs pre-authorized noninteractive sudo. See [distribution](distribution.md).
+
+**Published 1.1.0 limitation:** interactive confirmation fails with a misleading
+`confirmation requires /dev/tty` message, including for uninstall. `--yes`
+bypasses that prompt only if you explicitly accept the operation; it does not
+authorize system package changes. Version 1.1.1 fixes terminal confirmation.
+Updating the bootstrap alone does not fix
+the helper inside an already published archive or installation.
 
 Guided uninstall works offline from the installed helper:
 

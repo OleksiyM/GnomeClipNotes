@@ -3,8 +3,8 @@
   "url": "https://github.com/OleksiyM/GnomeClipNotes",
   "name": "GnomeClipNotes",
   "description": "Clipboard history and notes integration for GNOME Shell",
-  "version": 3,
-  "version-name": "1.1.0",
+  "version": 4,
+  "version-name": "1.1.1",
   "shell-version": ["46", "47", "48", "49", "50"],
   "settings-schema": "org.gnome.shell.extensions.gnome-clip-notes",
   "gettext-domain": "gnome-clip-notes"

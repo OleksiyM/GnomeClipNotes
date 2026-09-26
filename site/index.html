@@ -22,7 +22,7 @@
       <p class="intro">A clipboard is a starting point. Turn useful fragments into notes,
         organize them into folders, and take them further as readable Markdown.</p>
       <p class="actions"><a class="button" href="#install">Installation guide</a><a href="https://github.com/OleksiyM/GnomeClipNotes/blob/main/README.md">Explore the project →</a></p>
-      <p class="status">Built for Fedora 44 · x86_64 · GNOME on Wayland</p>
+      <p class="status">GNOME on Wayland · x86_64 · ARM64 desktop use experimental</p>
     </section>
     <section aria-labelledby="workflow">
       <h2 id="workflow">From a fragment to something useful.</h2>
@@ -37,7 +37,7 @@
       <p class="eyebrow">Gallery</p>
       <h2 id="screenshots-title">At home on your desktop.</h2>
       <p>Clipboard overlay in GNOME Shell, native Library, and Markdown editing — one continuous workflow.</p>
-      <p class="muted">Real screenshots from the maintainer's Ubuntu 26.04.1 test session. Select any image to view it at full resolution.</p>
+      <p class="muted">Real screenshots from the maintainer's Ubuntu test session. Select any image to view it at full resolution.</p>
       <div class="gallery">
         <figure class="gallery-wide">
           <a href="assets/overlay-dark.png"><img src="assets/overlay-dark.png" width="3839" height="2159" alt="Dark GNOME desktop with the clipboard overlay along the bottom, search, filters, folders and nine text cards." loading="lazy"></a>
@@ -77,6 +77,7 @@
       <h2 id="install-title">A small app. A straightforward install.</h2>
       <p>Both install the same app. <strong>Standard</strong> installs it directly; <strong>Guided</strong> helps with dependencies, shutdown and recovery.</p>
       <p>Both check SHA-256 and can verify signed provenance. Use the same path for updates; uninstall the previous method first if switching. Notes are kept by default.</p>
+      <p>Requires a recent GNOME desktop on Wayland and compatible runtime libraries. See the <a href="https://github.com/OleksiyM/GnomeClipNotes/blob/main/docs/installation.md#requirements-and-verification">requirements and compatibility guide</a>.</p>
       <div class="install-tabs" role="tablist" aria-label="Installation method" hidden>
         <button type="button" id="standard-tab" role="tab" aria-selected="true" aria-controls="standard-install">Standard install</button>
         <button type="button" id="guided-tab" role="tab" aria-selected="false" aria-controls="guided-install" tabindex="-1">Guided install</button>
@@ -84,28 +85,50 @@
       <div id="standard-install">
         <h3>Standard — you prepare, the script installs</h3>
         <p>Install the <a href="https://github.com/OleksiyM/GnomeClipNotes/blob/main/docs/installation.md#runtime-packages">runtime dependencies</a>, save and close editors, disable the extension and quit the app first. No Python, package installation, forced process termination or rollback.</p>
-        <pre><code id="standard-command">curl -fsSL https://raw.githubusercontent.com/OleksiyM/GnomeClipNotes/main/install.sh | bash</code></pre>
-        <button class="copy-command" type="button" data-copy="standard-command" hidden>Copy Standard command</button>
+        <div class="command-block">
+          <div class="command-toolbar"><span>Terminal</span>
+            <button class="copy-command" type="button" data-copy="standard-command" aria-label="Copy Standard command" title="Copy Standard command" hidden>
+              <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><g class="copy-icon"><rect x="8" y="8" width="12" height="12" rx="2"/><path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2"/></g><path class="copied-icon" d="m5 12 4 4L19 6"/></svg>
+              <span>Copy</span>
+            </button>
+          </div>
+          <pre><code id="standard-command">curl -fsSL https://raw.githubusercontent.com/OleksiyM/GnomeClipNotes/main/install.sh | bash</code></pre>
+        </div>
+        <p id="standard-command-status" class="copy-feedback" role="status" aria-live="polite"></p>
         <p class="status">If gh is missing or too old, Standard reports skipped provenance verification. Use --require-provenance to require it. Failed verification always stops installation.</p>
       </div>
       <div id="guided-install">
         <h3>Guided — help with setup and updates</h3>
         <p>Use this if you want a dependency offer, editor-aware shutdown and recovery of the previous program files on installation failure. Requires Python 3. Limited to explicitly listed systems; save and close editors first.</p>
-        <pre><code id="guided-command">curl -fsSL https://raw.githubusercontent.com/OleksiyM/GnomeClipNotes/main/guided-install.sh | bash</code></pre>
-        <button class="copy-command" type="button" data-copy="guided-command" hidden>Copy Guided command</button>
+        <div class="command-block">
+          <div class="command-toolbar"><span>Terminal</span>
+            <button class="copy-command" type="button" data-copy="guided-command" aria-label="Copy Guided command" title="Copy Guided command" hidden>
+              <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><g class="copy-icon"><rect x="8" y="8" width="12" height="12" rx="2"/><path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2"/></g><path class="copied-icon" d="m5 12 4 4L19 6"/></svg>
+              <span>Copy</span>
+            </button>
+          </div>
+          <pre><code id="guided-command">curl -fsSL https://raw.githubusercontent.com/OleksiyM/GnomeClipNotes/main/guided-install.sh | bash</code></pre>
+        </div>
+        <p id="guided-command-status" class="copy-feedback" role="status" aria-live="polite"></p>
         <p class="status">Guided stops if an installed gh is incompatible. It does not require gh when absent, unless --require-provenance is supplied.</p>
       </div>
-      <p id="copy-status" class="status" role="status" aria-live="polite"></p>
       <aside class="activation-note" aria-label="After installation">
         <h3>After installation: enable clipboard capture</h3>
         <ol><li>Log out and back in.</li><li>Open <strong>Extensions</strong> and enable <strong>GnomeClipNotes</strong>. If you do not have that app, use the command below after logging back in.</li></ol>
-        <pre><code id="enable-command">gnome-extensions enable gnome-clip-notes@oleksiym.github.io</code></pre>
-        <button class="copy-command" type="button" data-copy="enable-command" hidden>Copy activation command</button>
+        <div class="command-block">
+          <div class="command-toolbar"><span>Terminal</span>
+            <button class="copy-command" type="button" data-copy="enable-command" aria-label="Copy activation command" title="Copy activation command" hidden>
+              <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><g class="copy-icon"><rect x="8" y="8" width="12" height="12" rx="2"/><path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2"/></g><path class="copied-icon" d="m5 12 4 4L19 6"/></svg>
+              <span>Copy</span>
+            </button>
+          </div>
+          <pre><code id="enable-command">gnome-extensions enable gnome-clip-notes@oleksiym.github.io</code></pre>
+        </div>
+        <p id="enable-command-status" class="copy-feedback" role="status" aria-live="polite"></p>
         <p>You can return to this page after login. Opening Library alone does not enable the Shell extension.</p>
       </aside>
       <p><a class="button" href="https://github.com/OleksiyM/GnomeClipNotes/blob/main/docs/installation.md">Requirements, manual install and uninstall</a></p>
       <p><a href="https://github.com/OleksiyM/GnomeClipNotes/blob/main/docs/artifact-verification.md">Verification and inspect-first alternative</a> · <a href="https://github.com/OleksiyM/GnomeClipNotes/releases">Release downloads</a></p>
-      <p class="status">The x86_64 application has been used on Fedora 44 and Ubuntu 26.04.1. Archives are built on Fedora 44; other distributions still need compatible libraries. Ubuntu 22.04/24.04 are not verified binary targets. Starting with 1.1.0, the release workflow targets x86_64 and ARM64; ARM desktop use remains experimental. Download only assets actually listed in Releases.</p>
     </section>
     <section class="closing" aria-labelledby="local-title">
       <h2 id="local-title">Your notes stay yours.</h2>

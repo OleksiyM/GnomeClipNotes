@@ -5,6 +5,12 @@ copy buttons; no build system, external fonts or analytics. Without JavaScript,
 both installation commands remain visible and selectable.
 Open `index.html` locally or serve this directory with a static HTTP server.
 
+Command blocks share an icon + Copy button in their top-right toolbar. Hover,
+keyboard focus and pressed states remain visible in both themes. Successful
+copy changes that button to a checkmark + Copied! temporarily; denied Clipboard
+API access selects the command and shows manual-copy instructions beside it.
+Status announcements are local to each block, including extension activation.
+
 Publish **only this directory**, never the workspace root. GitHub Pages uses
 `.github/workflows/pages.yml`, called by the release workflow after a stable
 tag's GitHub Release is published. The site is checked out from that same tag.

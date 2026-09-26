@@ -30,12 +30,24 @@ for (const tab of tabs) {
 tablist.hidden = false;
 selectTab(tabs[0]);
 for (const button of document.querySelectorAll('[data-copy]')) {
+    const label = button.querySelector('span');
+    const description = button.getAttribute('aria-label');
+    let resetTimer;
     button.hidden = false;
     button.addEventListener('click', async () => {
         const code = document.getElementById(button.dataset.copy);
-        const status = document.getElementById('copy-status');
+        const status = document.getElementById(`${button.dataset.copy}-status`);
+        clearTimeout(resetTimer);
+        button.disabled = true;
+        button.dataset.state = '';
+        label.textContent = 'Copying…';
+        status.textContent = '';
         try {
             await navigator.clipboard.writeText(code.textContent.trim());
+            button.dataset.state = 'copied';
+            label.textContent = 'Copied!';
+            button.setAttribute('aria-label', `${description}: copied`);
+            status.classList.add('visually-hidden');
             status.textContent = 'Command copied.';
         } catch {
             // Also works when viewing the page locally without Clipboard API access.
@@ -44,7 +56,17 @@ for (const button of document.querySelectorAll('[data-copy]')) {
             const selection = window.getSelection();
             selection.removeAllRanges();
             selection.addRange(range);
+            label.textContent = 'Selected';
+            button.setAttribute('aria-label', `${description}: selected for manual copying`);
+            status.classList.remove('visually-hidden');
             status.textContent = 'Command selected. Press Ctrl+C (or Command+C) to copy.';
+        } finally {
+            button.disabled = false;
+            resetTimer = setTimeout(() => {
+                button.dataset.state = '';
+                label.textContent = 'Copy';
+                button.setAttribute('aria-label', description);
+            }, 2500);
         }
     });
 }

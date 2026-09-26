@@ -3,9 +3,15 @@ import json
 import os
 from pathlib import Path
 import platform
+import pty
 import re
+import select
+import signal
 import subprocess
+import sys
 import tempfile
+import time
+import traceback
 import unittest
 from unittest import mock
 
@@ -132,6 +138,84 @@ class InstallerTest(unittest.TestCase):
             package, app or self.app, yes=True, commands=self.commands,
             home=self.home, data_home=self.data, config_home=self.config,
             mutation_hook=hook)
+
+    def terminal_exchange(self, action, answer):
+        # A real controlling terminal, but piped stdin as with curl | bash.
+        pipe_read, pipe_write = os.pipe()
+        sys.stdout.flush()
+        sys.stderr.flush()
+        pid, terminal = pty.fork()
+        if pid == 0:
+            os.close(pipe_write)
+            os.dup2(pipe_read, 0)
+            os.close(pipe_read)
+            try:
+                action()
+            except BaseException:
+                traceback.print_exc()
+                sys.stderr.flush()
+                os._exit(1)
+            sys.stdout.flush()
+            os._exit(0)
+        os.close(pipe_read)
+        os.close(pipe_write)
+        output = b''
+        sent = False
+        status = None
+        deadline = time.monotonic() + 5
+        try:
+            while time.monotonic() < deadline:
+                if select.select([terminal], [], [], 0.05)[0]:
+                    try:
+                        chunk = os.read(terminal, 4096)
+                    except OSError:
+                        chunk = b''  # Linux reports EIO after the slave closes.
+                    output += chunk
+                    if not sent and b'[y/N]' in output:
+                        os.write(terminal, answer.encode() + b'\n')
+                        sent = True
+                child, status_value = os.waitpid(pid, os.WNOHANG)
+                if child:
+                    status = status_value
+                    break
+            self.assertIsNotNone(status, output.decode(errors='replace'))
+            self.assertEqual(os.waitstatus_to_exitcode(status), 0,
+                             output.decode(errors='replace'))
+        finally:
+            if status is None:
+                os.kill(pid, signal.SIGKILL)
+                os.waitpid(pid, 0)
+            os.close(terminal)
+
+    def test_interactive_consents_with_real_terminal_and_piped_stdin(self):
+        installer = self.installer(make_package(self.root))
+        installer.yes = False
+        installer.manifest = {'version': '1.0.0'}
+        cases = (
+            lambda: installer._confirm(None),
+            lambda: installer._confirm({'version': '1.0.0'}, uninstall=True),
+            lambda: installer._confirm_dependencies(('fedora', ['webkitgtk6.0'])),
+        )
+        for index, confirm in enumerate(cases):
+            for answer in ('yes', 'no'):
+                with self.subTest(prompt=index, answer=answer):
+                    def action():
+                        if answer == 'yes':
+                            confirm()
+                        else:
+                            with self.assertRaisesRegex(install_release.InstallError, 'cancelled|declined'):
+                                confirm()
+                    self.terminal_exchange(action, answer)
+
+    def test_interactive_sudo_receives_real_terminal_without_running_sudo(self):
+        def action():
+            def inspect(argv, **kwargs):
+                self.assertEqual(argv, ['/usr/bin/sudo', '-v'])
+                for stream in ('stdin', 'stdout', 'stderr'):
+                    self.assertTrue(os.isatty(kwargs[stream].fileno()))
+            with mock.patch.object(install_release.subprocess, 'run', side_effect=inspect):
+                install_release.Commands().authorize_dependencies(noninteractive=False)
+        self.terminal_exchange(action, '')
 
     def test_fresh_install_and_path_with_spaces(self):
         app = self.home / "Applications/My Clip Notes"

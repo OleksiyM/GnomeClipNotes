@@ -183,7 +183,8 @@ class Commands:
             if noninteractive:
                 subprocess.run(['/usr/bin/sudo', '-n', '-v'], check=True, stdin=subprocess.DEVNULL, timeout=120)
             else:
-                with open('/dev/tty', 'r+') as tty:
+                # Raw read/write is suitable for a terminal; buffered r+ seeks.
+                with open('/dev/tty', 'r+b', buffering=0) as tty:
                     subprocess.run(['/usr/bin/sudo', '-v'], check=True, stdin=tty, stdout=tty, stderr=tty, timeout=120)
         except (OSError, subprocess.SubprocessError) as error:
             raise InstallError('Could not authorize system package installation. No packages or '
@@ -511,10 +512,12 @@ class Installer:
         version = receipt['version'] if uninstall else self.manifest['version']
         prompt = f"{action.capitalize()} GnomeClipNotes {version} in {self.app_dir}? [y/N] "
         try:
-            with open("/dev/tty", "r+", encoding="utf-8") as tty:
-                tty.write(prompt)
-                tty.flush()
-                answer = tty.readline().strip().lower()
+            # Keep input separate from output: a terminal is not seekable.
+            with open("/dev/tty", "r", encoding="utf-8") as tty_in, \
+                    open("/dev/tty", "w", encoding="utf-8") as tty_out:
+                tty_out.write(prompt)
+                tty_out.flush()
+                answer = tty_in.readline().strip().lower()
         except OSError as error:
             raise InstallError("confirmation requires /dev/tty; use --yes for explicit noninteractive acceptance") from error
         if answer not in ("y", "yes"):
@@ -755,10 +758,11 @@ class Installer:
             raise InstallError('System package consent is separate: use --install-deps with --yes, '
                                'or run the manual commands above. Nothing was installed.')
         try:
-            with open('/dev/tty', 'r+') as tty:
-                tty.write('Allow installation of these system packages? [y/N] ')
-                tty.flush()
-                accepted = tty.readline().strip().lower() in ('y', 'yes')
+            with open('/dev/tty', 'r', encoding='utf-8') as tty_in, \
+                    open('/dev/tty', 'w', encoding='utf-8') as tty_out:
+                tty_out.write('Allow installation of these system packages? [y/N] ')
+                tty_out.flush()
+                accepted = tty_in.readline().strip().lower() in ('y', 'yes')
         except OSError as error:
             raise InstallError('Package consent needs /dev/tty; use the manual commands above.') from error
         if not accepted:
