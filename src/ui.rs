@@ -63,6 +63,7 @@ fn title(item: &Item) -> String {
 
 fn group_name(group: &Group) -> String {
     match group.id {
+        -1 => tr("All Items"),
         0 => tr("History"),
         1 => tr("Notes"),
         _ => group.name.clone(),
@@ -309,11 +310,6 @@ pub fn show(state: &Rc<State>) {
     content.set_hexpand(true);
     toolbar.set_content(Some(&content));
     root.set_content(Some(&toolbar));
-    let breakpoint =
-        adw::Breakpoint::new(adw::BreakpointCondition::parse("max-width: 720sp").unwrap());
-    breakpoint.add_setter(&root, "collapsed", Some(&true.to_value()));
-    breakpoint.add_setter(&root, "show-sidebar", Some(&false.to_value()));
-    window.add_breakpoint(breakpoint);
     let search_row = gtk::Box::new(gtk::Orientation::Horizontal, 8);
     let search = gtk::SearchEntry::builder()
         .placeholder_text(tr("Search this folder…"))
@@ -454,6 +450,7 @@ pub fn show(state: &Rc<State>) {
     prev.set_widget_name("library-previous");
     next.set_widget_name("library-next");
     let selection = crate::library_selection::Selection::new(&list, state, &prev, &next);
+    crate::library_actions::install(state, &selection, &window, &toolbar, &header, &root, &new);
     paging.append(&prev);
     paging.append(&next);
     content.append(&paging);
@@ -461,6 +458,7 @@ pub fn show(state: &Rc<State>) {
     let offset = Rc::new(Cell::new(0i64));
     let page_size = Rc::new(Cell::new(6i64));
     let refresh: Rc<dyn Fn()> = Rc::new({
+        let selection = selection.clone();
         let state = Rc::downgrade(state);
         let search = search.clone();
         let kinds = kinds.clone();
@@ -492,6 +490,32 @@ pub fn show(state: &Rc<State>) {
             let Some(state) = state.upgrade() else {
                 return;
             };
+            if let Ok(sources) = state.store.borrow().sources() {
+                if *source_values.borrow() != sources {
+                    let selected_name = source
+                        .selected()
+                        .checked_sub(1)
+                        .and_then(|i| source_values.borrow().get(i as usize).cloned());
+                    let selected = selected_name
+                        .as_ref()
+                        .and_then(|name| sources.iter().position(|s| s == name))
+                        .map_or(0, |i| i as u32 + 1);
+                    resetting_filters.set(true);
+                    let mut names = vec![tr("All apps")];
+                    names.extend(sources.iter().cloned());
+                    *source_values.borrow_mut() = sources;
+                    source_names.splice(
+                        0,
+                        source_names.n_items(),
+                        &names.iter().map(String::as_str).collect::<Vec<_>>(),
+                    );
+                    source.set_selected(selected);
+                    resetting_filters.set(false);
+                    if selected_name.is_some() && selected == 0 {
+                        offset.set(0);
+                    }
+                }
+            }
             // Incomplete date input is not an empty query. Keep the last valid
             // range while the other live filters and search continue to work.
             match date_range(dates.selected(), &from.text(), &until.text()) {
@@ -528,14 +552,6 @@ pub fn show(state: &Rc<State>) {
                     || !from.text().is_empty()
                     || !until.text().is_empty(),
             );
-            if let Ok(sources) = state.store.borrow().sources() {
-                for name in sources {
-                    if !source_values.borrow().contains(&name) {
-                        source_values.borrow_mut().push(name.clone());
-                        source_names.append(&name);
-                    }
-                }
-            }
             // A refresh can originate in one of these widgets' GTK signals.
             // Keep detached children alive until event dispatch has finished.
             let had_card_focus = selection.begin_refresh();
@@ -549,7 +565,14 @@ pub fn show(state: &Rc<State>) {
                 retired.push(child);
             }
             glib::idle_add_local_once(move || drop(retired));
-            let groups = state.store.borrow().groups().unwrap_or_default();
+            let mut groups = state.store.borrow().groups().unwrap_or_default();
+            groups.insert(
+                0,
+                Group {
+                    id: -1,
+                    name: tr("All Items"),
+                },
+            );
             if !groups.iter().any(|g| g.id == active_group.get()) {
                 active_group.set(0);
             }
@@ -558,6 +581,7 @@ pub fn show(state: &Rc<State>) {
                 let b = gtk::Button::new();
                 let row = gtk::Box::new(gtk::Orientation::Horizontal, 12);
                 row.append(&gtk::Image::from_icon_name(match group.id {
+                    -1 => "view-grid-symbolic",
                     0 => "document-open-recent-symbolic",
                     1 => "document-edit-symbolic",
                     _ => "folder-symbolic",
@@ -574,6 +598,11 @@ pub fn show(state: &Rc<State>) {
                 if group.id == active_group.get() {
                     b.add_css_class("collection-selected");
                     window_title.set_title(&name);
+                    search.set_placeholder_text(Some(&if group.id == -1 {
+                        tr("Search all items…")
+                    } else {
+                        tr("Search this folder…")
+                    }));
                 }
                 let id = group.id;
                 let selected = active_group.clone();
@@ -592,7 +621,7 @@ pub fn show(state: &Rc<State>) {
                 });
                 groups_box.append(&b);
             }
-            let query = Query {
+            let mut query = Query {
                 search: search.text().to_string(),
                 group_id: active_group.get(),
                 kind: match kinds.selected() {
@@ -616,9 +645,17 @@ pub fn show(state: &Rc<State>) {
                 offset: offset.get(),
                 ..Default::default()
             };
-            let result = state.store.borrow().query(&query);
+            let mut result = state.store.borrow().query(&query);
+            // Deleting/moving the last page must not strand an otherwise
+            // nonempty collection at an offset beyond its results.
+            if query.offset > 0 && result.as_ref().is_ok_and(Vec::is_empty) {
+                offset.set(0);
+                query.offset = 0;
+                result = state.store.borrow().query(&query);
+            }
             match result {
                 Ok(mut items) => {
+                    selection.set_query(&query);
                     prev.set_sensitive(offset.get() > 0);
                     next.set_sensitive(items.len() > page_size.get() as usize);
                     items.truncate(page_size.get() as usize);
@@ -669,10 +706,19 @@ pub fn show(state: &Rc<State>) {
                         results.set_visible_child_name("items");
                     }
                     for item in items {
-                        selection.append(item.id, &card(&state, &item));
+                        let collection = (query.group_id == -1)
+                            .then(|| groups.iter().find(|g| g.id == item.group_id))
+                            .flatten();
+                        selection.append(
+                            item.id,
+                            &card(&state, &item, selection.is_multiple(), collection),
+                        );
                     }
                 }
-                Err(error) => summary.set_text(&error.to_string()),
+                Err(error) => {
+                    selection.invalidate();
+                    summary.set_text(&error.to_string());
+                }
             }
             selection.finish_refresh(had_card_focus);
         }
@@ -743,6 +789,7 @@ pub fn show(state: &Rc<State>) {
         let from = from.clone();
         let until = until.clone();
         let offset = offset.clone();
+        let resetting_filters = resetting_filters.clone();
         clear_filters.connect_clicked(move |_| {
             resetting_filters.set(true);
             kinds.set_selected(0);
@@ -754,6 +801,10 @@ pub fn show(state: &Rc<State>) {
             resetting_filters.set(false);
             refresh();
         });
+    }
+    {
+        let selection = selection.clone();
+        search.connect_changed(move |search| selection.search_edited(&search.text()));
     }
     {
         let refresh = refresh.clone();
@@ -786,7 +837,11 @@ pub fn show(state: &Rc<State>) {
     {
         let refresh = refresh.clone();
         let offset = offset.clone();
+        let resetting_filters = resetting_filters.clone();
         source.connect_selected_notify(move |_| {
+            if resetting_filters.get() {
+                return;
+            }
             offset.set(0);
             refresh();
         });
@@ -894,7 +949,7 @@ fn date_range(index: u32, from: &str, until: &str) -> Result<(i64, i64), String>
     })
 }
 
-fn card(state: &Rc<State>, item: &Item) -> gtk::Box {
+fn card(state: &Rc<State>, item: &Item, selecting: bool, collection: Option<&Group>) -> gtk::Box {
     let card = gtk::Box::new(gtk::Orientation::Vertical, 8);
     card.add_css_class("clip-card");
     card.set_size_request(200, 180);
@@ -923,6 +978,7 @@ fn card(state: &Rc<State>, item: &Item) -> gtk::Box {
         details_button.connect_clicked(move |_| info(&state, &item));
     }
     head.append(&details_button);
+    details_button.set_visible(!selecting);
     card.append(&head);
     let excerpt: String = item
         .content
@@ -941,6 +997,23 @@ fn card(state: &Rc<State>, item: &Item) -> gtk::Box {
     preview.set_vexpand(true);
     preview.add_css_class("card-preview");
     card.append(&preview);
+    if let Some(group) = collection {
+        let location = gtk::Box::new(gtk::Orientation::Horizontal, 6);
+        location.set_widget_name("card-collection");
+        location.append(&gtk::Image::from_icon_name(match group.id {
+            0 => "document-open-recent-symbolic",
+            1 => "document-edit-symbolic",
+            _ => "folder-symbolic",
+        }));
+        let name = group_name(group);
+        let label = gtk::Label::new(Some(&name));
+        label.set_xalign(0.0);
+        label.set_ellipsize(gtk::pango::EllipsizeMode::End);
+        label.set_hexpand(true);
+        location.set_tooltip_text(Some(&name));
+        location.append(&label);
+        card.append(&location);
+    }
     let source = gtk::Label::new(Some(&if item.source.is_empty() {
         tr("Note")
     } else {
@@ -1024,6 +1097,7 @@ fn card(state: &Rc<State>, item: &Item) -> gtk::Box {
     menu.set_menu_model(Some(&model));
     foot.append(&menu);
     card.append(&foot);
+    foot.set_visible(!selecting);
     {
         let state = state.clone();
         let id = item.id;
@@ -1100,8 +1174,24 @@ pub fn delete_item(state: &Rc<State>, id: i64) {
     );
 }
 pub fn move_item(state: &Rc<State>, id: i64) {
+    let s = state.clone();
+    choose_move(state, false, None, move |group| {
+        let result = s.store.borrow().move_item(id, group);
+        s.report(result);
+    });
+}
+
+pub(crate) fn choose_move(
+    state: &Rc<State>,
+    retained_only: bool,
+    summary: Option<&str>,
+    on_move: impl Fn(i64) + 'static,
+) {
     let groups = match state.store.borrow().groups() {
-        Ok(g) => g,
+        Ok(g) => g
+            .into_iter()
+            .filter(|g| !retained_only || g.id >= 1)
+            .collect::<Vec<_>>(),
         Err(e) => {
             error(state, &e.to_string());
             return;
@@ -1114,16 +1204,18 @@ pub fn move_item(state: &Rc<State>, id: i64) {
         .heading(tr("Move to Folder"))
         .extra_child(&select)
         .build();
+    if let Some(summary) = summary {
+        dialog.set_body(summary);
+        dialog.set_body_use_markup(false);
+    }
     dialog.add_response("cancel", &tr("Cancel"));
     dialog.add_response("move", &tr("Move"));
     dialog.set_close_response("cancel");
     let parent = state.app.active_window();
-    let state = state.clone();
     dialog.connect_response(None, move |_, response| {
         if response == "move" {
             if let Some(g) = groups.get(select.selected() as usize) {
-                let result = state.store.borrow().move_item(id, g.id);
-                state.report(result);
+                on_move(g.id);
             }
         }
     });

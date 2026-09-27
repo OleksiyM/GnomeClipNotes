@@ -9,6 +9,9 @@ use std::{
 
 pub type Result<T> = std::result::Result<T, Box<dyn std::error::Error>>;
 
+const ITEM_FILTER_SQL: &str = "(?1=-1 OR group_id=?1) AND (instr(unicode_lower(content),?2)>0 OR instr(unicode_lower(title),?2)>0)
+    AND (?3='' OR kind=?3) AND (?4='' OR source=?4) AND (?5=0 OR created_at>=?5) AND (?6=0 OR created_at<=?6)";
+
 pub struct Store {
     pub db: Connection,
     pub settings: Settings,
@@ -203,9 +206,9 @@ impl Store {
             query.limit.min(200)
         };
         let pattern = query.search.to_lowercase();
-        let mut stmt = self.db.prepare("SELECT * FROM items WHERE group_id=?1 AND (instr(unicode_lower(content),?2)>0 OR instr(unicode_lower(title),?2)>0)
-            AND (?3='' OR kind=?3) AND (?4='' OR source=?4) AND (?5=0 OR created_at>=?5) AND (?6=0 OR created_at<=?6)
-            ORDER BY copied_at DESC,id DESC LIMIT ?7 OFFSET ?8")?;
+        let mut stmt = self.db.prepare(&format!(
+            "SELECT * FROM items WHERE {ITEM_FILTER_SQL} ORDER BY copied_at DESC,id DESC LIMIT ?7 OFFSET ?8"
+        ))?;
         let items = stmt
             .query_map(
                 params![
@@ -222,6 +225,25 @@ impl Store {
             )?
             .collect::<rusqlite::Result<_>>()?;
         Ok(items)
+    }
+    pub fn matching_item_ids(&self, query: &Query) -> Result<Vec<i64>> {
+        let mut stmt = self.db.prepare(&format!(
+            "SELECT id FROM items WHERE {ITEM_FILTER_SQL} ORDER BY copied_at DESC,id DESC"
+        ))?;
+        let ids = stmt
+            .query_map(
+                params![
+                    query.group_id,
+                    query.search.to_lowercase(),
+                    query.kind,
+                    query.source,
+                    query.since,
+                    query.until
+                ],
+                |r| r.get(0),
+            )?
+            .collect::<rusqlite::Result<_>>()?;
+        Ok(ids)
     }
     pub fn query_json(&self, query: &Query) -> Result<String> {
         let sources = self.sources()?;
@@ -392,6 +414,7 @@ impl Store {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::library_items::joined_content;
     fn store() -> Store {
         let mut s = Store {
             db: Connection::open_in_memory().unwrap(),
@@ -400,6 +423,100 @@ mod tests {
         };
         s.migrate().unwrap();
         s
+    }
+    #[test]
+    fn matching_ids_use_the_page_filters_without_the_page_limit() {
+        let mut s = store();
+        for n in 0..215 {
+            s.save_item(None, "Match", &format!("body {n}")).unwrap();
+        }
+        s.capture("Match history", "Browser", "", false).unwrap();
+        let notes = Query {
+            group_id: 1,
+            search: "MATCH".into(),
+            ..Default::default()
+        };
+        assert_eq!(s.query(&notes).unwrap().len(), 60);
+        assert_eq!(s.matching_item_ids(&notes).unwrap().len(), 215);
+        let all = Query {
+            group_id: -1,
+            search: "MATCH".into(),
+            limit: 500,
+            ..Default::default()
+        };
+        assert_eq!(s.query(&all).unwrap().len(), 200);
+        assert_eq!(s.matching_item_ids(&all).unwrap().len(), 216);
+        assert!(s
+            .matching_item_ids(&Query {
+                group_id: -2,
+                ..all
+            })
+            .unwrap()
+            .is_empty());
+    }
+
+    #[test]
+    fn combine_orders_contents_preserves_originals_and_checks_size() {
+        let mut s = store();
+        s.create_group("Work").unwrap();
+        let folder = s.groups().unwrap().last().unwrap().id;
+        let first = s.save_item(None, "A", "first").unwrap();
+        let second = s.save_item(None, "B", "second").unwrap();
+        s.move_item(first, folder).unwrap();
+        s.move_item(second, folder).unwrap();
+        s.db.execute("UPDATE items SET created_at=10 WHERE id=?1", [first])
+            .unwrap();
+        s.db.execute("UPDATE items SET created_at=20 WHERE id=?1", [second])
+            .unwrap();
+        let selected = s.selected_items(&[second, first, second]).unwrap();
+        assert_eq!(
+            selected.iter().map(|i| i.item.id).collect::<Vec<_>>(),
+            vec![first, second]
+        );
+        assert_eq!(joined_content(&selected), "first\n\n---\n\nsecond");
+        let (combined, originals) = s.combine_items(&[second, first]).unwrap();
+        assert_eq!(originals.len(), 2);
+        let new_item = s.get(combined).unwrap();
+        assert_eq!(new_item.group_id, folder);
+        assert_eq!(new_item.origin, "manual");
+        assert_eq!(new_item.title, "");
+        assert_eq!(new_item.content, joined_content(&selected));
+        assert_eq!(s.get(first).unwrap().content, "first");
+        assert_eq!(s.get(second).unwrap().content, "second");
+        s.move_item(second, 1).unwrap();
+        let mixed = s.combine_items(&[first, second]).unwrap().0;
+        assert_eq!(s.get(mixed).unwrap().group_id, 1);
+        s.save_item(Some(first), "", &"x".repeat(MAX_CONTENT / 2))
+            .unwrap();
+        s.save_item(Some(second), "", &"y".repeat(MAX_CONTENT / 2))
+            .unwrap();
+        assert!(s.combine_items(&[first, second]).is_err());
+    }
+
+    #[test]
+    fn selected_mutations_reject_stale_or_protected_items_atomically() {
+        let mut s = store();
+        let a = s.save_item(None, "", "a").unwrap();
+        let b = s.save_item(None, "", "b").unwrap();
+        s.create_group("Target").unwrap();
+        let target = s.groups().unwrap().last().unwrap().id;
+        let selected = s.selected_items(&[a, b]).unwrap();
+        assert!(s.delete_selected_items(&selected, &[b]).is_err());
+        assert!(s.move_selected_items(&selected, 0).is_err());
+        assert_eq!(s.get(a).unwrap().group_id, 1);
+        s.save_item(Some(b), "", "edited").unwrap();
+        assert!(s.delete_selected_items(&selected, &[]).is_err());
+        assert!(s.move_selected_items(&selected, target).is_err());
+        assert_eq!(s.get(a).unwrap().group_id, 1);
+        assert_eq!(s.get(b).unwrap().content, "edited");
+        let current = s.selected_items(&[a, b]).unwrap();
+        s.move_selected_items(&current, target).unwrap();
+        assert_eq!(s.get(a).unwrap().group_id, target);
+        assert_eq!(s.get(b).unwrap().group_id, target);
+        let moved = s.selected_items(&[a, b]).unwrap();
+        s.delete_selected_items(&moved, &[]).unwrap();
+        assert!(s.get(a).is_err());
+        assert!(s.get(b).is_err());
     }
     #[test]
     fn capture_privacy_dedup_and_literal_search() {

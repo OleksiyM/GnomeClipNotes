@@ -45,7 +45,7 @@ Details: [architecture](docs/architecture.md), [preview decisions](docs/preview.
 | --- | --- | --- |
 | Capture/paste/overlay/keys | `extension/extension.js`, `extension/clipboardFormats.js`, `extension/datePicker.js`; D-Bus in `src/lib.rs` | [Privacy](docs/privacy.md), [interface](docs/interface.md) |
 | Data/retention/sources/settings | `src/store.rs`, `src/model.rs`, `src/preferences.rs` | [Architecture](docs/architecture.md), [privacy](docs/privacy.md) |
-| Library/Native editor/selection | `src/ui.rs`, `src/library_selection.rs`, `src/item_shortcuts.rs`, `src/date_picker.rs`, `src/style.css` | [Interface](docs/interface.md) |
+| Library/Native editor/selection | `src/ui.rs`, `src/library_{selection,actions,items}.rs`, `src/item_shortcuts.rs`, `src/date_picker.rs`, `src/style.css` | [Interface](docs/interface.md) |
 | Full editor/rendering | `src/editor_process.rs`, `src/bin/gnome-clip-notes-editor.rs`, `src/preview_{native,html,webkit}.rs` | [Preview](docs/preview.md) |
 | Export/cleanup | `src/export.rs`, `src/export_ui.rs`, revision triggers in `src/store.rs` | [Export](docs/export.md) |
 | Languages/update check | `src/i18n.rs`, `po/`, `scripts/translations.py`; `src/release_check.rs` | [Translations](docs/translations.md), [privacy](docs/privacy.md) |
@@ -65,12 +65,20 @@ independently in both UIs. Delegate bounded work when useful; retain integration
   Dirty marker and Save share the saved-content comparison. Dirty close needs
   confirmation; crash/draft recovery is not implemented. Cards track item ID,
   not widget position/focus ring; shortcuts must respect focused text fields.
-- **Export is not backup.** Export complete selected Notes/custom folders, never
-  History or just the filtered page. Cleanup requires durable files, explicit
+- **Export is not backup.** Settings export covers complete selected Notes/custom
+  folders, never History or just the filtered page. Library selection export is
+  separate: explicitly selected items (including History), one Markdown file,
+  no cleanup. Cleanup in Settings requires durable files, explicit
   counts/consent, file rechecks and transactional revision checks, preserving
   open/changed/new items.
   Random revision triggers catch edit-and-revert and reused IDs; timestamps alone
   cannot. Back up via SQLite API, never by copying a live WAL database file.
+- **Bulk selection is temporary.** Library keeps checked IDs across pages and
+  refreshes, not across changed filters/collections or closed windows. Select all
+  means all matching results, not one page. Combine/Copy use creation-time order;
+  Combine keeps originals until confirmed, creates in the common custom folder
+  or Notes (never History), and respects 1 MiB. Bulk mutations are atomic; reuse
+  revision tokens to reject stale confirmations, and protect open editors on delete.
 - **Content stays inert.** Item content is bounded to 1 MiB. Clipboard fallback keeps
   exact advertised MIME names and owner/generation/privacy checks; never combine
   partial transfers. Previews execute no author HTML/JS and load no external

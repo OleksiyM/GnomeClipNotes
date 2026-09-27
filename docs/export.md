@@ -24,9 +24,19 @@ adds source, origin, identifiers and last-copied time. Notes may themselves cont
 arbitrary Markdown, including incomplete fragments; export preserves their body
 verbatim and does not repair or normalize author markup.
 
-History is never exported. Library filters do not affect the export. Clipboard
+Settings export never includes History. Library filters do not affect this export. Clipboard
 items saved into custom folders are included. Only the saved database state is
 exported, not unsaved editor contents.
+
+## Library selection export
+
+Library → Select → Export writes only the explicitly checked items into one
+Markdown file, including items selected from History or across All Items search.
+It reuses the same human-readable headings, local dates and unchanged bodies,
+ordered by creation time then ID, with optional metadata off. The system Save
+picker chooses the filename/destination and handles overwrite confirmation.
+There is no cleanup or folder export in this path. Cancelling leaves the selection;
+successful writing exits selection mode. Unsaved editor buffers are not included.
 
 ## Optional cleanup
 

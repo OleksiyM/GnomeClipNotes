@@ -30,6 +30,19 @@ patched-release retest. New service controls also need Ubuntu-specific checks.
 
 ## Menus
 
+- Library selection: enter Select, toggle cards/checkboxes, move between pages,
+  Select all on All Items with search/date/type/source filters, then change a
+  filter and check the selection clears. Check Combine → Keep/Delete, Copy,
+  Move and Delete → Cancel/confirm. Close Library to discard the selection.
+  For selection Export, manually exercise the system Save picker (cancel, new
+  file, overwrite confirmation, unwritable destination) and inspect the Markdown.
+  Keep Combine visible on narrow windows; Export/Delete belong in More Actions.
+- In All Items, check current collection labels separately from source apps,
+  including long folder names, filtering and light/dark themes. Mixed-selection
+  Delete/Combine cleanup and Move must show counts for each affected collection.
+  Rapid search edits must immediately clear selection and block old bulk actions.
+  After deleting/moving a last page, check results recover without reopening;
+  deleting a source's last item must remove it from the Library source dropdown.
 - In the indicator's Service submenu, check Start / Stop / Restart, separator,
   then status. Running enables Stop/Restart only; stopped enables Start only.
   During an operation all three are disabled. Start/Restart open no app windows.

@@ -6,6 +6,8 @@ src/export_ui.rs
 src/i18n.rs
 src/item_shortcuts.rs
 src/lib.rs
+src/library_actions.rs
+src/library_items.rs
 src/library_selection.rs
 src/main.rs
 src/model.rs

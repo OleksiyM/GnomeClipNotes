@@ -12,6 +12,8 @@ pub mod i18n;
 #[cfg(debug_assertions)]
 mod i18n_smoke;
 mod item_shortcuts;
+mod library_actions;
+mod library_items;
 mod library_selection;
 mod model;
 mod preferences;

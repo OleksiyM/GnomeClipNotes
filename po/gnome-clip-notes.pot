@@ -6,7 +6,7 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: GnomeClipNotes 1.1.1\n"
+"Project-Id-Version: GnomeClipNotes 1.2.0\n"
 "Report-Msgid-Bugs-To: https://github.com/OleksiyM/GnomeClipNotes/issues\n"
 "POT-Creation-Date: 1970-01-01 00:00+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
@@ -140,7 +140,7 @@ msgstr ""
 msgid "9 months"
 msgstr ""
 
-#: src/store.rs
+#: src/library_items.rs src/store.rs
 msgid "A note cannot be empty"
 msgstr ""
 
@@ -178,6 +178,10 @@ msgstr ""
 
 #: src/export_ui.rs
 msgid "After export"
+msgstr ""
+
+#: src/ui.rs
+msgid "All Items"
 msgstr ""
 
 #: src/ui.rs
@@ -248,7 +252,7 @@ msgstr ""
 msgid "Calendar shortcuts are locked by your system administrator."
 msgstr ""
 
-#: src/preferences.rs src/ui.rs
+#: src/library_actions.rs src/preferences.rs src/ui.rs
 msgid "Cancel"
 msgstr ""
 
@@ -298,6 +302,10 @@ msgstr ""
 
 #: src/export_ui.rs
 msgid "Choose Folder and Export…"
+msgstr ""
+
+#: src/library_items.rs
+msgid "Choose Notes or a folder as the destination."
 msgstr ""
 
 #: src/store.rs
@@ -371,6 +379,10 @@ msgstr ""
 msgid "Close overlay"
 msgstr ""
 
+#: src/library_items.rs
+msgid "Close the editor before deleting selected items."
+msgstr ""
+
 #: src/export_ui.rs
 msgid "Collection"
 msgstr ""
@@ -383,6 +395,13 @@ msgstr ""
 #: src/export_ui.rs src/ui.rs
 msgid "Collections"
 msgstr ""
+
+#: src/library_actions.rs
+#, rust-format
+msgid "Combined {count} item into a new Note. Delete original items?"
+msgid_plural "Combined {count} items into a new Note. Delete original items?"
+msgstr[0] ""
+msgstr[1] ""
 
 #: src/preferences.rs
 msgid "Continue a Markdown list"
@@ -482,7 +501,7 @@ msgstr ""
 msgid "Defaults"
 msgstr ""
 
-#: src/preferences.rs
+#: src/library_actions.rs src/preferences.rs
 msgid "Delete"
 msgstr ""
 
@@ -524,6 +543,13 @@ msgid_plural "Delete {count} exported items from the application."
 msgstr[0] ""
 msgstr[1] ""
 
+#: src/library_actions.rs
+#, rust-format
+msgid "Delete {count} selected item?"
+msgid_plural "Delete {count} selected items?"
+msgstr[0] ""
+msgstr[1] ""
+
 #: src/export_ui.rs
 #, rust-format
 msgid "Deleted {count} custom folder."
@@ -538,7 +564,7 @@ msgid_plural "Deleted {count} items."
 msgstr[0] ""
 msgstr[1] ""
 
-#: src/preferences.rs src/ui.rs
+#: src/library_actions.rs src/preferences.rs src/ui.rs
 msgid "Delete…"
 msgstr ""
 
@@ -607,6 +633,10 @@ msgstr ""
 msgid "Export Notes and Folders"
 msgstr ""
 
+#: src/library_actions.rs
+msgid "Export Selected Items"
+msgstr ""
+
 #: src/export_ui.rs
 msgid "Export complete"
 msgstr ""
@@ -639,7 +669,7 @@ msgstr ""
 msgid "Exported files will remain on disk. Deletion from the application cannot be undone."
 msgstr ""
 
-#: src/preferences.rs
+#: src/library_actions.rs src/preferences.rs
 msgid "Export…"
 msgstr ""
 
@@ -731,7 +761,7 @@ msgstr ""
 msgid "GnomeClipNotes is stopping. The Shell indicator remains available."
 msgstr ""
 
-#: src/preferences.rs src/ui.rs
+#: src/library_actions.rs src/preferences.rs src/ui.rs
 msgid "History"
 msgstr ""
 
@@ -786,6 +816,10 @@ msgstr ""
 
 #: src/preferences.rs
 msgid "Items in this folder will be moved to Notes. The items themselves will not be deleted."
+msgstr ""
+
+#: src/library_actions.rs
+msgid "Keep"
 msgstr ""
 
 #: src/preferences.rs
@@ -860,7 +894,7 @@ msgstr ""
 msgid "Markdown preview"
 msgstr ""
 
-#: src/ui.rs
+#: src/library_actions.rs src/ui.rs
 msgid "More Actions"
 msgstr ""
 
@@ -966,7 +1000,7 @@ msgstr ""
 msgid "Note {number}"
 msgstr ""
 
-#: src/export.rs src/export_ui.rs src/ui.rs
+#: src/export.rs src/export_ui.rs src/library_actions.rs src/ui.rs
 msgid "Notes"
 msgstr ""
 
@@ -1104,6 +1138,11 @@ msgstr ""
 msgid "Redo in the note editor"
 msgstr ""
 
+#: src/library_actions.rs
+#, rust-format
+msgid "Removed folder {id}"
+msgstr ""
+
 #: src/preferences.rs
 msgid "Rename"
 msgstr ""
@@ -1184,6 +1223,10 @@ msgstr ""
 msgid "Saving Markdown files…"
 msgstr ""
 
+#: src/ui.rs
+msgid "Search all items…"
+msgstr ""
+
 #: extension/extension.js
 msgid "Search clipboard and notes"
 msgstr ""
@@ -1192,12 +1235,32 @@ msgstr ""
 msgid "Search this folder…"
 msgstr ""
 
+#: src/library_actions.rs
+msgid "Select"
+msgstr ""
+
+#: src/library_actions.rs
+msgid "Select all matching items, including other pages"
+msgstr ""
+
 #: src/preferences.rs
 msgid "Select all text"
 msgstr ""
 
 #: src/export.rs
 msgid "Select at least one collection"
+msgstr ""
+
+#: src/library_items.rs
+msgid "Select at least two items to combine."
+msgstr ""
+
+#: src/library_selection.rs
+msgid "Select item"
+msgstr ""
+
+#: src/library_actions.rs
+msgid "Selected Items"
 msgstr ""
 
 #: src/preferences.rs
@@ -1304,7 +1367,7 @@ msgstr ""
 msgid "Text editing"
 msgstr ""
 
-#: src/store.rs
+#: src/library_items.rs src/store.rs
 msgid "Text must be at most 1 MiB and contain no NUL characters"
 msgstr ""
 
@@ -1316,6 +1379,14 @@ msgstr ""
 msgid "The calendar also uses this shortcut. You can resolve the conflict or choose another Activate shortcut above."
 msgstr ""
 
+#: src/library_actions.rs
+msgid "The combined text exceeds the 1 MiB clipboard limit. Export the selection instead."
+msgstr ""
+
+#: src/library_items.rs
+msgid "The destination folder no longer exists."
+msgstr ""
+
 #: src/export_ui.rs
 msgid "The export worker stopped unexpectedly. Some files may have been created in the selected folder. Nothing was deleted from the application."
 msgstr ""
@@ -1324,8 +1395,17 @@ msgstr ""
 msgid "The installed GNOME Shell extension does not support the Library shortcut. Update the extension first."
 msgstr ""
 
+#: src/library_actions.rs
+#, rust-format
+msgid "The new note is in {collection}. Deleting the originals cannot be undone."
+msgstr ""
+
 #: src/export_ui.rs
 msgid "The selected collections are now empty. No files were created and nothing was deleted."
+msgstr ""
+
+#: src/library_items.rs
+msgid "The selection changed. Select items again."
 msgstr ""
 
 #: extension/extension.js
@@ -1366,6 +1446,10 @@ msgstr ""
 
 #: src/ui.rs
 msgid "This permanently removes the item from your local library."
+msgstr ""
+
+#: src/library_actions.rs
+msgid "This permanently removes the selected items from your local library."
 msgstr ""
 
 #: src/preferences.rs
@@ -1544,6 +1628,11 @@ msgid_plural "{collection}: delete {count} items and their empty folder"
 msgstr[0] ""
 msgstr[1] ""
 
+#: src/library_actions.rs
+#, rust-format
+msgid "{collection}: {count}"
+msgstr ""
+
 #: src/export_ui.rs
 #, rust-format
 msgid "{collection}: {count} folder kept — {reason}"
@@ -1590,6 +1679,13 @@ msgstr[1] ""
 #, rust-format
 msgid "{count} item"
 msgid_plural "{count} items"
+msgstr[0] ""
+msgstr[1] ""
+
+#: src/library_actions.rs
+#, rust-format
+msgid "{count} selected"
+msgid_plural "{count} selected"
 msgstr[0] ""
 msgstr[1] ""
 

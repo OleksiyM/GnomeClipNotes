@@ -1138,9 +1138,413 @@ fn verify_library_keyboard(state: Rc<State>, dir: PathBuf) {
         state.changed();
         assert!(selected().is_none());
         println!("PASS library selection, refresh identity, card shortcuts, search safety and arrow paging");
+        verify_library_bulk(state.clone(), &dir).await;
         println!("UI_SMOKE_OK {}", dir.display());
         state.app.quit();
     });
+}
+
+async fn verify_library_bulk(state: Rc<State>, dir: &std::path::Path) {
+    use gtk::gdk::{Key, ModifierType};
+    let window = state.window.borrow().as_ref().unwrap().clone();
+    let button = |name: &str| {
+        find(window.upcast_ref(), &|w| w.widget_name() == name)
+            .unwrap()
+            .downcast::<gtk::Button>()
+            .unwrap()
+    };
+    let list = find(window.upcast_ref(), &|w| w.widget_name() == "library-cards")
+        .unwrap()
+        .downcast::<gtk::FlowBox>()
+        .unwrap();
+    let count = find(window.upcast_ref(), &|w| {
+        w.widget_name() == "library-selection-count"
+    })
+    .unwrap()
+    .downcast::<gtk::Label>()
+    .unwrap();
+    let keys = list.observe_controllers();
+    let keys = (0..keys.n_items())
+        .filter_map(|i| keys.item(i)?.downcast::<gtk::EventControllerKey>().ok())
+        .find(|c| c.name().as_deref() == Some("library-item-shortcuts"))
+        .unwrap();
+    let press_space =
+        || keys.emit_by_name::<bool>("key-pressed", &[&Key::space, &0u32, &ModifierType::empty()]);
+    button("collection--1").emit_clicked();
+    glib::timeout_future(Duration::from_millis(200)).await;
+    let all_query = crate::model::Query {
+        group_id: -1,
+        ..Default::default()
+    };
+    let all_ids = state.store.borrow().matching_item_ids(&all_query).unwrap();
+    assert!(all_ids.len() > list.observe_children().n_items() as usize);
+    button("library-select").emit_clicked();
+    button("library-select-all").emit_clicked();
+    assert!(count.text().starts_with(&all_ids.len().to_string()));
+    glib::timeout_future(Duration::from_millis(250)).await;
+    snapshot(
+        window.upcast_ref(),
+        &dir.join("library-bulk-light-narrow.png"),
+    );
+    adw::StyleManager::default().set_color_scheme(adw::ColorScheme::ForceDark);
+    glib::timeout_future(Duration::from_millis(350)).await;
+    snapshot(
+        window.upcast_ref(),
+        &dir.join("library-bulk-dark-narrow.png"),
+    );
+    adw::StyleManager::default().set_color_scheme(adw::ColorScheme::ForceLight);
+    window.set_default_size(1040, 720);
+    glib::timeout_future(Duration::from_millis(450)).await;
+    snapshot(
+        window.upcast_ref(),
+        &dir.join("library-bulk-light-wide.png"),
+    );
+    let next = button("library-next");
+    assert!(next.is_sensitive());
+    next.emit_clicked();
+    state.changed();
+    assert!(
+        count.text().starts_with(&all_ids.len().to_string()),
+        "Selection lost off-page items"
+    );
+    button("library-deselect-all").emit_clicked();
+    assert!(count.text().starts_with('0'));
+    let first = list.child_at_index(0).unwrap();
+    let second = list.child_at_index(1).unwrap();
+    let originals: Vec<i64> = [first.clone(), second.clone()]
+        .iter()
+        .map(|c| {
+            c.widget_name()
+                .strip_prefix("library-item-")
+                .unwrap()
+                .parse()
+                .unwrap()
+        })
+        .collect();
+    first.grab_focus();
+    assert!(press_space());
+    second.grab_focus();
+    assert!(press_space());
+    assert!(count.text().starts_with('2'));
+    button("library-bulk-combine").emit_clicked();
+    let dialog = window
+        .visible_dialog()
+        .unwrap()
+        .downcast::<adw::AlertDialog>()
+        .unwrap();
+    assert_eq!(dialog.widget_name(), "library-bulk-delete-dialog");
+    dialog.close(); // Keep both originals.
+    glib::timeout_future(Duration::from_millis(200)).await;
+    let after = state.store.borrow().matching_item_ids(&all_query).unwrap();
+    assert_eq!(after.len(), all_ids.len() + 1);
+    let combined = *after.iter().find(|id| !all_ids.contains(id)).unwrap();
+    assert_eq!(state.store.borrow().get(combined).unwrap().group_id, 1);
+    for id in originals {
+        assert!(state.store.borrow().get(id).is_ok());
+    }
+
+    let (delete_a, delete_b, move_id) = {
+        let mut store = state.store.borrow_mut();
+        (
+            store.save_item(None, "", "bulk-smoke-delete A").unwrap(),
+            store.save_item(None, "", "bulk-smoke-delete B").unwrap(),
+            store.save_item(None, "", "bulk-smoke-move").unwrap(),
+        )
+    };
+    state.changed();
+    let search = find(window.upcast_ref(), &|w| w.is::<gtk::SearchEntry>())
+        .unwrap()
+        .downcast::<gtk::SearchEntry>()
+        .unwrap();
+    search.set_text("bulk-smoke-delete");
+    glib::timeout_future(Duration::from_millis(200)).await;
+    button("library-select").emit_clicked();
+    button("library-select-all").emit_clicked();
+    assert!(count.text().starts_with('2'));
+    button("library-bulk-delete").emit_clicked();
+    assert!(window
+        .visible_dialog()
+        .unwrap()
+        .downcast::<adw::AlertDialog>()
+        .unwrap()
+        .body()
+        .contains("Notes: 2"));
+    window.visible_dialog().unwrap().close();
+    assert!(state.store.borrow().get(delete_a).is_ok());
+    button("library-bulk-delete").emit_clicked();
+    let dialog = window.visible_dialog().unwrap();
+    dialog.emit_by_name::<()>("response", &[&"delete"]);
+    dialog.force_close();
+    glib::timeout_future(Duration::from_millis(200)).await;
+    assert!(state.store.borrow().get(delete_a).is_err());
+    assert!(state.store.borrow().get(delete_b).is_err());
+
+    search.set_text("bulk-smoke-move");
+    glib::timeout_future(Duration::from_millis(200)).await;
+    button("library-select").emit_clicked();
+    button("library-select-all").emit_clicked();
+    button("library-bulk-move").emit_clicked();
+    let dialog = window.visible_dialog().unwrap();
+    assert_eq!(
+        dialog
+            .clone()
+            .downcast::<adw::AlertDialog>()
+            .unwrap()
+            .body(),
+        "Notes: 1"
+    );
+    let chooser = find(dialog.upcast_ref(), &|w| w.is::<gtk::DropDown>())
+        .unwrap()
+        .downcast::<gtk::DropDown>()
+        .unwrap();
+    chooser.set_selected(1); // First custom folder after Notes.
+    let target = state.store.borrow().groups().unwrap()[2].id;
+    dialog.emit_by_name::<()>("response", &[&"move"]);
+    dialog.force_close();
+    assert_eq!(state.store.borrow().get(move_id).unwrap().group_id, target);
+    button("library-select").emit_clicked();
+    button("library-select-all").emit_clicked();
+    button("library-bulk-copy").emit_clicked();
+    let copied = gtk::prelude::WidgetExt::display(&window)
+        .clipboard()
+        .read_text_future()
+        .await
+        .unwrap()
+        .unwrap();
+    assert_eq!(copied.as_str(), "bulk-smoke-move");
+    // User dogfood: searching, selecting all and clearing must share one query.
+    for index in 0..6 {
+        state
+            .store
+            .borrow_mut()
+            .save_item(None, "", &format!("dogfood-11-{index}"))
+            .unwrap();
+    }
+    search.set_text("dogfood-11-");
+    glib::timeout_future(Duration::from_millis(500)).await;
+    button("library-select").emit_clicked();
+    button("library-select-all").emit_clicked();
+    assert_eq!(
+        count.text().as_str(),
+        "6 selected",
+        "Select all must use the search query"
+    );
+    search.set_text("");
+    glib::timeout_future(Duration::from_millis(500)).await;
+    assert_eq!(
+        count.text().as_str(),
+        "0 selected",
+        "Clearing search clears selection"
+    );
+    button("library-select-all").emit_clicked();
+    let total = state
+        .store
+        .borrow()
+        .matching_item_ids(&all_query)
+        .unwrap()
+        .len();
+    assert_eq!(count.text().as_str(), format!("{total} selected"));
+    button("library-select").emit_clicked();
+    window.close();
+    glib::timeout_future(Duration::from_millis(200)).await;
+    ui::show(&state);
+    let reopened = state.window.borrow().as_ref().unwrap().clone();
+    let search = find(reopened.upcast_ref(), &|w| w.is::<gtk::SearchEntry>())
+        .unwrap()
+        .downcast::<gtk::SearchEntry>()
+        .unwrap();
+    let click = |name: &str| {
+        find(reopened.upcast_ref(), &|w| w.widget_name() == name)
+            .unwrap()
+            .downcast::<gtk::Button>()
+            .unwrap()
+            .emit_clicked()
+    };
+    click("collection--1");
+    click("library-select");
+    click("library-select-all");
+    search.set_text("11");
+    let all_button = find(reopened.upcast_ref(), &|w| {
+        w.widget_name() == "library-select-all"
+    })
+    .unwrap()
+    .downcast::<gtk::Button>()
+    .unwrap();
+    assert!(
+        !all_button.is_sensitive(),
+        "Pending search blocks stale Select all"
+    );
+    click("library-select-all"); // Programmatic actions must be guarded too.
+    let pending_count = find(reopened.upcast_ref(), &|w| {
+        w.widget_name() == "library-selection-count"
+    })
+    .unwrap()
+    .downcast::<gtk::Label>()
+    .unwrap();
+    assert_eq!(pending_count.text().as_str(), "0 selected");
+    glib::timeout_future(Duration::from_millis(500)).await;
+    assert!(all_button.is_sensitive());
+    let location = find(reopened.upcast_ref(), &|w| {
+        w.widget_name() == "card-collection"
+    })
+    .expect("All Items cards expose their current collection");
+    assert!(location.last_child().unwrap().is::<gtk::Label>());
+    click("library-select-all");
+    let count = find(reopened.upcast_ref(), &|w| {
+        w.widget_name() == "library-selection-count"
+    })
+    .unwrap()
+    .downcast::<gtk::Label>()
+    .unwrap();
+    let expected = state
+        .store
+        .borrow()
+        .matching_item_ids(&crate::model::Query {
+            search: "11".into(),
+            group_id: -1,
+            ..Default::default()
+        })
+        .unwrap()
+        .len();
+    assert_eq!(count.text().as_str(), format!("{expected} selected"));
+    search.set_text("");
+    glib::timeout_future(Duration::from_millis(500)).await;
+    assert_eq!(count.text().as_str(), "0 selected");
+    click("library-select-all");
+    assert_eq!(count.text().as_str(), format!("{total} selected"));
+    click("library-select");
+    // Removing the sole item on a later page returns to valid results.
+    state
+        .store
+        .borrow()
+        .create_group("Pagination repair")
+        .unwrap();
+    let folder = state
+        .store
+        .borrow()
+        .groups()
+        .unwrap()
+        .into_iter()
+        .find(|g| g.name == "Pagination repair")
+        .unwrap()
+        .id;
+    let mut pagination_ids = Vec::new();
+    for i in 0..15 {
+        let id = state
+            .store
+            .borrow_mut()
+            .save_item(None, "", &format!("page fixture {i}"))
+            .unwrap();
+        state.store.borrow().move_item(id, folder).unwrap();
+        pagination_ids.push(id);
+    }
+    state.changed();
+    click(&format!("collection-{folder}"));
+    assert!(find(reopened.upcast_ref(), &|w| w.widget_name()
+        == "card-collection")
+    .is_none());
+    glib::timeout_future(Duration::from_millis(200)).await;
+    let next = find(reopened.upcast_ref(), &|w| {
+        w.widget_name() == "library-next"
+    })
+    .unwrap()
+    .downcast::<gtk::Button>()
+    .unwrap();
+    assert!(next.is_sensitive());
+    next.emit_clicked();
+    for id in pagination_ids.iter().skip(1) {
+        state.store.borrow().delete(*id).unwrap();
+    }
+    state.changed();
+    let grid = find(reopened.upcast_ref(), &|w| {
+        w.widget_name() == "library-cards"
+    })
+    .unwrap();
+    assert_eq!(
+        grid.first_child().unwrap().widget_name(),
+        format!("library-item-{}", pagination_ids[0])
+    );
+
+    assert!(state
+        .store
+        .borrow_mut()
+        .capture(
+            "Orphan source fixture",
+            "Orphan Test App",
+            "orphan.test",
+            false
+        )
+        .unwrap());
+    let source_id = state
+        .store
+        .borrow()
+        .matching_item_ids(&crate::model::Query {
+            source: "Orphan Test App".into(),
+            ..Default::default()
+        })
+        .unwrap()[0];
+    state.changed();
+    let sources = find(reopened.upcast_ref(), &|w| {
+        w.widget_name() == "library-filter-source"
+    })
+    .unwrap()
+    .downcast::<gtk::DropDown>()
+    .unwrap();
+    let names = sources
+        .model()
+        .unwrap()
+        .downcast::<gtk::StringList>()
+        .unwrap();
+    let index = (0..names.n_items())
+        .find(|i| names.string(*i).as_deref() == Some("Orphan Test App"))
+        .unwrap();
+    sources.set_selected(index);
+    state.store.borrow().delete(source_id).unwrap();
+    state.changed();
+    assert_eq!(sources.selected(), 0);
+    assert!((0..names.n_items()).all(|i| names.string(i).as_deref() != Some("Orphan Test App")));
+    reopened.set_default_size(1040, 720);
+    click("collection--1");
+    glib::timeout_future(Duration::from_millis(400)).await;
+    let verify_page = || {
+        let grid = find(reopened.upcast_ref(), &|w| {
+            w.widget_name() == "library-cards"
+        })
+        .unwrap();
+        assert!(
+            grid.observe_children().n_items() > 3,
+            "This fixture fits more than one row"
+        );
+    };
+    verify_page();
+    for text in ["22221", "22222", "22223"] {
+        search.set_text(text);
+        state
+            .store
+            .borrow_mut()
+            .capture(text, "GnomeClipNotes", crate::APP_ID, false)
+            .unwrap();
+        state.changed();
+        glib::timeout_future(Duration::from_millis(250)).await;
+    }
+    search.set_text("");
+    glib::timeout_future(Duration::from_millis(400)).await;
+    verify_page();
+    for (name, file) in [
+        ("collection-0", "numeric-capture-history.png"),
+        ("collection--1", "numeric-capture-all.png"),
+    ] {
+        click(name);
+        glib::timeout_future(Duration::from_millis(400)).await;
+        verify_page();
+        snapshot(reopened.upcast_ref(), &dir.join(file));
+    }
+    for (width, height) in [(1060, 740), (1040, 720), (960, 660)] {
+        reopened.set_default_size(width, height);
+        glib::timeout_future(Duration::from_millis(400)).await;
+        verify_page();
+    }
+    println!("PASS Library All Items, off-page selection, keyboard toggle, combine/keep, delete cancel/confirm and move");
 }
 
 // Exercise the actual chooser and its refresh path, including a duplicate add.

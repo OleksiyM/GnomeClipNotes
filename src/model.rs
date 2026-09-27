@@ -35,6 +35,7 @@ pub struct Group {
 pub struct Query {
     pub metadata_only: bool,
     pub search: String,
+    /// -1 searches all collections; 0 History, 1 Notes, >=2 custom folders.
     pub group_id: i64,
     pub kind: String,
     pub source: String,

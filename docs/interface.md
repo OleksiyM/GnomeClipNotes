@@ -67,6 +67,32 @@ changed to reserve either combination.
 
 ## Application windows
 
+- Library's All Items collection searches/filters across History, Notes and
+  folders; other collections keep their scoped search. Select enters an explicit
+  multi-selection mode with card checkboxes and a bottom action bar. Clicking a
+  card or pressing Space toggles it instead of opening it. Cancel/Escape exits.
+  Checked IDs survive page changes and refreshes; changing search, filters or
+  collection clears them. Select all covers every matching page, not just visible
+  cards; new arrivals are not automatically selected. No selection is persisted.
+  Editing search clears the selection immediately and blocks bulk actions until
+  results refresh, including keyboard actions during the search delay.
+- All Items cards show their current collection (History, Notes or folder) with
+  a symbolic icon, separately from the source application. Search does not hide
+  these labels or regroup results: chronological ordering and paging are unchanged.
+  Bulk Delete, Combine's original-item deletion and the existing Move chooser
+  show selected counts by collection, using the same item snapshot as the action.
+- Combine, Copy, Export, Move and Delete act only on checked items. Combine stays
+  visible on narrow windows; Export/Delete move to More Actions. Successful
+  actions exit selection mode; cancelled or failed actions leave the selection.
+  Single-item shortcuts do not edit/delete a different focused item in this mode;
+  Ctrl+A, Ctrl+C, Space and Delete operate on selection while the grid has focus.
+- Combine and Copy preserve saved bodies verbatim, joined with a Markdown rule
+  (`\n\n---\n\n`), in creation-time order (ID breaks ties). Combine requires at
+  least two items and creates an unnamed Note in their common custom folder, or
+  Notes for mixed collections/History. Originals stay unless the subsequent
+  Keep/Delete confirmation is accepted. Changed or editor-open originals prevent
+  the whole deletion; the new Note remains. No automatic editing of open buffers.
+  Combine/Copy retain the 1 MiB text limit; selection export can handle larger text.
 - Card menus in Library and the overlay use the same move destinations:
   Move to Notes, then Move to folder with up to ten custom folders in collection
   order. More Folders… appears only above ten and opens the existing chooser;
@@ -79,6 +105,9 @@ changed to reserve either combination.
   available in the editor. Page capacity is measured from the viewport and card
   size, so Previous/Next page through fitting rows in History, Notes, and folders.
   Fetch one extra result to detect the final page without opening an empty one.
+  If a mutation empties a later page, return to the first page. Library's source
+  filter reconciles against existing sources on refresh, preserves a still-valid
+  selection by name and resets to All apps if its last item disappears.
 - Header bars contain a few relevant actions. Preferences and About live in
   the main menu, not as competing top-level buttons.
 - Main and card-action menus use `GMenu`/`GtkPopoverMenu`, not flat buttons in

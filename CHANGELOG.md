@@ -3,7 +3,26 @@
 Release availability and publication dates are recorded in
 [GitHub Releases](https://github.com/OleksiyM/GnomeClipNotes/releases).
 
-## Unreleased
+## 1.2.0 — 2026-09-27
+
+### Library
+
+- Show collection labels in All Items and per-collection counts before bulk move
+  or deletion. Block stale bulk actions during search updates, recover empty
+  later pages after mutations, and remove obsolete Library source filters.
+- Explicit multi-selection with checkboxes, cross-page Select all and bulk
+  Combine, Copy, Export, Move and confirmed Delete. Narrow layouts keep Combine
+  visible and move Export/Delete into More Actions.
+- All Items provides search and filtering across collections. Combine creates a
+  new retained note in chronological order and separately offers to delete originals.
+
+### Known issue
+
+- During exploratory Library use, a temporarily inconsistent selection count
+  and underfilled pages were observed. A reliable reproduction is not yet known;
+  reopening Library restored normal behavior. If the selected count looks wrong,
+  cancel selection before performing a bulk action. These observations remain
+  unresolved, not claimed as fixed by the search/paging improvements.
 
 ## 1.1.1 — 2026-09-26
 
