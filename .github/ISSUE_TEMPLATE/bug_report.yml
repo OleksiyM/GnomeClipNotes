@@ -1,0 +1,50 @@
+name: Bug report
+description: Report a problem with capture, Library, the overlay, or installation.
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Please search existing issues first. Intermittent problems are welcome too;
+        a reliable reproduction is helpful, not a requirement.
+        Issues are public: remove private clipboard text, notes, tokens and personal
+        information from logs and screenshots. Do not attach your notes database.
+        For a security vulnerability, use [private reporting](https://github.com/OleksiyM/GnomeClipNotes/security/advisories/new).
+  - type: input
+    id: version
+    attributes:
+      label: GnomeClipNotes version
+      description: Find it in About, or give the commit if you built from source. Unknown is OK.
+      placeholder: "App version; extension version if different"
+    validations:
+      required: true
+  - type: textarea
+    id: environment
+    attributes:
+      label: Environment and installation
+      description: Include what you know; you do not need to investigate every field.
+      placeholder: |
+        Distribution and version:
+        GNOME version; Wayland or X11:
+        Architecture (x86_64 / ARM64):
+        Install method (Standard / Guided / manual / source):
+        For copy/paste problems, source and destination apps:
+    validations:
+      required: true
+  - type: textarea
+    id: behavior
+    attributes:
+      label: What happened, and what did you expect?
+      description: Describe the visible result. Mention unexpected selection counts or possible data loss explicitly.
+    validations:
+      required: true
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Steps or circumstances
+      description: Steps if known; otherwise describe what happened beforehand, frequency, and whether reopening changed anything.
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Logs, screenshots, or other context
+      description: Optional. Review and redact before posting; synthetic example text is best.

@@ -1,0 +1,21 @@
+name: Feature or usability suggestion
+description: Describe a workflow that could be easier, or an improvement you would use.
+labels: [enhancement]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Please search existing suggestions first. Start with the need, not an implementation plan.
+        Examples are useful, but replace any private clipboard or note content.
+  - type: textarea
+    id: problem
+    attributes:
+      label: What are you trying to do?
+      description: Describe the workflow and what is currently missing or awkward.
+    validations:
+      required: true
+  - type: textarea
+    id: suggestion
+    attributes:
+      label: Suggested improvement or alternatives
+      description: Optional. A small example or sketch is welcome; a finished design is not required.

@@ -155,6 +155,10 @@ successful compilation alone does not establish desktop compatibility.
 
 ## Development and releases
 
+Want to report a bug, suggest an improvement, or send a patch? See
+[Contributing](CONTRIBUTING.md). Please report security vulnerabilities
+[privately](SECURITY.md), not in public issues.
+
 Small reviewed changes may go directly to `main`, with CI checks; branches are
 optional. Use meaningful commit subjects for generated release notes.
 Public releases start at 1.0.0: fixes normally increment patch, features minor.
