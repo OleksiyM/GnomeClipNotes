@@ -46,6 +46,12 @@ scope. Settings → Shortcuts lists the available bindings and alternatives.
 Since 1.1.0, the applications-menu launcher opens Library directly.
 Super+V and the panel indicator keep opening the overlay.
 
+Since 1.2.0, Library's **All Items** brings History, Notes and folders into one
+searchable view, with each item's collection clearly labelled. Use **Select**
+to work with multiple items across search results and pages: **Combine** them
+into a new Note, **Copy** their text, **Export** them to Markdown, **Move** them
+to Notes or a folder, or **Delete** them with confirmation.
+
 ## Install
 
 Two installation paths, **the same complete app**. Both verify SHA256 and can
