@@ -24,3 +24,17 @@
 
 `site/` contains the static website source. No private maintainer notes are needed
 to build, test or understand the public project.
+
+## Reclaim local build space
+
+Run `bash scripts/clean-build.sh` to preview cleanup of the debug incremental
+cache and archived WebKit prototype build. Add `--apply` to delete those outputs;
+ready-built app binaries remain, but the next build may take longer.
+
+Use `--full` to preview removal of the entire project `target/`, `dist/` packages
+and prototype build; `--full --apply` performs it. Run only when builds, tests and
+packaging have stopped. Full cleanup requires rebuilding binaries and generated
+translations before running local UI tests or packaging. Deleted outputs are not
+backed up. Source, Git, `.private`, installed applications and shared Cargo download
+caches are untouched. Custom Cargo target directories outside these fixed paths
+are not cleaned.
