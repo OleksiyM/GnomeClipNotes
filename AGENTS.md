@@ -5,6 +5,10 @@ Keep this file compact: decisions and reasons here, implementation detail in
 [docs/](docs/README.md), session history in optional `.private/`.
 If `.private/README.md` exists, consult its index; for release work also read and
 update `.private/release-plan.md`. A public checkout remains self-contained.
+When present, `.private/` is a separate private Git repository in this workspace,
+not a submodule. Keep its files out of public commits; never force-add that path.
+Use `git -C .private ...` for its history and remote. Its README explains saving
+and restoring both parts; do not publish private context in public docs or logs.
 
 ## Product and engineering direction
 
