@@ -59,8 +59,8 @@ def write_archive(path, entries=None, release=None):
 
 class BootstrapTests(unittest.TestCase):
     def setUp(self):
-        if PLATFORM != 'fedora-44-x86_64':
-            self.skipTest("bootstrap integration fixture requires Fedora 44 x86_64")
+        if PLATFORM not in ('fedora-44-x86_64', 'fedora-44-aarch64'):
+            self.skipTest("bootstrap integration fixture requires Fedora 44 x86_64 or aarch64")
         self.temp = tempfile.TemporaryDirectory()
         self.root = Path(self.temp.name)
         self.bin = self.root / "mock bin"
@@ -228,8 +228,9 @@ if os.environ.get('GH_FAIL') == '1':
         self.assertEqual(result.returncode, 0, result.stderr)
         self.assertTrue(self.marker.exists())
 
-    def test_ubuntu_2604_uses_fedora_release_metadata(self):
+    def test_ubuntu_2604_x86_64_uses_fedora_release_metadata(self):
         (self.root / 'sitecustomize.py').write_text(
+            'import platform\nplatform.machine = lambda: "x86_64"\n'
             'from pathlib import Path\n'
             '_read_text = Path.read_text\n'
             'def read_text(self, *args, **kwargs):\n'
@@ -239,14 +240,21 @@ if os.environ.get('GH_FAIL') == '1':
             'Path.read_text = read_text\n', encoding='utf-8')
         release = manifest()
         release['platform'] = {'id': 'fedora', 'version_id': '44', 'arch': 'x86_64'}
-        write_archive(self.archive, release=release)
+        # Ubuntu compatibility is x86_64-only, including when this test runs on ARM.
+        ubuntu_package = f'gnome-clip-notes-{VERSION}-x86_64'
+        self.archive = self.root / (ubuntu_package + '.tar.gz')
+        self.bundle = self.root / (self.archive.name + '.sigstore.json')
+        self.bundle.write_text('{}')
+        with mock.patch.dict(globals(), PACKAGE=ubuntu_package):
+            write_archive(self.archive, release=release)
         result = self.run_bootstrap(env={'PYTHONPATH': str(self.root)})
         self.assertEqual(result.returncode, 0, result.stderr)
         self.assertIn('fedora-44-x86_64', result.stdout)
         self.assertTrue(self.marker.exists())
 
-    def test_ubuntu_2404_stops_before_download(self):
+    def test_ubuntu_2404_x86_64_stops_before_download(self):
         (self.root / 'sitecustomize.py').write_text(
+            'import platform\nplatform.machine = lambda: "x86_64"\n'
             'from pathlib import Path\n'
             '_read_text = Path.read_text\n'
             'def read_text(self, *args, **kwargs):\n'
