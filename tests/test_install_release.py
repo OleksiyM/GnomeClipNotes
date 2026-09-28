@@ -213,8 +213,9 @@ class InstallerTest(unittest.TestCase):
                 self.assertEqual(argv, ['/usr/bin/sudo', '-v'])
                 for stream in ('stdin', 'stdout', 'stderr'):
                     self.assertTrue(os.isatty(kwargs[stream].fileno()))
-            with mock.patch.object(install_release.subprocess, 'run', side_effect=inspect):
+            with mock.patch.object(install_release.subprocess, 'run', side_effect=inspect) as run:
                 install_release.Commands().authorize_dependencies(noninteractive=False)
+                run.assert_called_once()
         self.terminal_exchange(action, '')
 
     def test_fresh_install_and_path_with_spaces(self):
@@ -740,7 +741,10 @@ class RuntimeDiagnosticsTest(unittest.TestCase):
         self.assertIn('libadwaita-1.so.0', message)
         self.assertIn('libwebkitgtk-6.0.so.4', message)
         self.assertIn('No program files were changed', message)
-        self.assertEqual(run.call_count, 2)
+        self.assertEqual(run.call_args_list, [
+            mock.call(['ldd', '/unused/target/release/gnome-clip-notes'], check=False),
+            mock.call(['ldd', '/unused/target/release/gnome-clip-notes-editor'], check=False),
+        ])
 
     def test_runtime_rejects_abi_failure_and_unreadable_binary(self):
         commands = install_release.Commands()
