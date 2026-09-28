@@ -22,6 +22,10 @@ OS_RELEASE = platform.freedesktop_os_release()
 PLATFORM = f"{OS_RELEASE['ID']}-{OS_RELEASE['VERSION_ID']}-{platform.machine()}"
 PACKAGE = f"gnome-clip-notes-{VERSION}-{platform.machine()}"
 ARCHIVE = PACKAGE + ".tar.gz"
+HELPER = b"""#!/usr/bin/env python3
+import json, os, pathlib, sys
+pathlib.Path(os.environ['BOOTSTRAP_MARKER']).write_text(json.dumps(sys.argv[1:]))
+"""
 
 
 def manifest():
@@ -44,13 +48,9 @@ def regular(name, contents=b"fixture", mode=0o644):
 
 def write_archive(path, entries=None, release=None):
     if entries is None:
-        helper = b"""#!/usr/bin/env python3
-import json, os, pathlib, sys
-pathlib.Path(os.environ['BOOTSTRAP_MARKER']).write_text(json.dumps(sys.argv[1:]))
-"""
         entries = [
             regular(PACKAGE + "/release.json", json.dumps(release or manifest()).encode()),
-            regular(PACKAGE + "/scripts/install-release.py", helper, 0o755),
+            regular(PACKAGE + "/scripts/install-release.py", HELPER, 0o755),
         ]
     with tarfile.open(path, "w:gz") as stream:
         for info, contents in entries:
@@ -70,6 +70,7 @@ class BootstrapTests(unittest.TestCase):
         self.bundle.write_text("{}")
         self.marker = self.root / "helper marker.json"
         self.gh_log = self.root / "gh args.jsonl"
+        self.extraction_state = self.root / "extraction at verification.json"
         self.curl_log = self.root / "curl args.jsonl"
         (self.bin / 'mktemp').symlink_to('/usr/bin/mktemp')
         self._write_executable("python3", f"#!/bin/sh\nexec {sys.executable!s} \"$@\"\n")
@@ -104,6 +105,11 @@ if args == ['attestation', 'verify', '--help']:
     raise SystemExit(0)
 with pathlib.Path(os.environ['GH_LOG']).open('a') as log:
     log.write(json.dumps(args) + '\\n')
+# Observe the real staging directory before verification returns, not after
+# the bootstrap's EXIT trap has removed it.
+archive = pathlib.Path(args[2])
+extracted = archive.with_name(archive.name.removesuffix('.tar.gz'))
+pathlib.Path(os.environ['EXTRACTION_STATE']).write_text(json.dumps(extracted.exists()))
 if os.environ.get('GH_FAIL') == '1':
     raise SystemExit(1)
 """)
@@ -123,6 +129,7 @@ if os.environ.get('GH_FAIL') == '1':
             "FIXTURE_BUNDLE": str(self.bundle),
             "BOOTSTRAP_MARKER": str(self.marker),
             "GH_LOG": str(self.gh_log),
+            "EXTRACTION_STATE": str(self.extraction_state),
             "CURL_LOG": str(self.curl_log),
         }
         if env:
@@ -141,6 +148,7 @@ if os.environ.get('GH_FAIL') == '1':
         app_dir = self.root / "Applications with spaces" / "Clip Notes"
         result = self.run_bootstrap("--app-dir", str(app_dir))
         self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertIs(json.loads(self.extraction_state.read_text()), False)
         helper_args = json.loads(self.marker.read_text())
         self.assertEqual(helper_args[0], "--package-dir")
         self.assertTrue(helper_args[1].endswith("/" + PACKAGE))
@@ -169,6 +177,7 @@ if os.environ.get('GH_FAIL') == '1':
         self.assertNotEqual(result.returncode, 0)
         self.assertFalse(self.marker.exists())
         self.assertEqual(len(self.gh_calls()), 1)
+        self.assertIs(json.loads(self.extraction_state.read_text()), False)
 
     def test_explicit_package_consent_is_forwarded_to_verified_helper(self):
         write_archive(self.archive)
@@ -267,13 +276,13 @@ if os.environ.get('GH_FAIL') == '1':
         self.assertFalse(self.curl_log.exists())
 
     def test_rejects_unsafe_paths_links_duplicates_and_oversized_metadata(self):
-        valid_helper = regular(PACKAGE + "/scripts/install-release.py", b"raise SystemExit(99)\n")
+        valid_helper = regular(PACKAGE + "/scripts/install-release.py", HELPER)
         cases = {}
         cases["parent path"] = [regular(PACKAGE + "/../escape", b"bad")]
-        cases["absolute path"] = [regular('/tmp/gcn-escape', b'bad')]
+        cases["absolute path"] = [regular(str(self.root / 'absolute-escape'), b'bad')]
         link = tarfile.TarInfo(PACKAGE + "/link")
         link.type = tarfile.SYMTYPE
-        link.linkname = "/tmp/escape"
+        link.linkname = str(self.root / 'symlink-target')
         cases["symbolic link"] = [(link, b"")]
         hardlink = tarfile.TarInfo(PACKAGE + '/hardlink')
         hardlink.type = tarfile.LNKTYPE
@@ -297,6 +306,9 @@ if os.environ.get('GH_FAIL') == '1':
                 result = self.run_bootstrap()
                 self.assertNotEqual(result.returncode, 0, name)
                 self.assertFalse(self.marker.exists(), name)
+                expected_error = ('Release metadata is too large' if name == 'oversized metadata'
+                                  else 'Unsafe or duplicate archive entry:')
+                self.assertIn(expected_error, result.stderr, name)
 
     def test_rejects_wrong_release_manifest(self):
         wrong = manifest()
