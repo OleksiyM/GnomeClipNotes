@@ -20,6 +20,7 @@ Security vulnerabilities have a [private reporting route](SECURITY.md).
 Be considerate, discuss the behavior or proposed change rather than the person,
 and respect other people's privacy. Disagreement about a design is normal;
 harassment and personal attacks are not welcome.
+See the [Code of Conduct](CODE_OF_CONDUCT.md) for expectations and private reporting.
 
 ## Before a larger change
 
