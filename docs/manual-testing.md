@@ -90,6 +90,25 @@ patched-release retest. New service controls also need Ubuntu-specific checks.
 
 ## Settings layout
 
+- Enable Comments and Categories (separate switches, both initially off),
+  add/rename/reorder categories and children.
+  In Library, assign only a parent, assign a child with an empty or multiline
+  comment, cancel the dialog and edit the saved comment. Check No category keeps
+  the comment, child deletion keeps the parent, and category deletion preserves
+  all bodies/comments. Inspect affected counts before confirming.
+- With only comments enabled, add/edit via Comment… and the card's comment icon.
+  With only categories enabled, choosing a child assigns it without a dialog.
+  Toggle each independently: its filter clears, the other stays active, data stays.
+  Category captions must not look like buttons; comment icons appear with and
+  without categories. Root card menus must not inherit long child-name widths.
+- Filter All Items by category, child and comment; Select all must select every
+  match across pages, not unfiltered items. Clear filters and disable the feature:
+  cards/results/selection must agree immediately. Move between folders and export
+  a selected item: annotations stay attached and appear in Markdown, not Copy.
+- Check long category/question names in narrow/light/dark Library and Settings.
+  Verify keyboard navigation and cancellation through nested Category menus and
+  an outside click on Filters after a category dropdown. These real Wayland
+  interactions complement, rather than duplicate, the isolated widget smoke run.
 - Language initially offers only System default and English. Choose English,
   leave an editor open, and confirm the selection is saved without closing the
   editor. Restart the app when drafts are safe; the choice should remain.
@@ -99,7 +118,7 @@ patched-release retest. New service controls also need Ubuntu-specific checks.
   `bash scripts/test-i18n-ui.sh`. Review the elongated-label screenshots; use an
   installed `en_US.UTF-8` locale for the pseudolocale runs.
 
-- Visit General, History, Privacy, Shortcuts, Folders and Data using the sidebar.
+- Visit General, History, Privacy, Shortcuts, Folders, Comments & Categories and Data using the sidebar.
   Check title and selection match. Repeat at 420 px: use Back to return to the
   section list, then open another section without widening the window.
 - Check each section in light and dark themes, including long folder names and

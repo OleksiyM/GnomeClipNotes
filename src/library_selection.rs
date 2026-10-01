@@ -130,12 +130,7 @@ impl Selection {
     pub fn set_query(&self, query: &Query) {
         self.ready.set(true);
         let old = self.query.borrow();
-        let changed = old.search != query.search
-            || old.group_id != query.group_id
-            || old.kind != query.kind
-            || old.source != query.source
-            || old.since != query.since
-            || old.until != query.until;
+        let changed = !old.same_filter(query);
         drop(old);
         *self.query.borrow_mut() = query.clone();
         if changed {

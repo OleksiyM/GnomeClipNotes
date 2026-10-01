@@ -1,3 +1,10 @@
+mod card_metadata;
+mod classification;
+mod classification_filters;
+mod classification_preferences;
+#[cfg(debug_assertions)]
+mod classification_smoke;
+mod classification_ui;
 mod date_picker;
 mod editor_process;
 #[cfg(debug_assertions)]

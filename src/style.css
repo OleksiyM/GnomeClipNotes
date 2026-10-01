@@ -8,6 +8,11 @@
   box-shadow: 0 1px 3px alpha(black, .12);
 }
 .card-preview { line-height: 1.35; }
+.metadata-tag {
+  background: alpha(@card_fg_color, .07);
+  border-radius: 8px;
+  padding: 4px 8px;
+}
 #library-cards > flowboxchild { border-radius: 14px; }
 #library-cards > flowboxchild:selected { background: alpha(@accent_bg_color, .18); }
 #library-cards > flowboxchild:selected .clip-card { box-shadow: 0 0 0 2px @accent_color; }

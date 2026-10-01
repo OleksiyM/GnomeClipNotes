@@ -71,6 +71,7 @@ async fn snapshot_settings_pages(dialog: &adw::Dialog, root: &std::path::Path) {
         "privacy",
         "shortcuts",
         "folders",
+        "categories",
         "data",
     ] {
         pages.set_visible_child_name(name);
@@ -110,6 +111,17 @@ pub fn run(state: &Rc<State>) {
             )
             .unwrap();
         store.move_item(note, folder).unwrap();
+        let category = store
+            .create_category("Projects — user-defined category")
+            .unwrap();
+        store
+            .create_subcategory(
+                category,
+                "What would I like to understand before the next release?",
+            )
+            .unwrap();
+        store.settings.classification_enabled = true;
+        store.settings.comments_enabled = true;
         (note, folder)
     };
 

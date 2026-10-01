@@ -29,6 +29,33 @@ sources of existing items, so there is no independent source registry to prune.
 Schema migrations and export revision triggers are part of the data contract;
 see [export cleanup](export.md) before changing mutation or deletion paths.
 
+Optional Library classification is stored by `classification.rs` (schema 3),
+with native UI in `classification_preferences.rs`, `classification_ui.rs` and
+`classification_filters.rs`.
+Categories and their optional children are global, independent of folders.
+`item_classifications` stores at most one assignment and a free-text comment per
+item. Removing a category clears its assignments/children, not comments or notes;
+removing a child preserves the parent. Deleting an item cascades its annotation.
+Dictionary IDs are not reused, so stale menu choices cannot target a new category.
+The independent `classification_enabled` and `comments_enabled` preferences
+default to false; hiding either feature must never delete annotations.
+Classification alone does not retain History.
+
+Assignment/comment changes and dictionary renames/removals invalidate the same
+item revision tokens used by bulk actions and export cleanup, including edits
+made by another connection. They do not change the note body or capture time.
+Reordering the dictionary does not invalidate note content. Query and Select all
+share category/child/comment predicates; ordinary text search still searches only
+title/body. `Query::same_filter` includes these fields for selection invalidation.
+UI callers emit the existing `State::changed` notification after mutations.
+Comment dialogs save against the item revision they opened with; a concurrent
+change keeps the dialog/text open with an error instead of overwriting new data.
+Export freezes category/child names and comments alongside items in its read
+transaction, so rendering and file verification never look up current names.
+Schema 3 preserves existing rows and revision tokens, but released schema-2-only
+binaries cannot reopen a database after this migration. Do not test dev builds
+against a working profile without approval and a SQLite backup.
+
 Clipboard transfers are bounded to 1 MiB of UTF-8 text. The extension prefers
 the exact advertised `text/plain;charset=utf-8` format, then other advertised
 UTF-8 spellings, plain text and `UTF8_STRING`. A provider may advertise a format

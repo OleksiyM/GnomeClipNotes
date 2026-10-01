@@ -1,4 +1,5 @@
 use crate::{
+    export::{export_annotation, ExportAnnotation},
     i18n::tr,
     model::{kind, now, Item, MAX_CONTENT},
     store::{Result, Store},
@@ -10,6 +11,7 @@ use std::collections::{BTreeSet, HashSet};
 pub struct SelectedItem {
     pub item: Item,
     pub revision: Vec<u8>,
+    pub annotation: ExportAnnotation,
 }
 
 pub fn joined_content(items: &[SelectedItem]) -> String {
@@ -30,6 +32,7 @@ fn read_selected(db: &Connection, ids: &[i64]) -> Result<Vec<SelectedItem>> {
                 Ok(SelectedItem {
                     item: Store::row(r)?,
                     revision: r.get(11)?,
+                    annotation: export_annotation(db, id)?,
                 })
             })
             .optional()?

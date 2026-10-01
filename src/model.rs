@@ -30,6 +30,26 @@ pub struct Group {
     pub name: String,
 }
 
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct Category {
+    pub id: i64,
+    pub name: String,
+    pub children: Vec<Subcategory>,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct Subcategory {
+    pub id: i64,
+    pub name: String,
+}
+
+#[derive(Debug, Clone, Default, PartialEq, Eq)]
+pub struct ItemClassification {
+    pub category_id: Option<i64>,
+    pub subcategory_id: Option<i64>,
+    pub comment: String,
+}
+
 #[derive(Debug, Clone, Default, Deserialize)]
 #[serde(default)]
 pub struct Query {
@@ -41,8 +61,28 @@ pub struct Query {
     pub source: String,
     pub since: i64,
     pub until: i64,
+    /// None: all categories; Some(0): unclassified; positive: a category ID.
+    pub category_id: Option<i64>,
+    pub subcategory_id: Option<i64>,
+    /// Literal case-insensitive search in the user's classification comment only.
+    pub comment: String,
     pub limit: i64,
     pub offset: i64,
+}
+
+impl Query {
+    /// Paging and metadata transport do not change the set being selected.
+    pub fn same_filter(&self, other: &Self) -> bool {
+        self.search == other.search
+            && self.group_id == other.group_id
+            && self.kind == other.kind
+            && self.source == other.source
+            && self.since == other.since
+            && self.until == other.until
+            && self.category_id == other.category_id
+            && self.subcategory_id == other.subcategory_id
+            && self.comment == other.comment
+    }
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -63,6 +103,8 @@ pub struct Settings {
     pub preview_mode: String,
     pub super_v_conflict_dismissed: bool,
     pub last_export_folder: Option<String>,
+    pub classification_enabled: bool,
+    pub comments_enabled: bool,
 }
 impl Default for Settings {
     fn default() -> Self {
@@ -89,6 +131,8 @@ impl Default for Settings {
             preview_mode: "webkit".into(),
             super_v_conflict_dismissed: false,
             last_export_folder: None,
+            classification_enabled: false,
+            comments_enabled: false,
         }
     }
 }
@@ -132,5 +176,7 @@ mod tests {
         .unwrap();
         assert_eq!(settings.preview_mode, "webkit");
         assert_eq!(settings.library_shortcut, "<Super>b");
+        assert!(!settings.classification_enabled);
+        assert!(!settings.comments_enabled);
     }
 }

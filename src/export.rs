@@ -15,6 +15,33 @@ use std::{
 
 pub type ExportResult<T> = Result<T, Box<dyn std::error::Error>>;
 
+#[derive(Debug, Clone, Default, Serialize, Deserialize, PartialEq, Eq)]
+pub struct ExportAnnotation {
+    pub category: Option<String>,
+    pub child: Option<String>,
+    pub comment: String,
+}
+
+pub(crate) fn export_annotation(
+    db: &rusqlite::Connection,
+    id: i64,
+) -> rusqlite::Result<ExportAnnotation> {
+    db.query_row(
+        "SELECT c.name,s.name,COALESCE(a.comment,'') FROM items i
+         LEFT JOIN item_classifications a ON a.item_id=i.id
+         LEFT JOIN categories c ON c.id=a.category_id
+         LEFT JOIN subcategories s ON s.id=a.subcategory_id WHERE i.id=?1",
+        [id],
+        |r| {
+            Ok(ExportAnnotation {
+                category: r.get(0)?,
+                child: r.get(1)?,
+                comment: r.get(2)?,
+            })
+        },
+    )
+}
+
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct ExportCollection {
     pub group_id: i64,
@@ -22,6 +49,7 @@ pub struct ExportCollection {
     pub group_revision: Vec<u8>,
     pub items: Vec<Item>,
     pub item_revisions: Vec<Vec<u8>>,
+    pub annotations: Vec<ExportAnnotation>,
 }
 #[derive(Debug, Clone)]
 pub struct ExportSnapshot {
@@ -123,6 +151,10 @@ impl Store {
             let rows = stmt
                 .query_map([id], |r| Ok((Store::row(r)?, r.get::<_, Vec<u8>>(11)?)))?
                 .collect::<rusqlite::Result<Vec<_>>>()?;
+            let annotations = rows
+                .iter()
+                .map(|(item, _)| export_annotation(&tx, item.id))
+                .collect::<rusqlite::Result<Vec<_>>>()?;
             let (items, item_revisions) = rows.into_iter().unzip();
             collections.push(ExportCollection {
                 group_id: id,
@@ -130,6 +162,7 @@ impl Store {
                 group_revision,
                 items,
                 item_revisions,
+                annotations,
             });
         }
         tx.commit()?;
@@ -456,6 +489,28 @@ pub fn render_collection(
             out.push_str(&trf(" · Modified: {date}", &[("date", &modified)]));
         }
         out.push('\n');
+        if let Some(annotation) = c.annotations.get(i) {
+            if let Some(category) = &annotation.category {
+                out.push_str(&trf(
+                    "\nCategory: {category}\n",
+                    &[("category", &inline(category))],
+                ));
+            }
+            if let Some(child) = &annotation.child {
+                out.push_str(&trf(
+                    "\nSubcategory: {subcategory}\n",
+                    &[("subcategory", &inline(child))],
+                ));
+            }
+            if !annotation.comment.is_empty() {
+                out.push_str(&format!("\n{}\n\n", tr("Comment:")));
+                for line in annotation.comment.split('\n') {
+                    out.push_str("> ");
+                    out.push_str(&inline(line));
+                    out.push('\n');
+                }
+            }
+        }
         if options.include_metadata {
             let item_id = item.id.to_string();
             let collection_id = item.group_id.to_string();
@@ -571,7 +626,7 @@ mod tests {
     use std::sync::atomic::{AtomicU64, Ordering};
     static NEXT: AtomicU64 = AtomicU64::new(1);
 
-    fn store() -> Store {
+    fn store_v2() -> Store {
         let db = Connection::open_in_memory().unwrap();
         db.execute_batch("PRAGMA foreign_keys=ON;
           CREATE TABLE groups(id INTEGER PRIMARY KEY,name TEXT NOT NULL UNIQUE,position INTEGER NOT NULL);
@@ -583,12 +638,18 @@ mod tests {
           CREATE TRIGGER item_export_revision_insert AFTER INSERT ON items BEGIN INSERT INTO item_export_revisions VALUES(new.id,randomblob(16)); END;
           CREATE TRIGGER item_export_revision_update AFTER UPDATE ON items BEGIN UPDATE item_export_revisions SET token=randomblob(16) WHERE item_id=new.id; END;
           CREATE TRIGGER group_export_revision_insert AFTER INSERT ON groups BEGIN INSERT INTO group_export_revisions VALUES(new.id,randomblob(16)); END;
-          CREATE TRIGGER group_export_revision_update AFTER UPDATE ON groups BEGIN UPDATE group_export_revisions SET token=randomblob(16) WHERE group_id=new.id; END;").unwrap();
+          CREATE TRIGGER group_export_revision_update AFTER UPDATE ON groups BEGIN UPDATE group_export_revisions SET token=randomblob(16) WHERE group_id=new.id; END;
+          PRAGMA user_version=2;").unwrap();
         Store {
             db,
             settings: Settings::default(),
             config_path: PathBuf::new(),
         }
+    }
+    fn store() -> Store {
+        let mut store = store_v2();
+        store.migrate().unwrap();
+        store
     }
     fn add(s: &Store, id: i64, group: i64, title: &str, content: &str, created: i64) {
         s.db.execute(
@@ -605,6 +666,124 @@ mod tests {
         ));
         std::fs::create_dir(&p).unwrap();
         p
+    }
+
+    #[test]
+    fn v2_classification_migration_preserves_existing_export_snapshots() {
+        let mut s = store_v2();
+        add(&s, 42, 2, "Old title", "Old content", 10);
+        let before_item = s.get(42).unwrap();
+        let before_revision: Vec<u8> =
+            s.db.query_row(
+                "SELECT token FROM item_export_revisions WHERE item_id=42",
+                [],
+                |r| r.get(0),
+            )
+            .unwrap();
+        let before_group_revision: Vec<u8> =
+            s.db.query_row(
+                "SELECT token FROM group_export_revisions WHERE group_id=2",
+                [],
+                |r| r.get(0),
+            )
+            .unwrap();
+        s.migrate().unwrap();
+        s.migrate().unwrap();
+        let after = s.snapshot_markdown_export(&[2]).unwrap();
+        assert!(same_item(&before_item, &after.collections[0].items[0]));
+        assert_eq!(before_revision, after.collections[0].item_revisions[0]);
+        assert_eq!(before_group_revision, after.collections[0].group_revision);
+        assert!(s.categories().unwrap().is_empty());
+        assert_eq!(
+            s.item_classification(42).unwrap(),
+            crate::model::ItemClassification::default()
+        );
+    }
+
+    #[test]
+    fn annotation_export_is_readable_and_shared_with_selected_items() {
+        let mut s = store();
+        add(&s, 1, 1, "Title", "original **body**", 10);
+        let category = s.create_category("<Project> *A*").unwrap();
+        let child = s.create_subcategory(category, "[Question]?").unwrap();
+        s.set_item_classification(
+            1,
+            &crate::model::ItemClassification {
+                category_id: Some(category),
+                subcategory_id: Some(child),
+                comment: "First <answer>\n\n# second\n".into(),
+            },
+        )
+        .unwrap();
+        let snapshot = s.snapshot_markdown_export(&[1]).unwrap();
+        let collection = &snapshot.collections[0];
+        let selected = s.selected_items(&[1]).unwrap();
+        assert_eq!(selected[0].annotation, collection.annotations[0]);
+        let text = render_collection(collection, ExportOptions::default(), &glib::TimeZone::utc());
+        assert!(text.contains("Category: &lt;Project&gt; \\*A\\*"));
+        assert!(text.contains("Subcategory: \\[Question\\]?"));
+        assert!(text.contains("> First &lt;answer&gt;\n> \n> \\# second\n> \n"));
+        assert!(text.ends_with("original **body**\n"));
+        assert!(!text.contains("Item ID:"));
+        s.clear_item_category(1).unwrap();
+        let unassigned = s.snapshot_markdown_export(&[1]).unwrap();
+        let text = render_collection(
+            &unassigned.collections[0],
+            ExportOptions::default(),
+            &glib::TimeZone::utc(),
+        );
+        assert!(!text.contains("Category:"));
+        assert!(text.contains("Comment:"));
+    }
+
+    #[test]
+    fn annotation_snapshot_stays_frozen_and_rename_refuses_cleanup() {
+        let mut s = store();
+        add(&s, 1, 2, "Title", "body", 10);
+        let category = s.create_category("Original category").unwrap();
+        let child = s.create_subcategory(category, "Original child").unwrap();
+        s.set_item_classification(
+            1,
+            &crate::model::ItemClassification {
+                category_id: Some(category),
+                subcategory_id: Some(child),
+                comment: "Answer".into(),
+            },
+        )
+        .unwrap();
+        let snapshot = s.snapshot_markdown_export(&[2]).unwrap();
+        let selected = s.selected_items(&[1]).unwrap();
+        let dir = temp();
+        let written = write_markdown_export(&snapshot, &dir, ExportOptions::default());
+        let confirmed = s
+            .preview_export_cleanup(&snapshot, &written, &[], true)
+            .unwrap();
+        assert_eq!(confirmed.eligible_item_ids, vec![1]);
+        s.rename_category(category, "New category").unwrap();
+        s.rename_subcategory(child, "New child").unwrap();
+        assert!(verified_groups(&snapshot, &written).contains(&2));
+        assert_eq!(
+            selected[0].annotation,
+            snapshot.collections[0].annotations[0]
+        );
+        let text = render_collection(
+            &snapshot.collections[0],
+            ExportOptions::default(),
+            &snapshot.time_zone,
+        );
+        assert!(text.contains("Original category"));
+        assert!(text.contains("Original child"));
+        assert!(!text.contains("New category"));
+        let report = s
+            .cleanup_exported_snapshot(&snapshot, &written, &confirmed, &[])
+            .unwrap();
+        assert!(report.deleted_item_ids.is_empty());
+        assert!(report.deleted_folder_ids.is_empty());
+        assert!(report
+            .skipped
+            .iter()
+            .all(|skip| !skip.reason.contains("export file")));
+        std::fs::remove_dir_all(dir).unwrap();
     }
 
     #[test]
@@ -851,6 +1030,44 @@ mod tests {
             .unwrap();
         assert!(report.deleted_item_ids.is_empty());
         assert_eq!(s.get(8).unwrap().content, "original");
+        std::fs::remove_dir_all(dir).unwrap();
+    }
+
+    #[test]
+    fn classification_edit_and_revert_invalidates_confirmed_export_cleanup() {
+        use crate::model::ItemClassification;
+        let mut s = store();
+        add(&s, 1, 2, "Title", "unchanged body", 10);
+        let category = s.create_category("Project").unwrap();
+        let annotation = ItemClassification {
+            category_id: Some(category),
+            comment: "Original answer".into(),
+            ..Default::default()
+        };
+        s.set_item_classification(1, &annotation).unwrap();
+        let snapshot = s.snapshot_markdown_export(&[2]).unwrap();
+        let dir = temp();
+        let written = write_markdown_export(&snapshot, &dir, ExportOptions::default());
+        let confirmed = s
+            .preview_export_cleanup(&snapshot, &written, &[], true)
+            .unwrap();
+        assert_eq!(confirmed.eligible_item_ids, vec![1]);
+        s.set_item_classification(
+            1,
+            &ItemClassification {
+                comment: "Changed answer".into(),
+                ..annotation.clone()
+            },
+        )
+        .unwrap();
+        s.set_item_classification(1, &annotation).unwrap();
+        let report = s
+            .cleanup_exported_snapshot(&snapshot, &written, &confirmed, &[])
+            .unwrap();
+        assert!(report.deleted_item_ids.is_empty());
+        assert!(report.deleted_folder_ids.is_empty());
+        assert_eq!(s.item_classification(1).unwrap(), annotation);
+        assert_eq!(s.get(1).unwrap().content, "unchanged body");
         std::fs::remove_dir_all(dir).unwrap();
     }
     #[test]

@@ -52,6 +52,13 @@ to work with multiple items across search results and pages: **Combine** them
 into a new Note, **Copy** their text, **Export** them to Markdown, **Move** them
 to Notes or a folder, or **Delete** them with confirmation.
 
+Since 1.3.0, Library offers **categories, subcategories and comments**, independent
+of folders. Enable comments and categories separately in **Settings → Comments &
+Categories**; both are off by default. Use subcategories as labels or saved
+questions, and comments for your answers or context. Filter by category,
+subcategory or comment text; Markdown exports preserve these annotations.
+Collection and category tags keep each card's context visible at a glance.
+
 ## Install
 
 Two installation paths, **the same complete app**. Both verify SHA256 and can

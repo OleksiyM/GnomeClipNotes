@@ -10,7 +10,11 @@ use std::{
 pub type Result<T> = std::result::Result<T, Box<dyn std::error::Error>>;
 
 const ITEM_FILTER_SQL: &str = "(?1=-1 OR group_id=?1) AND (instr(unicode_lower(content),?2)>0 OR instr(unicode_lower(title),?2)>0)
-    AND (?3='' OR kind=?3) AND (?4='' OR source=?4) AND (?5=0 OR created_at>=?5) AND (?6=0 OR created_at<=?6)";
+    AND (?3='' OR kind=?3) AND (?4='' OR source=?4) AND (?5=0 OR created_at>=?5) AND (?6=0 OR created_at<=?6)
+    AND (?7 IS NULL OR (?7=0 AND NOT EXISTS(SELECT 1 FROM item_classifications a WHERE a.item_id=items.id AND a.category_id IS NOT NULL))
+         OR EXISTS(SELECT 1 FROM item_classifications a WHERE a.item_id=items.id AND a.category_id=?7))
+    AND (?8 IS NULL OR EXISTS(SELECT 1 FROM item_classifications a WHERE a.item_id=items.id AND a.subcategory_id=?8))
+    AND (?9='' OR EXISTS(SELECT 1 FROM item_classifications a WHERE a.item_id=items.id AND instr(unicode_lower(a.comment),?9)>0))";
 
 pub struct Store {
     pub db: Connection,
@@ -70,7 +74,7 @@ impl Store {
         Ok(store)
     }
 
-    fn migrate(&mut self) -> Result<()> {
+    pub(crate) fn migrate(&mut self) -> Result<()> {
         self.db.create_scalar_function(
             "unicode_lower",
             1,
@@ -80,7 +84,7 @@ impl Store {
         )?;
         self.db.busy_timeout(std::time::Duration::from_secs(5))?;
         let version: i64 = self.db.query_row("PRAGMA user_version", [], |r| r.get(0))?;
-        if version > 2 {
+        if version > 3 {
             return Err(
                 tr("Database was created by a newer application; refusing to open it").into(),
             );
@@ -113,6 +117,9 @@ impl Store {
                 CREATE TRIGGER group_export_revision_update AFTER UPDATE ON groups BEGIN UPDATE group_export_revisions SET token=randomblob(16) WHERE group_id=new.id; END;
                 PRAGMA user_version=2;")?;
             tx.commit()?;
+        }
+        if version < 3 {
+            crate::classification::migrate(&mut self.db)?;
         }
         Ok(())
     }
@@ -207,7 +214,7 @@ impl Store {
         };
         let pattern = query.search.to_lowercase();
         let mut stmt = self.db.prepare(&format!(
-            "SELECT * FROM items WHERE {ITEM_FILTER_SQL} ORDER BY copied_at DESC,id DESC LIMIT ?7 OFFSET ?8"
+            "SELECT * FROM items WHERE {ITEM_FILTER_SQL} ORDER BY copied_at DESC,id DESC LIMIT ?10 OFFSET ?11"
         ))?;
         let items = stmt
             .query_map(
@@ -218,6 +225,9 @@ impl Store {
                     query.source,
                     query.since,
                     query.until,
+                    query.category_id,
+                    query.subcategory_id,
+                    query.comment.to_lowercase(),
                     limit,
                     query.offset.max(0)
                 ],
@@ -238,7 +248,10 @@ impl Store {
                     query.kind,
                     query.source,
                     query.since,
-                    query.until
+                    query.until,
+                    query.category_id,
+                    query.subcategory_id,
+                    query.comment.to_lowercase()
                 ],
                 |r| r.get(0),
             )?
@@ -729,7 +742,7 @@ mod tests {
         assert_eq!(
             s.db.query_row("PRAGMA user_version", [], |r| r.get::<_, i64>(0))
                 .unwrap(),
-            2
+            3
         );
     }
 

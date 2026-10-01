@@ -1,4 +1,9 @@
 src/bin/gnome-clip-notes-editor.rs
+src/card_metadata.rs
+src/classification.rs
+src/classification_filters.rs
+src/classification_preferences.rs
+src/classification_ui.rs
 src/date_picker.rs
 src/editor_process.rs
 src/export.rs

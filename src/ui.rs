@@ -355,6 +355,7 @@ pub fn show(state: &Rc<State>) {
         owner.add_controller(outside_click);
     }
     let filters = gtk::Box::new(gtk::Orientation::Vertical, 12);
+    filters.set_width_request(280);
     margins(&filters, 12);
     let filter_title = label("Filter Items");
     filter_title.add_css_class("heading");
@@ -395,7 +396,14 @@ pub fn show(state: &Rc<State>) {
     date_hint.add_css_class("caption");
     date_hint.add_css_class("dim-label");
     filters.append(&date_hint);
-    filter_popover.set_child(Some(&filters));
+    let filter_scroll = gtk::ScrolledWindow::builder()
+        .child(&filters)
+        .hscrollbar_policy(gtk::PolicyType::Never)
+        .propagate_natural_width(true)
+        .max_content_height(480)
+        .propagate_natural_height(true)
+        .build();
+    filter_popover.set_child(Some(&filter_scroll));
     filter_button.set_popover(Some(&filter_popover));
     search_row.append(&filter_button);
     content.append(&search_row);
@@ -407,6 +415,8 @@ pub fn show(state: &Rc<State>) {
         .build();
     filters.append(&source);
     source.set_widget_name("library-filter-source");
+    let classification_filters = crate::classification_filters::Filters::new();
+    filters.append(&classification_filters.widget);
     let clear_filters = button("Clear filters");
     clear_filters.set_widget_name("library-clear-filters");
     clear_filters.add_css_class("flat");
@@ -458,6 +468,7 @@ pub fn show(state: &Rc<State>) {
     let offset = Rc::new(Cell::new(0i64));
     let page_size = Rc::new(Cell::new(6i64));
     let refresh: Rc<dyn Fn()> = Rc::new({
+        let classification_filters = classification_filters.clone();
         let selection = selection.clone();
         let state = Rc::downgrade(state);
         let search = search.clone();
@@ -490,6 +501,26 @@ pub fn show(state: &Rc<State>) {
             let Some(state) = state.upgrade() else {
                 return;
             };
+            {
+                let store = state.store.borrow();
+                match store.categories() {
+                    Ok(categories) => {
+                        if classification_filters.sync(
+                            store.settings.classification_enabled,
+                            store.settings.comments_enabled,
+                            categories,
+                        ) {
+                            selection.invalidate();
+                            offset.set(0);
+                        }
+                    }
+                    Err(error) => {
+                        selection.invalidate();
+                        summary.set_text(&error.to_string());
+                        return;
+                    }
+                }
+            }
             if let Ok(sources) = state.store.borrow().sources() {
                 if *source_values.borrow() != sources {
                     let selected_name = source
@@ -534,7 +565,8 @@ pub fn show(state: &Rc<State>) {
             let (since, end) = applied_date_range.get();
             let count = u8::from(kinds.selected() != 0)
                 + u8::from(source.selected() != 0)
-                + u8::from(since != 0 || end != 0);
+                + u8::from(since != 0 || end != 0)
+                + classification_filters.count();
             filter_button.set_label(&if count == 0 {
                 tr("Filters")
             } else {
@@ -550,7 +582,8 @@ pub fn show(state: &Rc<State>) {
                     || dates.selected() != 0
                     || source.selected() != 0
                     || !from.text().is_empty()
-                    || !until.text().is_empty(),
+                    || !until.text().is_empty()
+                    || classification_filters.count() > 0,
             );
             // A refresh can originate in one of these widgets' GTK signals.
             // Keep detached children alive until event dispatch has finished.
@@ -621,7 +654,11 @@ pub fn show(state: &Rc<State>) {
                 });
                 groups_box.append(&b);
             }
+            let classification_query = classification_filters.query();
             let mut query = Query {
+                category_id: classification_query.category_id,
+                subcategory_id: classification_query.subcategory_id,
+                comment: classification_query.comment,
                 search: search.text().to_string(),
                 group_id: active_group.get(),
                 kind: match kinds.selected() {
@@ -684,7 +721,10 @@ pub fn show(state: &Rc<State>) {
                             || !query.kind.is_empty()
                             || !query.source.is_empty()
                             || query.since != 0
-                            || query.until != 0;
+                            || query.until != 0
+                            || query.category_id.is_some()
+                            || query.subcategory_id.is_some()
+                            || !query.comment.is_empty();
                         if filtered {
                             empty.set_title(&tr("No Matching Items"));
                             empty.set_description(Some(&tr(
@@ -790,6 +830,7 @@ pub fn show(state: &Rc<State>) {
         let until = until.clone();
         let offset = offset.clone();
         let resetting_filters = resetting_filters.clone();
+        let classification_filters = classification_filters.clone();
         clear_filters.connect_clicked(move |_| {
             resetting_filters.set(true);
             kinds.set_selected(0);
@@ -797,6 +838,7 @@ pub fn show(state: &Rc<State>) {
             source.set_selected(0);
             from.set_text("");
             until.set_text("");
+            classification_filters.clear();
             offset.set(0);
             resetting_filters.set(false);
             refresh();
@@ -805,6 +847,18 @@ pub fn show(state: &Rc<State>) {
     {
         let selection = selection.clone();
         search.connect_changed(move |search| selection.search_edited(&search.text()));
+    }
+    {
+        let refresh = Rc::downgrade(&refresh);
+        let offset = offset.clone();
+        let selection = selection.clone();
+        classification_filters.connect_changed(move || {
+            selection.invalidate();
+            offset.set(0);
+            if let Some(refresh) = refresh.upgrade() {
+                refresh();
+            }
+        });
     }
     {
         let refresh = refresh.clone();
@@ -998,21 +1052,18 @@ fn card(state: &Rc<State>, item: &Item, selecting: bool, collection: Option<&Gro
     preview.add_css_class("card-preview");
     card.append(&preview);
     if let Some(group) = collection {
-        let location = gtk::Box::new(gtk::Orientation::Horizontal, 6);
-        location.set_widget_name("card-collection");
-        location.append(&gtk::Image::from_icon_name(match group.id {
+        let icon = match group.id {
             0 => "document-open-recent-symbolic",
             1 => "document-edit-symbolic",
             _ => "folder-symbolic",
-        }));
+        };
         let name = group_name(group);
-        let label = gtk::Label::new(Some(&name));
-        label.set_xalign(0.0);
-        label.set_ellipsize(gtk::pango::EllipsizeMode::End);
-        label.set_hexpand(true);
-        location.set_tooltip_text(Some(&name));
-        location.append(&label);
+        let location = crate::card_metadata::MetadataTag::new(icon, &name, "card-collection");
+        location.set_margin_top(4);
         card.append(&location);
+    }
+    if let Some(label) = crate::classification_ui::card_label(state, item.id) {
+        card.append(&label);
     }
     let source = gtk::Label::new(Some(&if item.source.is_empty() {
         tr("Note")
@@ -1033,6 +1084,9 @@ fn card(state: &Rc<State>, item: &Item, selecting: bool, collection: Option<&Gro
     paste.add_css_class("flat");
     foot.append(&edit);
     foot.append(&paste);
+    if let Some(comment) = crate::classification_ui::comment_button(state, item.id) {
+        foot.append(&comment);
+    }
     let menu = gtk::MenuButton::builder()
         .icon_name("view-more-horizontal-symbolic")
         .tooltip_text(tr("More Actions"))
@@ -1088,13 +1142,19 @@ fn card(state: &Rc<State>, item: &Item, selecting: bool, collection: Option<&Gro
     let organize = gio::Menu::new();
     organize.append(Some(&tr("Move to Notes")), Some("menu.notes"));
     organize.append_submenu(Some(&tr("Move to folder")), &move_destinations(&folders));
+    crate::classification_ui::add_menu(state, item.id, &menu, &organize);
     model.append_section(None, &organize);
     let destructive = gio::Menu::new();
     let delete_item = gio::MenuItem::new(Some(&tr("Delete…")), Some("menu.delete"));
     delete_item.set_attribute_value("accel", Some(&"Delete".to_variant()));
     destructive.append_item(&delete_item);
     model.append_section(None, &destructive);
-    menu.set_menu_model(Some(&model));
+    // Sliding submenus share their widest page's width, including long user
+    // category/question names. Native nested popovers size each menu separately.
+    menu.set_popover(Some(&gtk::PopoverMenu::from_model_full(
+        &model,
+        gtk::PopoverMenuFlags::NESTED,
+    )));
     foot.append(&menu);
     card.append(&foot);
     foot.set_visible(!selecting);

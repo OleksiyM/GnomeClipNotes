@@ -24,6 +24,15 @@ adds source, origin, identifiers and last-copied time. Notes may themselves cont
 arbitrary Markdown, including incomplete fragments; export preserves their body
 verbatim and does not repair or normalize author markup.
 
+Assigned category and subcategory names and user comments are author content:
+they are included when present even with optional technical metadata off, and
+even when classification controls are disabled. Names are escaped as plain text;
+multiline comments appear in an escaped Markdown quotation before the unchanged
+item body. Empty annotations leave the previous document format unchanged.
+Names and comments are frozen in the same SQLite snapshot as items and revision
+tokens. File verification reuses that snapshot, never the current dictionary.
+Annotation edits and dictionary renames/removals invalidate cleanup confirmations.
+
 Settings export never includes History. Library filters do not affect this export. Clipboard
 items saved into custom folders are included. Only the saved database state is
 exported, not unsaved editor contents.

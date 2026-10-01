@@ -6,7 +6,7 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: GnomeClipNotes 1.2.0\n"
+"Project-Id-Version: GnomeClipNotes 1.3.0\n"
 "Report-Msgid-Bugs-To: https://github.com/OleksiyM/GnomeClipNotes/issues\n"
 "POT-Creation-Date: 1970-01-01 00:00+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
@@ -29,6 +29,20 @@ msgid ""
 "- Source: {source}\n"
 "- Source ID: {source_id}\n"
 "- Last copied: {date}\n"
+msgstr ""
+
+#: src/export.rs
+#, rust-format
+msgid ""
+"\n"
+"Category: {category}\n"
+msgstr ""
+
+#: src/export.rs
+#, rust-format
+msgid ""
+"\n"
+"Subcategory: {subcategory}\n"
 msgstr ""
 
 #: src/export.rs
@@ -160,12 +174,28 @@ msgstr ""
 msgid "Add"
 msgstr ""
 
+#: src/classification_preferences.rs
+msgid "Add Category…"
+msgstr ""
+
 #: src/preferences.rs
 msgid "Add Identifier Manually"
 msgstr ""
 
 #: src/preferences.rs
 msgid "Add Installed Application"
+msgstr ""
+
+#: src/classification_preferences.rs
+msgid "Add Subcategory…"
+msgstr ""
+
+#: src/classification_preferences.rs
+msgid "Add a personal comment to any item, with or without a category."
+msgstr ""
+
+#: src/classification_preferences.rs
+msgid "Add your own categories. Nothing is assigned automatically."
 msgstr ""
 
 #: src/export_ui.rs
@@ -188,8 +218,16 @@ msgstr ""
 msgid "All apps"
 msgstr ""
 
+#: src/classification_filters.rs
+msgid "All categories"
+msgstr ""
+
 #: src/export_ui.rs
 msgid "All items and folders were kept in the application."
+msgstr ""
+
+#: src/classification_filters.rs
+msgid "All subcategories"
 msgstr ""
 
 #: src/ui.rs
@@ -252,7 +290,7 @@ msgstr ""
 msgid "Calendar shortcuts are locked by your system administrator."
 msgstr ""
 
-#: src/library_actions.rs src/preferences.rs src/ui.rs
+#: src/classification_ui.rs src/library_actions.rs src/preferences.rs src/ui.rs
 msgid "Cancel"
 msgstr ""
 
@@ -270,6 +308,14 @@ msgstr ""
 
 #: src/preferences.rs
 msgid "Capture is active"
+msgstr ""
+
+#: src/classification_filters.rs src/classification_ui.rs
+msgid "Category"
+msgstr ""
+
+#: src/classification_preferences.rs
+msgid "Category Actions"
 msgstr ""
 
 #: src/export_ui.rs
@@ -403,6 +449,26 @@ msgid_plural "Combined {count} items into a new Note. Delete original items?"
 msgstr[0] ""
 msgstr[1] ""
 
+#: src/classification_ui.rs
+msgid "Comment"
+msgstr ""
+
+#: src/classification_filters.rs
+msgid "Comment contains…"
+msgstr ""
+
+#: src/export.rs
+msgid "Comment:"
+msgstr ""
+
+#: src/classification_preferences.rs
+msgid "Comments & Categories"
+msgstr ""
+
+#: src/classification_ui.rs
+msgid "Comment…"
+msgstr ""
+
 #: src/preferences.rs
 msgid "Continue a Markdown list"
 msgstr ""
@@ -525,8 +591,16 @@ msgstr ""
 msgid "Delete exported items?"
 msgstr ""
 
+#: src/classification_preferences.rs
+msgid "Delete this category?"
+msgstr ""
+
 #: src/ui.rs
 msgid "Delete this item?"
+msgstr ""
+
+#: src/classification_preferences.rs
+msgid "Delete this subcategory?"
 msgstr ""
 
 #: src/export_ui.rs
@@ -564,7 +638,8 @@ msgid_plural "Deleted {count} items."
 msgstr[0] ""
 msgstr[1] ""
 
-#: src/library_actions.rs src/preferences.rs src/ui.rs
+#: src/classification_preferences.rs src/library_actions.rs src/preferences.rs
+#: src/ui.rs
 msgid "Delete…"
 msgstr ""
 
@@ -595,6 +670,10 @@ msgstr ""
 
 #: src/preferences.rs src/ui.rs
 msgid "Edit"
+msgstr ""
+
+#: src/classification_ui.rs
+msgid "Edit Comment"
 msgstr ""
 
 #: src/ui.rs
@@ -695,6 +774,10 @@ msgstr[1] ""
 
 #: src/preferences.rs
 msgid "Folders"
+msgstr ""
+
+#: src/classification_preferences.rs
+msgid "For example: a project as a category, with Research, Ideas and Decisions as subcategories."
 msgstr ""
 
 #: src/preferences.rs
@@ -910,7 +993,7 @@ msgstr ""
 msgid "Move"
 msgstr ""
 
-#: src/preferences.rs
+#: src/classification_preferences.rs src/preferences.rs
 msgid "Move down"
 msgstr ""
 
@@ -926,12 +1009,16 @@ msgstr ""
 msgid "Move to folder"
 msgstr ""
 
-#: src/preferences.rs
+#: src/classification_preferences.rs src/preferences.rs
 msgid "Move up"
 msgstr ""
 
 #: src/ui.rs
 msgid "Name is optional."
+msgstr ""
+
+#: src/classification_preferences.rs
+msgid "New Category"
 msgstr ""
 
 #: src/preferences.rs src/ui.rs
@@ -949,6 +1036,10 @@ msgstr ""
 
 #: src/lib.rs src/ui.rs
 msgid "New Note"
+msgstr ""
+
+#: src/classification_preferences.rs
+msgid "New Subcategory"
 msgstr ""
 
 #: src/ui.rs
@@ -969,6 +1060,14 @@ msgstr ""
 
 #: src/ui.rs
 msgid "No Notes Yet"
+msgstr ""
+
+#: src/classification_preferences.rs
+msgid "No categories yet"
+msgstr ""
+
+#: src/classification_filters.rs src/classification_ui.rs
+msgid "No category"
 msgstr ""
 
 #: src/preferences.rs
@@ -1050,6 +1149,14 @@ msgstr ""
 
 #: src/preferences.rs
 msgid "Open at Login"
+msgstr ""
+
+#: src/classification_ui.rs
+msgid "Optional — leave empty if you don't need a comment."
+msgstr ""
+
+#: src/classification_preferences.rs
+msgid "Organize items with categories and subcategories, independently of folders."
 msgstr ""
 
 #: src/ui.rs
@@ -1147,11 +1254,19 @@ msgstr ""
 msgid "Rename"
 msgstr ""
 
+#: src/classification_preferences.rs
+msgid "Rename Category"
+msgstr ""
+
 #: src/ui.rs
 msgid "Rename Item"
 msgstr ""
 
-#: src/preferences.rs src/ui.rs
+#: src/classification_preferences.rs
+msgid "Rename Subcategory"
+msgstr ""
+
+#: src/classification_preferences.rs src/preferences.rs src/ui.rs
 msgid "Rename…"
 msgstr ""
 
@@ -1191,7 +1306,7 @@ msgstr ""
 msgid "Richer Markdown formatting, including tables. Uses more memory."
 msgstr ""
 
-#: src/ui.rs
+#: src/classification_ui.rs src/ui.rs
 msgid "Save"
 msgstr ""
 
@@ -1257,6 +1372,11 @@ msgstr ""
 
 #: src/library_selection.rs
 msgid "Select item"
+msgstr ""
+
+#: src/classification_ui.rs
+#, rust-format
+msgid "Select “{category}”"
 msgstr ""
 
 #: src/library_actions.rs
@@ -1335,6 +1455,10 @@ msgstr ""
 msgid "Stopping service…"
 msgstr ""
 
+#: src/classification_filters.rs
+msgid "Subcategory"
+msgstr ""
+
 #: src/preferences.rs
 msgid "Super+B"
 msgstr ""
@@ -1367,7 +1491,7 @@ msgstr ""
 msgid "Text editing"
 msgstr ""
 
-#: src/library_items.rs src/store.rs
+#: src/classification.rs src/library_items.rs src/store.rs
 msgid "Text must be at most 1 MiB and contain no NUL characters"
 msgstr ""
 
@@ -1377,6 +1501,10 @@ msgstr ""
 
 #: src/preferences.rs
 msgid "The calendar also uses this shortcut. You can resolve the conflict or choose another Activate shortcut above."
+msgstr ""
+
+#: src/classification.rs
+msgid "The category list changed. Try again."
 msgstr ""
 
 #: src/library_actions.rs
@@ -1432,12 +1560,27 @@ msgstr ""
 msgid "This build is newer than the latest public release."
 msgstr ""
 
+#: src/classification_preferences.rs
+#, rust-format
+msgid "This category and its subcategories will be removed from {count} item. Comments and items will be kept."
+msgid_plural "This category and its subcategories will be removed from {count} items. Comments and items will be kept."
+msgstr[0] ""
+msgstr[1] ""
+
 #: src/store.rs
 msgid "This folder cannot be renamed"
 msgstr ""
 
+#: src/classification.rs
+msgid "This item changed while the dialog was open. Close it and try again; your comment has not been saved."
+msgstr ""
+
 #: src/store.rs
 msgid "This item no longer exists. No folder was created."
+msgstr ""
+
+#: src/classification.rs
+msgid "This item or category no longer exists."
 msgstr ""
 
 #: src/store.rs
@@ -1455,6 +1598,13 @@ msgstr ""
 #: src/preferences.rs
 msgid "This restores every setting to its original value."
 msgstr ""
+
+#: src/classification_preferences.rs
+#, rust-format
+msgid "This subcategory will be removed from {count} item. Categories, comments and items will be kept."
+msgid_plural "This subcategory will be removed from {count} items. Categories, comments and items will be kept."
+msgstr[0] ""
+msgstr[1] ""
 
 #: src/ui.rs
 msgid "This week"
@@ -1503,6 +1653,18 @@ msgstr ""
 
 #: src/preferences.rs
 msgid "Use Super+V for ClipNotes?"
+msgstr ""
+
+#: src/classification.rs
+msgid "Use a name of 1–512 characters without NUL characters."
+msgstr ""
+
+#: src/classification_preferences.rs
+msgid "Use categories in Library"
+msgstr ""
+
+#: src/classification_preferences.rs
+msgid "Use comments in Library"
 msgstr ""
 
 #: src/ui.rs
@@ -1554,6 +1716,10 @@ msgstr ""
 msgid "Yesterday"
 msgstr ""
 
+#: src/classification_preferences.rs
+msgid "Your categories"
+msgstr ""
+
 #: src/ui.rs
 msgid "Your changes have not been saved."
 msgstr ""
@@ -1592,6 +1758,11 @@ msgstr ""
 
 #: src/export.rs
 msgid "item was moved"
+msgstr ""
+
+#: src/classification_ui.rs
+#, rust-format
+msgid "{category} · {subcategory}"
 msgstr ""
 
 #: src/ui.rs

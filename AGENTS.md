@@ -48,8 +48,8 @@ Details: [architecture](docs/architecture.md), [preview decisions](docs/preview.
 | Task | Entry points | Read first |
 | --- | --- | --- |
 | Capture/paste/overlay/keys | `extension/extension.js`, `extension/clipboardFormats.js`, `extension/datePicker.js`; D-Bus in `src/lib.rs` | [Privacy](docs/privacy.md), [interface](docs/interface.md) |
-| Data/retention/sources/settings | `src/store.rs`, `src/model.rs`, `src/preferences.rs` | [Architecture](docs/architecture.md), [privacy](docs/privacy.md) |
-| Library/Native editor/selection | `src/ui.rs`, `src/library_{selection,actions,items}.rs`, `src/item_shortcuts.rs`, `src/date_picker.rs`, `src/style.css` | [Interface](docs/interface.md) |
+| Data/retention/sources/settings | `src/store.rs`, `src/classification.rs`, `src/model.rs`, `src/preferences.rs` | [Architecture](docs/architecture.md), [privacy](docs/privacy.md) |
+| Library/Native editor/selection | `src/ui.rs`, `src/library_{selection,actions,items}.rs`, `src/classification_{ui,filters,preferences}.rs`, `src/item_shortcuts.rs`, `src/date_picker.rs`, `src/style.css` | [Interface](docs/interface.md) |
 | Full editor/rendering | `src/editor_process.rs`, `src/bin/gnome-clip-notes-editor.rs`, `src/preview_{native,html,webkit}.rs` | [Preview](docs/preview.md) |
 | Export/cleanup | `src/export.rs`, `src/export_ui.rs`, revision triggers in `src/store.rs` | [Export](docs/export.md) |
 | Languages/update check | `src/i18n.rs`, `po/`, `scripts/translations.py`; `src/release_check.rs` | [Translations](docs/translations.md), [privacy](docs/privacy.md) |
@@ -69,6 +69,13 @@ independently in both UIs. Delegate bounded work when useful; retain integration
   Dirty marker and Save share the saved-content comparison. Dirty close needs
   confirmation; crash/draft recovery is not implemented. Cards track item ID,
   not widget position/focus ring; shortcuts must respect focused text fields.
+- **Classification is optional and folder-independent.** Off by default, Library
+  only. Comments have a separate default-off switch and work without categories;
+  disabling either hides its controls/filters, never its data.
+  Removing categories/children clears assignments, never comments or notes.
+  It does not promote History or survive Combine as an inferred assignment.
+  Dictionary/annotation mutations must invalidate item revisions and refresh UI;
+  export freezes and includes user annotations even without technical metadata.
 - **Export is not backup.** Settings export covers complete selected Notes/custom
   folders, never History or just the filtered page. Library selection export is
   separate: explicitly selected items (including History), one Markdown file,

@@ -64,7 +64,14 @@ fn verify_menus(state: &Rc<State>, dir: &std::path::Path) {
         .downcast::<gtk::MenuButton>()
         .unwrap();
         assert!(card.popover().unwrap().is::<gtk::PopoverMenu>());
-        let actions = card.menu_model().unwrap().item_link(0, "section").unwrap();
+        let model = card
+            .popover()
+            .unwrap()
+            .downcast::<gtk::PopoverMenu>()
+            .unwrap()
+            .menu_model()
+            .unwrap();
+        let actions = model.item_link(0, "section").unwrap();
         assert_eq!(
             actions
                 .item_attribute_value(0, "action", None)
@@ -73,11 +80,11 @@ fn verify_menus(state: &Rc<State>, dir: &std::path::Path) {
             Some("menu.view")
         );
         assert_eq!(
-            card.menu_model().unwrap().n_items(),
+            model.n_items(),
             3,
             "Separate details, organization and deletion"
         );
-        let organize = card.menu_model().unwrap().item_link(1, "section").unwrap();
+        let organize = model.item_link(1, "section").unwrap();
         assert_eq!(
             organize
                 .item_attribute_value(0, "action", None)
@@ -1139,6 +1146,7 @@ fn verify_library_keyboard(state: Rc<State>, dir: PathBuf) {
         assert!(selected().is_none());
         println!("PASS library selection, refresh identity, card shortcuts, search safety and arrow paging");
         verify_library_bulk(state.clone(), &dir).await;
+        crate::classification_smoke::run(state.clone(), &dir).await;
         println!("UI_SMOKE_OK {}", dir.display());
         state.app.quit();
     });
@@ -1388,7 +1396,7 @@ async fn verify_library_bulk(state: Rc<State>, dir: &std::path::Path) {
         w.widget_name() == "card-collection"
     })
     .expect("All Items cards expose their current collection");
-    assert!(location.last_child().unwrap().is::<gtk::Label>());
+    assert!(find(&location, &|w| w.is::<gtk::Label>()).is_some());
     click("library-select-all");
     let count = find(reopened.upcast_ref(), &|w| {
         w.widget_name() == "library-selection-count"
@@ -1503,7 +1511,8 @@ async fn verify_library_bulk(state: Rc<State>, dir: &std::path::Path) {
     state.changed();
     assert_eq!(sources.selected(), 0);
     assert!((0..names.n_items()).all(|i| names.string(i).as_deref() != Some("Orphan Test App")));
-    reopened.set_default_size(1040, 720);
+    // Leave room for two rows including the collection metadata tags.
+    reopened.set_default_size(1040, 880);
     click("collection--1");
     glib::timeout_future(Duration::from_millis(400)).await;
     let verify_page = || {
@@ -1539,7 +1548,7 @@ async fn verify_library_bulk(state: Rc<State>, dir: &std::path::Path) {
         verify_page();
         snapshot(reopened.upcast_ref(), &dir.join(file));
     }
-    for (width, height) in [(1060, 740), (1040, 720), (960, 660)] {
+    for (width, height) in [(1060, 900), (1040, 880), (960, 820)] {
         reopened.set_default_size(width, height);
         glib::timeout_future(Duration::from_millis(400)).await;
         verify_page();

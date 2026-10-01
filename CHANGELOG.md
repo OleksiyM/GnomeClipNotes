@@ -3,6 +3,38 @@
 Release availability and publication dates are recorded in
 [GitHub Releases](https://github.com/OleksiyM/GnomeClipNotes/releases).
 
+## 1.3.0 — 2026-10-01
+
+### Library
+
+- Optional categories and subcategories, independent of folders. Manage names
+  and ordering in Settings; assign or remove a category from a card's menu.
+  Subcategories can be labels or saved questions.
+- Independent per-item comments with a card shortcut for editing existing
+  comments. Comments and categories have separate default-off switches in
+  Settings → Comments & Categories; disabling them hides controls, not data.
+- Filter by category, subcategory or comment text, including across All Items
+  and bulk selection. Search within category dropdowns narrows choices live.
+- Collection and category tags share a subtle, noninteractive style. Long names
+  use the available card width without widening the grid; full names have tooltips.
+
+### Export and data
+
+- Both collection and selected-item Markdown exports include categories,
+  subcategories and comments, even when technical metadata is disabled.
+- Removing categories preserves notes and comments; moving items preserves
+  their annotations. Combine creates a new unclassified note. History retention
+  is unchanged by classification.
+- Database schema upgrades automatically to version 3. Earlier app versions
+  cannot open the upgraded database; keep a pre-upgrade database backup if a
+  downgrade may be needed. Export is not a database backup.
+
+### Known issue
+
+- Previously observed transient Library selection/paging inconsistencies remain
+  unresolved. Narrow pages can also require scrolling. This release does not
+  claim to fix these observations; cancel selection if its count looks wrong.
+
 ## 1.2.0 — 2026-09-27
 
 ### Library

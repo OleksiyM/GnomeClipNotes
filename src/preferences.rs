@@ -272,7 +272,7 @@ const RETENTION: &[(i64, &str)] = &[
     (0, mark("Forever")),
 ];
 
-fn save_change(state: &Rc<State>, mutate: impl FnOnce(&mut Settings)) -> bool {
+pub(crate) fn save_change(state: &Rc<State>, mutate: impl FnOnce(&mut Settings)) -> bool {
     let previous = state.store.borrow().settings.clone();
     let result = {
         let mut store = state.store.borrow_mut();
@@ -1667,6 +1667,7 @@ fn show_page(state: &Rc<State>, page: Option<&str>) {
             privacy,
             shortcuts_page,
             folders_page,
+            crate::classification_preferences::page(state),
             data_page,
         ],
         page,

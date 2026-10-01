@@ -365,6 +365,10 @@ fn export_items(state: &Rc<State>, selection: &Rc<Selection>, items: Vec<Selecte
         group_id: -1,
         group_name: tr("Selected Items"),
         group_revision: Vec::new(),
+        annotations: items
+            .iter()
+            .map(|selected| selected.annotation.clone())
+            .collect(),
         items: items.into_iter().map(|selected| selected.item).collect(),
         item_revisions: Vec::new(),
     };

@@ -67,6 +67,37 @@ changed to reserve either combination.
 
 ## Application windows
 
+- Settings → Comments & Categories has independent, default-off switches for
+  comments and categories, with comments first. Either can be used on its own.
+  It adds no overlay controls. User-defined categories are independent of folders;
+  a note has at most one category, optionally a subcategory and a free-text comment.
+  Subcategories can be ordinary labels or saved questions. Nothing is inferred or
+  assigned automatically. Settings uses expandable category rows, with Add,
+  Rename, Move up/down and Delete actions; disabling either keeps its saved data.
+- Library's Category menu offers No category, direct parent choices, and child
+  submenus whose first entry selects only the parent. With comments enabled, a
+  child opens an optional comment dialog; Cancel makes no assignment. Otherwise
+  the child is assigned directly. Comment… opens the comment independently of
+  categories. Empty is valid; clearing text removes the comment. An existing
+  comment shows a small edit-comment icon next to Edit/Paste, even with a category.
+  Category/child is a noninteractive tag with regular text, a symbolic icon,
+  subtle neutral background and extra separation from the preview. It fits its
+  content, bounded by the card width, with no hover/pressed styling. The technical
+  source remains a small, dim caption. Long labels ellipsize with full tooltip.
+- No category removes an item's assignment but keeps its comment. Deleting a
+  dictionary category clears assignments and its children; deleting a child keeps
+  parent assignments. Both confirmations show affected-item counts and preserve
+  notes/comments. Folder moves preserve classification; Combine starts a new,
+  unclassified note. Classifying History does not exempt it from retention.
+- Library Filters adds All categories / No category / named category and a
+  dependent subcategory when categories are enabled; Comment contains… follows
+  the independent comments switch. These apply immediately,
+  use literal case-insensitive comment search and participate in Select all.
+  The category/subcategory dropdown search narrows its own choices live by a
+  case-insensitive substring; selecting a result applies the Library filter.
+  Main search still covers title/body only. Deleted dictionary choices reset;
+  disabling either feature clears only its filters and affected selections immediately.
+  Filters scroll when needed; Clear filters preserves the main search text.
 - Library's All Items collection searches/filters across History, Notes and
   folders; other collections keep their scoped search. Select enters an explicit
   multi-selection mode with card checkboxes and a bottom action bar. Clicking a
@@ -77,7 +108,10 @@ changed to reserve either combination.
   Editing search clears the selection immediately and blocks bulk actions until
   results refresh, including keyboard actions during the search delay.
 - All Items cards show their current collection (History, Notes or folder) with
-  a symbolic icon, separately from the source application. Search does not hide
+  a symbolic icon in the same neutral, noninteractive tag style as categories,
+  separately from the source application. Both tags fit short names and use the
+  available card width for long ones, without a character-count cap or widening
+  the grid (`src/card_metadata.rs` handles this allocation). Search does not hide
   these labels or regroup results: chronological ordering and paging are unchanged.
   Bulk Delete, Combine's original-item deletion and the existing Move chooser
   show selected counts by collection, using the same item snapshot as the action.
@@ -99,6 +133,8 @@ changed to reserve either combination.
   New Folder… always appears below the separator (no separator for an empty list).
   Creating a destination and moving the item is one database transaction: a
   failed move must not leave an empty folder behind. Cancelling changes nothing.
+  Library uses native nested popovers, so long folder/category/question names
+  do not force the root card menu to inherit the widest submenu's width.
 - The library uses `AdwOverlaySplitView`, `AdwToolbarView`, and a breakpoint.
   Its sidebar becomes an overlay on narrow windows.
 - Library cards have bounded, whitespace-normalized previews; full text remains
@@ -140,7 +176,7 @@ changed to reserve either combination.
   automatic draft recovery is not implemented by this editor change.
 - Settings uses an `AdwDialog` with `AdwNavigationSplitView`: a sidebar on wide
   layouts, a section list and native back navigation on narrow layouts. General,
-  History, Privacy, Shortcuts, Folders and Data keep native `AdwPreferencesPage`,
+  History, Privacy, Shortcuts, Folders, Categories and Data keep native `AdwPreferencesPage`,
   `AdwSwitchRow` and `AdwComboRow` content, with a bounded reading width.
   The selected section survives list refreshes (ignored apps and folders).
 - History retention uses a restrained-width scale with a separate selected
