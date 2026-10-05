@@ -59,6 +59,12 @@ questions, and comments for your answers or context. Filter by category,
 subcategory or comment text; Markdown exports preserve these annotations.
 Collection and category tags keep each card's context visible at a glance.
 
+Since 1.3.1, clipboard capture provides configurable **clipboard ownership** in
+**Settings → General**: keep source application formatting (preserving Telegram
+styles, HTML and spreadsheet tables) or immediately take plain-text ownership.
+Native Markdown preview also fixes nested list rendering and adds distinct styling
+for inline code.
+
 ## Install
 
 Two installation paths, **the same complete app**. Both verify SHA256 and can

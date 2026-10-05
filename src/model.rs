@@ -105,6 +105,7 @@ pub struct Settings {
     pub last_export_folder: Option<String>,
     pub classification_enabled: bool,
     pub comments_enabled: bool,
+    pub capture_ownership: String,
 }
 impl Default for Settings {
     fn default() -> Self {
@@ -133,6 +134,7 @@ impl Default for Settings {
             last_export_folder: None,
             classification_enabled: false,
             comments_enabled: false,
+            capture_ownership: "preserve".into(),
         }
     }
 }
@@ -176,6 +178,7 @@ mod tests {
         .unwrap();
         assert_eq!(settings.preview_mode, "webkit");
         assert_eq!(settings.library_shortcut, "<Super>b");
+        assert_eq!(settings.capture_ownership, "preserve");
         assert!(!settings.classification_enabled);
         assert!(!settings.comments_enabled);
     }

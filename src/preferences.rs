@@ -1132,6 +1132,59 @@ fn show_page(state: &Rc<State>, page: Option<&str>) {
     capture.add(&pause);
     general.add(&capture);
 
+    let ownership_group = adw::PreferencesGroup::builder()
+        .title(tr("Clipboard ownership"))
+        .description(tr(
+            "Controls how captured text is handled in the system clipboard.",
+        ))
+        .build();
+    let preserve_radio = gtk::CheckButton::new();
+    let eager_radio = gtk::CheckButton::new();
+    eager_radio.set_group(Some(&preserve_radio));
+    let preserve_row = action_row(
+        mark("Preserve source formatting"),
+        mark("Source application keeps clipboard. Preserves rich text, HTML, and Telegram formatting."),
+    );
+    let eager_row = action_row(
+        mark("Take ownership immediately"),
+        mark("Converts clipboard to plain text. Content survives closing the source application immediately."),
+    );
+    preserve_row.add_suffix(&preserve_radio);
+    eager_row.add_suffix(&eager_radio);
+    preserve_row.set_activatable_widget(Some(&preserve_radio));
+    eager_row.set_activatable_widget(Some(&eager_radio));
+    preserve_radio.set_active(current.capture_ownership != "eager");
+    eager_radio.set_active(current.capture_ownership == "eager");
+    let ownership_guard = Rc::new(Cell::new(false));
+    for (toggle, mode) in [(&preserve_radio, "preserve"), (&eager_radio, "eager")] {
+        let state = state.clone();
+        let preserve = preserve_radio.downgrade();
+        let eager = eager_radio.downgrade();
+        let guard = ownership_guard.clone();
+        toggle.connect_toggled(move |toggle| {
+            if guard.get() || !toggle.is_active() {
+                return;
+            }
+            let old = state.store.borrow().settings.capture_ownership.clone();
+            if old == mode {
+                return;
+            }
+            if !save_change(&state, |settings| settings.capture_ownership = mode.into()) {
+                guard.set(true);
+                if let Some(preserve) = preserve.upgrade() {
+                    preserve.set_active(old != "eager");
+                }
+                if let Some(eager) = eager.upgrade() {
+                    eager.set_active(old == "eager");
+                }
+                guard.set(false);
+            }
+        });
+    }
+    ownership_group.add(&preserve_row);
+    ownership_group.add(&eager_row);
+    general.add(&ownership_group);
+
     let retention_group = adw::PreferencesGroup::builder()
         .title(tr("History retention"))
         .description(tr("Applies only to History. Notes and your folders are never deleted automatically. Months are 30 days; a year is 365 days."))

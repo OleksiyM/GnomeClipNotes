@@ -3,6 +3,25 @@
 Release availability and publication dates are recorded in
 [GitHub Releases](https://github.com/OleksiyM/GnomeClipNotes/releases).
 
+## 1.3.1 — 2026-10-05
+
+### Clipboard
+
+- Configurable clipboard ownership in Settings → General. The default
+  *Preserve source formatting* leaves clipboard ownership with the source
+  application, preventing eager conversion to plain text from stripping
+  Telegram formatting entities, HTML in browsers, and spreadsheet tables.
+  *Take ownership immediately* retains the legacy behavior for workflows that
+  require plain-text clipboard persistence when closing source windows immediately.
+
+### Native Preview
+
+- Fixed a rendering bug where nested list items immediately following a parent
+  item were concatenated onto the same block. Each item and sublist level now
+  renders as an independent block with proper indentation.
+- Styled inline code (`` `code` ``) with monospace typography and a subtle,
+  semi-transparent background badge that adapts cleanly to both light and dark themes.
+
 ## 1.3.0 — 2026-10-01
 
 ### Library

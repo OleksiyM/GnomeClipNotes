@@ -166,7 +166,10 @@ fn parse(markdown: &str) -> Vec<Block> {
                     flush(&mut blocks, &mut text, &mut kind);
                     kind = Some(Kind::Code);
                 }
-                Tag::List(start) => lists.push(start),
+                Tag::List(start) => {
+                    flush(&mut blocks, &mut text, &mut kind);
+                    lists.push(start);
+                }
                 Tag::Item => {
                     kind = Some(Kind::List);
                     let indent = "  ".repeat(lists.len().saturating_sub(1));
@@ -227,7 +230,10 @@ fn parse(markdown: &str) -> Vec<Block> {
                     text.push_str(&escape(&value));
                 }
             }
-            Event::Code(value) => text.push_str(&format!("<tt>{}</tt>", escape(&value))),
+            Event::Code(value) => text.push_str(&format!(
+                "<span font_family=\"monospace\" background=\"#808080\" background_alpha=\"25%\">{}</span>",
+                escape(&value)
+            )),
             Event::Html(value) | Event::InlineHtml(value) => {
                 kind.get_or_insert(Kind::Paragraph);
                 text.push_str(&escape(&value));
@@ -290,5 +296,22 @@ mod tests {
             .text
             .contains("&lt;div&gt;literal &amp; visible&lt;/div&gt;")));
         assert!(blocks.iter().any(|b| b.text.contains("| 1 | 2 |")));
+    }
+
+    #[test]
+    fn nested_lists_have_separate_blocks_and_indentation() {
+        let blocks = parse("- item 1\n  - sub item 1\n  - sub item 2");
+        assert_eq!(blocks.len(), 3);
+        assert_eq!(blocks[0].text, "• item 1");
+        assert_eq!(blocks[1].text, "  • sub item 1");
+        assert_eq!(blocks[2].text, "  • sub item 2");
+    }
+
+    #[test]
+    fn inline_code_has_monospace_and_background() {
+        let blocks = parse("text with `code` inline");
+        assert!(blocks[0].text.contains(
+            "<span font_family=\"monospace\" background=\"#808080\" background_alpha=\"25%\">code</span>"
+        ));
     }
 }

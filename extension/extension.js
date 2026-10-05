@@ -1271,7 +1271,9 @@ export default class GnomeClipNotesExtension extends Extension {
                             }
                             if (reply?.[0] === true) {
                                 this._lastCaptureStatus = 'accepted';
-                                this._takeClipboardOwnership(text, generation, owner);
+                                if (this._runtimeSettings?.capture_ownership === 'eager') {
+                                    this._takeClipboardOwnership(text, generation, owner);
+                                }
                             } else {
                                 this._lastCaptureStatus = 'ignored:service-rejected';
                             }
