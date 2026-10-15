@@ -13,7 +13,7 @@ concurrency:
 
 jobs:
   deploy:
-    if: github.repository == 'OleksiyM/GnomeClipNotes' && startsWith(github.ref, 'refs/tags/v')
+    if: github.repository == 'OleksiyM/GnomeClipNotes' && (startsWith(github.ref, 'refs/tags/v') || github.event_name == 'workflow_dispatch')
     runs-on: ubuntu-24.04
     permissions:
       contents: read
@@ -34,7 +34,11 @@ jobs:
           RELEASE_TAG: ${{ github.ref_name }}
         run: |
           set -euo pipefail
-          published=$(gh release view "$RELEASE_TAG" --json isDraft,isPrerelease --jq '.isDraft == false and .isPrerelease == false')
+          if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
+            published=$(gh release view --json isDraft,isPrerelease --jq '.isDraft == false and .isPrerelease == false')
+          else
+            published=$(gh release view "$RELEASE_TAG" --json isDraft,isPrerelease --jq '.isDraft == false and .isPrerelease == false')
+          fi
           [[ "$published" == true ]]
       - uses: actions/configure-pages@45bfe0192ca1faeb007ade9deae92b16b8254a0d # v6.0.0
       - uses: actions/upload-pages-artifact@fc324d3547104276b827a68afc52ff2a11cc49c9 # v5.0.0
