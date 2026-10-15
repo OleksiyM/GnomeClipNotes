@@ -38,7 +38,7 @@ summary version-independent; the table records specific testing evidence.
 Source-level minimums are GTK 4.12 and libadwaita 1.5, plus libsoup 3 and
 WebKitGTK 6.0. Prebuilt archives also need compatible native libraries/ABI,
 including glibc; those minimums alone do not guarantee a binary will run.
-The bundled extension currently declares GNOME Shell 46–50; a newer Shell
+The bundled extension currently declares GNOME Shell 46–51; a newer Shell
 release needs compatibility review, not merely newer GTK packages.
 
 | System | Evidence / scope |

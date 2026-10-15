@@ -65,6 +65,9 @@ styles, HTML and spreadsheet tables) or immediately take plain-text ownership.
 Native Markdown preview also fixes nested list rendering and adds distinct styling
 for inline code.
 
+Since 1.3.2, the Shell extension adds support for **GNOME Shell 51**, updating
+widget orientation properties to match upstream St API requirements.
+
 ## Install
 
 Two installation paths, **the same complete app**. Both verify SHA256 and can

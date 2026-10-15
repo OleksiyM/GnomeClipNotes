@@ -3,6 +3,14 @@
 Release availability and publication dates are recorded in
 [GitHub Releases](https://github.com/OleksiyM/GnomeClipNotes/releases).
 
+## 1.3.2 — 2026-10-15
+
+### Shell Extension
+
+- Added support for GNOME Shell 51: replaced deprecated and removed `vertical`
+  property on `St.BoxLayout` with `orientation: Clutter.Orientation.VERTICAL`.
+- Declared GNOME Shell 51 in the bundled extension metadata.
+
 ## 1.3.1 — 2026-10-05
 
 ### Clipboard

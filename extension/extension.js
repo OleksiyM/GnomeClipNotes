@@ -73,7 +73,7 @@ class Overlay {
         this._query = {search: '', group_id: 0, kind: '', source: '', since: 0, until: 0, limit: 9, offset: 0};
         if (previous) this._query = {...previous._query};
         this._customDates = previous?._customDates ? {...previous._customDates} : null;
-        this._actor = new St.BoxLayout({vertical: true, style_class: 'popup-menu-content gcn-overlay', reactive: true});
+        this._actor = new St.BoxLayout({orientation: Clutter.Orientation.VERTICAL, style_class: 'popup-menu-content gcn-overlay', reactive: true});
         this._actor.connect('destroy',()=>{this._actorDestroyed=true;});
         this._keyId = this._actor.connect('captured-event', (_a, event) => {
             if (!this.visible || this._context?.isOpen || event.type() !== Clutter.EventType.KEY_PRESS)
@@ -247,7 +247,7 @@ class Overlay {
         const item = new PopupMenu.PopupSubMenuMenuItem(_('Custom…'));
         menu.addMenuItem(item);
         const row = new PopupMenu.PopupBaseMenuItem({reactive: false, can_focus: false});
-        const form = new St.BoxLayout({vertical: true, style_class: 'gcn-date-form', x_expand: true});
+        const form = new St.BoxLayout({orientation: Clutter.Orientation.VERTICAL, style_class: 'gcn-date-form', x_expand: true});
         row.add_child(form);
         item.menu.addMenuItem(row);
         const field = (title, text) => {
@@ -606,7 +606,7 @@ class Overlay {
 
     _renderError(message) {
         this._cards.destroy_all_children();
-        const empty = new St.BoxLayout({vertical:true, style_class:'gcn-empty', x_expand:true, x_align:Clutter.ActorAlign.CENTER, y_align:Clutter.ActorAlign.CENTER});
+        const empty = new St.BoxLayout({orientation: Clutter.Orientation.VERTICAL, style_class:'gcn-empty', x_expand:true, x_align:Clutter.ActorAlign.CENTER, y_align:Clutter.ActorAlign.CENTER});
         empty.add_child(new St.Icon({icon_name:'edit-paste-symbolic',icon_size:40,style_class:'gcn-empty-icon'}));
         empty.add_child(new St.Label({text:message,style_class:'gcn-empty-title',x_align:Clutter.ActorAlign.CENTER}));
         if (!this._items.length && message === _('Nothing here yet'))
@@ -627,7 +627,7 @@ class Overlay {
         const cardWidth=Math.floor((this._actor.width - 48*scale - (this._pageSize - 1)*12*scale)/this._pageSize);
         this._items.forEach((item, index) => {
             const card = new St.Button({style_class: `button gcn-card${index === this._selected ? ' gcn-card-selected' : ''}`, width:cardWidth, x_expand: false, y_align:Clutter.ActorAlign.START, can_focus: true});
-            const box = new St.BoxLayout({vertical: true,x_expand:true, style_class:'gcn-card-inner'});
+            const box = new St.BoxLayout({orientation: Clutter.Orientation.VERTICAL, x_expand:true, style_class:'gcn-card-inner'});
             const source = new St.BoxLayout({style_class:'gcn-card-source'});
             const app = item.source_id ? Shell.AppSystem.get_default().lookup_app(item.source_id) : null;
             source.add_child(app?.create_icon_texture(20) ?? new St.Icon({icon_name:item.kind==='link'?'insert-link-symbolic':'text-x-generic-symbolic',icon_size:20}));
