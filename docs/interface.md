@@ -164,7 +164,7 @@ changed to reserve either combination.
   `New Note`, the saved name, or `Note` when saved without a name.
 - Use `AdwWindowTitle` at the native header size, including the dirty marker;
   do not apply large content-heading styles to the editor's window title.
-- A leading `●` and Save sensitivity share the same comparison against saved
+- A leading `•` and Save sensitivity share the same comparison against saved
   content, including undo back to that content. Saving leaves the editor open.
   First save asks for an optional name in an initially empty field; later saves
   never ask. Rename remains a library action. There is no bottom status strip.

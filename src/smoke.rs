@@ -385,15 +385,15 @@ pub fn run(state: &Rc<State>) {
                 .downcast::<gtk::Button>()
                 .unwrap();
                 assert!(save.is_sensitive());
-                assert!(window.title().unwrap().starts_with("● "));
+                assert!(window.title().unwrap().starts_with("• "));
                 buffer.undo();
                 assert!(!save.is_sensitive());
-                assert!(!window.title().unwrap().starts_with("● "));
+                assert!(!window.title().unwrap().starts_with("• "));
                 buffer.redo();
                 assert!(save.is_sensitive());
                 save.emit_clicked();
                 assert!(!save.is_sensitive());
-                assert!(!window.title().unwrap().starts_with("● "));
+                assert!(!window.title().unwrap().starts_with("• "));
                 assert!(window.is_visible());
                 assert!(state
                     .store
@@ -808,8 +808,8 @@ fn verify_note_lifecycle(state: &Rc<State>) {
         assert!(find(window.upcast_ref(), &|w| w.is::<gtk::Entry>()).is_none());
         buffer.set_text("New note lifecycle fixture");
         assert!(save.is_sensitive());
-        assert_eq!(window.title().as_deref(), Some("● New Note"));
-        assert_eq!(heading.title(), "● New Note");
+        assert_eq!(window.title().as_deref(), Some("• New Note"));
+        assert_eq!(heading.title(), "• New Note");
         save.emit_clicked();
         let dialog = window
             .visible_dialog()

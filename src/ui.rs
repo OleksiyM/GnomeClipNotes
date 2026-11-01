@@ -1759,7 +1759,7 @@ pub(crate) fn editor_in_process_mode(state: &Rc<State>, id: Option<i64>, preview
             } else {
                 note_name.borrow().clone()
             };
-            let title = if changed { format!("● {name}") } else { name };
+            let title = if changed { format!("• {name}") } else { name };
             heading.set_title(&title);
             window.set_title(Some(&title));
         })
