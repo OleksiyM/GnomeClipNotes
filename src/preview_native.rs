@@ -83,6 +83,7 @@ pub fn build(markdown: &str) -> gtk::Widget {
             .wrap(true)
             .wrap_mode(gtk::pango::WrapMode::WordChar)
             .selectable(true)
+            .can_focus(false)
             .hexpand(true)
             .build();
         label.add_css_class("markdown-preview-block");

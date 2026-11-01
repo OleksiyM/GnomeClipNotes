@@ -605,6 +605,15 @@ fn verify_view(state: &Rc<State>, note_id: i64) {
             .downcast::<gtk::Button>()
             .unwrap();
         assert_eq!(pages.visible_child_name().as_deref(), Some("preview"));
+        let preview = pages.child_by_name("preview").unwrap();
+        assert!(
+            find(&preview, &|w| {
+                w.downcast_ref::<gtk::Label>()
+                    .is_some_and(|l| l.can_focus() || l.selection_bounds().is_some())
+            })
+            .is_none(),
+            "Preview blocks must not auto-focus or highlight text on open"
+        );
         assert!(!save.is_sensitive());
         assert_eq!(state.app.windows().len(), count + 1);
         ui::editor(state, Some(id));
