@@ -1022,7 +1022,7 @@ fn card(state: &Rc<State>, item: &Item, selecting: bool, collection: Option<&Gro
     heading.add_css_class("heading");
     head.append(&heading);
     let details_button = gtk::Button::builder()
-        .icon_name("dialog-information-symbolic")
+        .icon_name("help-about-symbolic")
         .tooltip_text(tr("Item Details"))
         .build();
     details_button.add_css_class("flat");
