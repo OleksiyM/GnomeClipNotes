@@ -3,6 +3,16 @@
 Release availability and publication dates are recorded in
 [GitHub Releases](https://github.com/OleksiyM/GnomeClipNotes/releases).
 
+## 1.5.0 — 2026-11-01
+
+### Clipboard & Rich Text Capture
+
+- Added automatic HTML-to-Markdown conversion on clipboard capture (`htmd`): copying formatted articles, headings, links, lists, blockquotes, code blocks and tables from web browsers or Google Docs / Sheets saves clean GitHub-Flavored Markdown.
+- Added **Rich text capture** preference group with the **Convert rich text to Markdown** toggle in **Settings → General** below **Clipboard ownership** (enabled by default). When disabled, capture stores literal plain text.
+- Smart semantic detection preserves untouched plain text for code snippets copied from IDEs (VS Code, JetBrains) without escaping Markdown syntax characters (`*`, `[`, `]`), as well as unformatted text copied from Google Docs.
+- Preserved `Link` classification and bare URL content when copying standalone URLs.
+- Promoted headerless multi-column HTML tables (such as Google Docs and Google Sheets selections) into valid GFM pipe tables, stripped decorative heading permalink symbols (`§`, `¶`, `#`) and non-content elements (`<button>`, `<svg>`, `<img>`), and added UTF-16 BOM decoding support in the Shell extension.
+
 ## 1.4.0 — 2026-11-01
 
 ### Library & Collections

@@ -40,8 +40,8 @@ and export them as readable Markdown.
   Continue developing and reusing your material in your preferred tools.
 
 Plain text and Markdown, stored locally. No account, cloud storage or
-synchronization service. Images, files and HTML capture are outside the current
-scope. Settings → Shortcuts lists the available bindings and alternatives.
+synchronization service. Images, files and raw HTML storage remain outside the
+current scope. Settings → Shortcuts lists the available bindings and alternatives.
 
 Since 1.1.0, the applications-menu launcher opens Library directly.
 Super+V and the panel indicator keep opening the overlay.
@@ -79,6 +79,13 @@ inside **Notes** or custom collections/folders (**Collections**) so they stay at
 **History**. Pinned cards display a subtle pin indicator, can be filtered in the
 **Filters** popover, and prompt for confirmation before moving to another folder where
 the pin is cleared.
+
+Since 1.5.0, clipboard capture supports **rich text (HTML) to Markdown conversion**:
+copying formatted articles, headings, links, lists, quotes, code blocks and tables
+from web browsers or **Google Docs / Sheets** automatically saves clean GitHub-Flavored
+Markdown, while preserving literal plain text for bare URLs (`Link`) and code snippets
+copied from IDEs (**VS Code**, **JetBrains**). Toggle **Convert rich text to Markdown**
+in **Settings → General** under **Rich text capture** (enabled by default).
 
 ## Install
 
