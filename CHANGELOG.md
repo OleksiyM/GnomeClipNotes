@@ -3,6 +3,14 @@
 Release availability and publication dates are recorded in
 [GitHub Releases](https://github.com/OleksiyM/GnomeClipNotes/releases).
 
+## 1.3.3 — 2026-11-01
+
+### Library & Editor
+
+- Replaced the oversized unsaved-changes circle (`●`) in the note editor title with a smaller bullet (`•`).
+- Fixed Native Markdown preview auto-focusing and highlighting the first paragraph in blue when opening an item in View mode (`F3`) or switching to Preview, while keeping preview text selectable with the pointer.
+- Replaced the lightbulb icon (`dialog-information-symbolic`) on the Library card *Item Details* button with the circular info icon (`help-about-symbolic`).
+
 ## 1.3.2 — 2026-10-15
 
 ### Shell Extension
