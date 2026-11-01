@@ -1529,12 +1529,34 @@ async fn verify_library_bulk(state: Rc<State>, dir: &std::path::Path) {
             w.widget_name() == "library-cards"
         })
         .unwrap();
+        let scroll = find(reopened.upcast_ref(), &|w| {
+            w.widget_name() == "library-scroll"
+        })
+        .unwrap()
+        .downcast::<gtk::ScrolledWindow>()
+        .unwrap();
+        let adjustment = scroll.vadjustment();
         assert!(
             grid.observe_children().n_items() > 3,
             "This fixture fits more than one row"
         );
+        assert!(
+            adjustment.upper() <= adjustment.page_size() + 1.0,
+            "Library page must not overflow vertically: {} > {}",
+            adjustment.upper(),
+            adjustment.page_size()
+        );
     };
     verify_page();
+    state
+        .store
+        .borrow_mut()
+        .save_item(
+            None,
+            "Microsoft - Voluntary Exit Offer (VEO) 26.10.2026 объявила новую программу",
+            "Short body under a long heading",
+        )
+        .unwrap();
     for text in ["22221", "22222", "22223"] {
         search.set_text(text);
         state
@@ -1550,6 +1572,7 @@ async fn verify_library_bulk(state: Rc<State>, dir: &std::path::Path) {
     verify_page();
     for (name, file) in [
         ("collection-0", "numeric-capture-history.png"),
+        ("collection-1", "long-heading-notes.png"),
         ("collection--1", "numeric-capture-all.png"),
     ] {
         click(name);
@@ -1557,7 +1580,7 @@ async fn verify_library_bulk(state: Rc<State>, dir: &std::path::Path) {
         verify_page();
         snapshot(reopened.upcast_ref(), &dir.join(file));
     }
-    for (width, height) in [(1060, 900), (1040, 880), (960, 820)] {
+    for (width, height) in [(1060, 900), (1040, 880), (960, 820), (900, 820)] {
         reopened.set_default_size(width, height);
         glib::timeout_future(Duration::from_millis(400)).await;
         verify_page();

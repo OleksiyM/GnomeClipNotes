@@ -73,9 +73,13 @@ glib::wrapper! {
 }
 
 impl MetadataTag {
-    pub fn new(icon: &str, text: &str, name: &str) -> Self {
+    pub fn wrap(child: &impl IsA<gtk::Widget>) -> Self {
         let tag: Self = glib::Object::builder().build();
-        tag.set_widget_name(name);
+        child.as_ref().set_parent(&tag);
+        tag
+    }
+
+    pub fn new(icon: &str, text: &str, name: &str) -> Self {
         let row = gtk::Box::new(gtk::Orientation::Horizontal, 6);
         row.add_css_class("metadata-tag");
         row.set_tooltip_text(Some(text));
@@ -88,7 +92,8 @@ impl MetadataTag {
                 .ellipsize(gtk::pango::EllipsizeMode::End)
                 .build(),
         );
-        row.set_parent(&tag);
+        let tag = Self::wrap(&row);
+        tag.set_widget_name(name);
         tag
     }
 }

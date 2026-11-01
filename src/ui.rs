@@ -467,6 +467,102 @@ pub fn show(state: &Rc<State>) {
     let active_group = Rc::new(Cell::new(0i64));
     let offset = Rc::new(Cell::new(0i64));
     let page_size = Rc::new(Cell::new(6i64));
+    let pending_layout = Rc::new(Cell::new(false));
+    let layout_refresh = Rc::new(Cell::new(false));
+    let last_viewport = Rc::new(Cell::new((0i32, 0i32)));
+    let shrunk_at = Rc::new(Cell::new(None::<(i32, i32)>));
+    // Recalculate pages after viewport allocation and card replacement, not on
+    // every rendered frame. Measuring actual children's natural widths and
+    // tallest row height matches GtkFlowBox's homogeneous layout.
+    let request_layout: Rc<dyn Fn()> = Rc::new({
+        let pending = pending_layout.clone();
+        let scroll = scroll.downgrade();
+        let list = list.downgrade();
+        let state = Rc::downgrade(state);
+        let page_size = page_size.clone();
+        let offset = offset.clone();
+        let layout_refresh = layout_refresh.clone();
+        let last_viewport = last_viewport.clone();
+        let shrunk_at = shrunk_at.clone();
+        move || {
+            if pending.replace(true) {
+                return;
+            }
+            let (
+                pending,
+                scroll,
+                list,
+                state,
+                page_size,
+                offset,
+                layout_refresh,
+                last_viewport,
+                shrunk_at,
+            ) = (
+                pending.clone(),
+                scroll.clone(),
+                list.clone(),
+                state.clone(),
+                page_size.clone(),
+                offset.clone(),
+                layout_refresh.clone(),
+                last_viewport.clone(),
+                shrunk_at.clone(),
+            );
+            glib::idle_add_local_once(move || {
+                pending.set(false);
+                let (Some(scroll), Some(list), Some(state)) =
+                    (scroll.upgrade(), list.upgrade(), state.upgrade())
+                else {
+                    return;
+                };
+                if list.first_child().is_none() {
+                    return;
+                }
+                let width = scroll.width();
+                let height = scroll.height();
+                if width <= 0 || height <= 0 {
+                    return;
+                }
+                let viewport_changed = last_viewport.replace((width, height)) != (width, height);
+                if viewport_changed {
+                    shrunk_at.set(None);
+                }
+                let mut card_width = 1;
+                let mut current = list.first_child();
+                while let Some(child) = current {
+                    card_width = card_width.max(child.measure(gtk::Orientation::Horizontal, -1).1);
+                    current = child.next_sibling();
+                }
+                let columns = ((width + 16) / (card_width + 16)).clamp(1, 3) as u32;
+                let column_width = (width - (columns as i32 - 1) * 16) / columns as i32;
+                let mut row_height = 1;
+                let mut current = list.first_child();
+                while let Some(child) = current {
+                    row_height =
+                        row_height.max(child.measure(gtk::Orientation::Vertical, column_width).1);
+                    current = child.next_sibling();
+                }
+                let rows = ((height + 16) / (row_height + 16)).max(1);
+                let size = i64::from(columns) * i64::from(rows);
+                list.set_max_children_per_line(columns);
+                let current_size = page_size.get();
+                if size != current_size && (viewport_changed || offset.get() == 0) {
+                    if size < current_size {
+                        shrunk_at.set(Some((width, height)));
+                    } else if shrunk_at.get() == Some((width, height)) {
+                        return;
+                    }
+                    page_size.set(size);
+                    offset.set(offset.get() / size * size);
+                    layout_refresh.set(true);
+                    if let Some(refresh) = state.refresh.borrow().as_ref() {
+                        refresh();
+                    }
+                }
+            });
+        }
+    });
     let refresh: Rc<dyn Fn()> = Rc::new({
         let classification_filters = classification_filters.clone();
         let selection = selection.clone();
@@ -494,9 +590,15 @@ pub fn show(state: &Rc<State>) {
         let split = root.clone();
         let resetting_filters = resetting_filters.clone();
         let clear_filters = clear_filters.clone();
+        let layout_refresh = layout_refresh.clone();
+        let shrunk_at = shrunk_at.clone();
+        let request_layout = request_layout.clone();
         move || {
             if resetting_filters.get() {
                 return;
+            }
+            if !layout_refresh.replace(false) {
+                shrunk_at.set(None);
             }
             let Some(state) = state.upgrade() else {
                 return;
@@ -761,61 +863,12 @@ pub fn show(state: &Rc<State>) {
                 }
             }
             selection.finish_refresh(had_card_focus);
+            request_layout();
         }
     });
-    // Recalculate pages after viewport allocation, not on every rendered frame.
-    // Measuring actual children respects theme padding and text scaling.
-    let pending_layout = Rc::new(Cell::new(false));
     for adjustment in [scroll.hadjustment(), scroll.vadjustment()] {
-        let pending = pending_layout.clone();
-        let scroll = scroll.downgrade();
-        let list = list.downgrade();
-        let refresh = Rc::downgrade(&refresh);
-        let page_size = page_size.clone();
-        let offset = offset.clone();
-        adjustment.connect_changed(move |_| {
-            if pending.replace(true) {
-                return;
-            }
-            let (pending, scroll, list, refresh, page_size, offset) = (
-                pending.clone(),
-                scroll.clone(),
-                list.clone(),
-                refresh.clone(),
-                page_size.clone(),
-                offset.clone(),
-            );
-            glib::idle_add_local_once(move || {
-                pending.set(false);
-                let (Some(scroll), Some(list), Some(refresh)) =
-                    (scroll.upgrade(), list.upgrade(), refresh.upgrade())
-                else {
-                    return;
-                };
-                let Some(child) = list.first_child() else {
-                    return;
-                };
-                let width = scroll.width();
-                let height = scroll.height();
-                if width <= 0 || height <= 0 {
-                    return;
-                }
-                let min_width = child.measure(gtk::Orientation::Horizontal, -1).0.max(1);
-                let columns = ((width + 16) / (min_width + 16)).clamp(1, 3) as u32;
-                let column_width = (width - (columns as i32 - 1) * 16) / columns as i32;
-                let row_height = child
-                    .measure(gtk::Orientation::Vertical, column_width)
-                    .1
-                    .max(1);
-                let rows = ((height + 16) / (row_height + 16)).max(1);
-                let size = i64::from(columns) * i64::from(rows);
-                list.set_max_children_per_line(columns);
-                if page_size.replace(size) != size {
-                    offset.set(offset.get() / size * size);
-                    refresh();
-                }
-            });
-        });
+        let request_layout = request_layout.clone();
+        adjustment.connect_changed(move |_| request_layout());
     }
     *state.refresh.borrow_mut() = Some(Box::new({
         let refresh = refresh.clone();
@@ -1020,6 +1073,8 @@ fn card(state: &Rc<State>, item: &Item, selecting: bool, collection: Option<&Gro
     heading.set_hexpand(true);
     heading.set_ellipsize(gtk::pango::EllipsizeMode::End);
     heading.add_css_class("heading");
+    let heading = crate::card_metadata::MetadataTag::wrap(&heading);
+    heading.set_hexpand(true);
     head.append(&heading);
     let details_button = gtk::Button::builder()
         .icon_name("help-about-symbolic")
@@ -1041,6 +1096,7 @@ fn card(state: &Rc<State>, item: &Item, selecting: bool, collection: Option<&Gro
         .take(250)
         .collect();
     let preview = gtk::Label::new(Some(excerpt.trim_end()));
+    preview.set_width_chars(24);
     preview.set_max_width_chars(24);
     preview.set_wrap(true);
     preview.set_wrap_mode(gtk::pango::WrapMode::WordChar);
@@ -1074,7 +1130,7 @@ fn card(state: &Rc<State>, item: &Item, selecting: bool, collection: Option<&Gro
     source.set_ellipsize(gtk::pango::EllipsizeMode::End);
     source.add_css_class("caption");
     source.add_css_class("dim-label");
-    card.append(&source);
+    card.append(&crate::card_metadata::MetadataTag::wrap(&source));
     let foot = gtk::Box::new(gtk::Orientation::Horizontal, 6);
     let edit = gtk::Button::from_icon_name("document-edit-symbolic");
     edit.set_tooltip_text(Some(&tr("Edit Item")));
