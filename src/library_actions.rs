@@ -253,13 +253,44 @@ fn activate(state: &Rc<State>, selection: &Rc<Selection>, name: &str) {
             let state_copy = state.clone();
             let selection = selection.clone();
             ui::choose_move(state, true, Some(&summary), move |group| {
-                let result = state_copy
-                    .store
-                    .borrow_mut()
-                    .move_selected_items(&items, group);
-                match result {
-                    Ok(()) => selection.set_multiple(false),
-                    Err(error) => ui::error(&state_copy, &error.to_string()),
+                let unpinned_count = items
+                    .iter()
+                    .filter(|s| s.item.pinned_at > 0 && s.item.group_id != group)
+                    .count();
+                if unpinned_count > 0 {
+                    let state_confirm = state_copy.clone();
+                    let selection = selection.clone();
+                    let items = items.clone();
+                    ui::confirm(
+                        &state_copy,
+                        "Move pinned items?",
+                        &ntrf(
+                            "Moving {count} pinned item to another folder will remove its pin.",
+                            "Moving {count} pinned items to another folder will remove their pins.",
+                            unpinned_count as u64,
+                            &[],
+                        ),
+                        "Move",
+                        move || {
+                            let result = state_confirm
+                                .store
+                                .borrow_mut()
+                                .move_selected_items(&items, group);
+                            match result {
+                                Ok(()) => selection.set_multiple(false),
+                                Err(error) => ui::error(&state_confirm, &error.to_string()),
+                            }
+                        },
+                    );
+                } else {
+                    let result = state_copy
+                        .store
+                        .borrow_mut()
+                        .move_selected_items(&items, group);
+                    match result {
+                        Ok(()) => selection.set_multiple(false),
+                        Err(error) => ui::error(&state_copy, &error.to_string()),
+                    }
                 }
             });
         }

@@ -632,6 +632,8 @@ class Overlay {
             const app = item.source_id ? Shell.AppSystem.get_default().lookup_app(item.source_id) : null;
             source.add_child(app?.create_icon_texture(20) ?? new St.Icon({icon_name:item.kind==='link'?'insert-link-symbolic':'text-x-generic-symbolic',icon_size:20}));
             source.add_child(clippedLabel(item.source || _('Notes'), 'gcn-source-label'));
+            if (item.pinned_at > 0 && item.group_id >= 1)
+                source.add_child(new St.Icon({icon_name: 'view-pin-symbolic', icon_size: 16, style_class: 'gcn-card-pin'}));
             box.add_child(source);
             if(item.title)box.add_child(clippedLabel(ellipsize(item.title, 32), 'gcn-card-title'));
             const preview=clippedLabel(String(item.content??'').trim().slice(0,500), 'gcn-card-content');

@@ -25,6 +25,7 @@
 .gcn-card-selected { border-color: -st-accent-color; }
 .gcn-card-inner { spacing: 12px; }
 .gcn-card-source { spacing: 8px; }
+.gcn-card-pin { opacity: 190; }
 .gcn-source-label { font-weight: 600; }
 .gcn-card-title { font-weight: 700; }
 .gcn-card-content { font-size: 1em; }

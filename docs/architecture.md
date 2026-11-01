@@ -53,8 +53,11 @@ change keeps the dialog/text open with an error instead of overwriting new data.
 Export freezes category/child names and comments alongside items in its read
 transaction, so rendering and file verification never look up current names.
 Schema 3 preserves existing rows and revision tokens, but released schema-2-only
-binaries cannot reopen a database after this migration. Do not test dev builds
-against a working profile without approval and a SQLite backup.
+binaries cannot reopen a database after this migration. Schema 4 adds `pinned_at`
+(default 0) on `items` for folder-scoped pinning (`group_id >= 1`), ordered
+before unpinned items within a folder while preserving chronological order in
+`All Items` and `History`; moving an item to another folder clears `pinned_at`.
+Do not test dev builds against a working profile without approval and a SQLite backup.
 
 Clipboard transfers are bounded to 1 MiB of UTF-8 text. The extension prefers
 the exact advertised `text/plain;charset=utf-8` format, then other advertised

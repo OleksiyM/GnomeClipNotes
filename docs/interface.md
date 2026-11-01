@@ -135,6 +135,16 @@ changed to reserve either combination.
   failed move must not leave an empty folder behind. Cancelling changes nothing.
   Library uses native nested popovers, so long folder/category/question names
   do not force the root card menu to inherit the widest submenu's width.
+- Pinning belongs to retained collections (`Notes` and custom folders, never
+  `History`). Within a folder, both Library and the Shell overlay place pinned
+  items first (`pinned_at DESC`), followed by unpinned items (`copied_at DESC,
+  id DESC`). `All Items` keeps chronological ordering across collections. Pinned
+  cards display a read-only `view-pin-symbolic` indicator in the card header
+  (to the left of `Item Details` in Library, and in the top source row of the
+  overlay). Pinning and unpinning happen in Library through the card's `…` menu
+  (`Pin` / `Pinned` with a checkmark in folders; `Pinned` to unpin in `All Items`;
+  hidden in `History`). Moving a pinned note to another folder clears its pin
+  after confirmation. `Item Details` shows `Pinned At` only when pinned.
 - The library uses `AdwOverlaySplitView`, `AdwToolbarView`, and a breakpoint.
   Its sidebar becomes an overlay on narrow windows.
 - Library cards have bounded, whitespace-normalized previews; full text remains

@@ -1585,7 +1585,139 @@ async fn verify_library_bulk(state: Rc<State>, dir: &std::path::Path) {
         glib::timeout_future(Duration::from_millis(400)).await;
         verify_page();
     }
+    verify_pinning(&state, &reopened).await;
     println!("PASS Library All Items, off-page selection, keyboard toggle, combine/keep, delete cancel/confirm and move");
+}
+
+async fn verify_pinning(state: &Rc<State>, window: &adw::ApplicationWindow) {
+    let click = |name: &str| {
+        find(window.upcast_ref(), &|w| w.widget_name() == name)
+            .unwrap()
+            .downcast::<gtk::Button>()
+            .unwrap()
+            .emit_clicked();
+    };
+    let older = state
+        .store
+        .borrow_mut()
+        .save_item(None, "Pin older", "Older note body")
+        .unwrap();
+    let newer = state
+        .store
+        .borrow_mut()
+        .save_item(None, "Pin newer", "Newer note body")
+        .unwrap();
+    state
+        .store
+        .borrow()
+        .db
+        .execute("UPDATE items SET copied_at=5000000000 WHERE id=?1", [older])
+        .unwrap();
+    state
+        .store
+        .borrow()
+        .db
+        .execute("UPDATE items SET copied_at=5000000010 WHERE id=?1", [newer])
+        .unwrap();
+    state.changed();
+    click("collection-1");
+    glib::timeout_future(Duration::from_millis(200)).await;
+    let grid = find(window.upcast_ref(), &|w| w.widget_name() == "library-cards").unwrap();
+    assert_eq!(
+        grid.first_child().unwrap().widget_name(),
+        format!("library-item-{newer}")
+    );
+
+    // Pin older via toggle-pin action; it moves to the top and shows the pin icon.
+    state.activate("toggle-pin", older);
+    glib::timeout_future(Duration::from_millis(200)).await;
+    let first_card = grid.first_child().unwrap();
+    assert_eq!(first_card.widget_name(), format!("library-item-{older}"));
+    assert!(
+        find(&first_card, &|w| w.widget_name() == "card-pinned").is_some(),
+        "Pinned note must display the pin icon in card header"
+    );
+
+    // Check Item Details includes Pinned At for pinned note, and omits it for unpinned note.
+    let older_item = state.store.borrow().get(older).unwrap();
+    ui::info(state, &older_item);
+    let dialog = window.visible_dialog().unwrap();
+    let group = find(dialog.upcast_ref(), &|w| {
+        w.widget_name() == "item-details-properties"
+    })
+    .unwrap();
+    assert!(find(&group, &|w| {
+        w.downcast_ref::<adw::ActionRow>()
+            .is_some_and(|r| r.title() == "Pinned At")
+    })
+    .is_some());
+    dialog.force_close();
+
+    let newer_item = state.store.borrow().get(newer).unwrap();
+    ui::info(state, &newer_item);
+    let dialog = window.visible_dialog().unwrap();
+    let group = find(dialog.upcast_ref(), &|w| {
+        w.widget_name() == "item-details-properties"
+    })
+    .unwrap();
+    assert!(find(&group, &|w| {
+        w.downcast_ref::<adw::ActionRow>()
+            .is_some_and(|r| r.title() == "Pinned At")
+    })
+    .is_none());
+    dialog.force_close();
+
+    // Filter by pinned in Library.
+    let pinned_dropdown = find(window.upcast_ref(), &|w| {
+        w.widget_name() == "library-filter-pinned"
+    })
+    .unwrap()
+    .downcast::<gtk::DropDown>()
+    .unwrap();
+    pinned_dropdown.set_selected(1);
+    glib::timeout_future(Duration::from_millis(200)).await;
+    assert_eq!(grid.observe_children().n_items(), 1);
+    assert_eq!(
+        grid.first_child().unwrap().widget_name(),
+        format!("library-item-{older}")
+    );
+    click("library-clear-filters");
+    glib::timeout_future(Duration::from_millis(200)).await;
+    assert_eq!(pinned_dropdown.selected(), 0);
+
+    // Moving a pinned item to another folder prompts for confirmation and clears the pin on accept.
+    let target_group = state
+        .store
+        .borrow()
+        .groups()
+        .unwrap()
+        .into_iter()
+        .find(|g| g.id > 1)
+        .unwrap()
+        .id;
+    state.activate(&format!("move-group-{target_group}"), older);
+    let alert = window
+        .visible_dialog()
+        .expect("Moving a pinned note must ask for confirmation")
+        .downcast::<adw::AlertDialog>()
+        .unwrap();
+    assert_eq!(alert.heading().as_deref(), Some("Move pinned item?"));
+    alert.emit_by_name::<()>("response", &[&"cancel"]);
+    alert.force_close();
+    assert_eq!(state.store.borrow().get(older).unwrap().group_id, 1);
+    assert!(state.store.borrow().get(older).unwrap().pinned_at > 0);
+
+    state.activate(&format!("move-group-{target_group}"), older);
+    let alert = window
+        .visible_dialog()
+        .unwrap()
+        .downcast::<adw::AlertDialog>()
+        .unwrap();
+    alert.emit_by_name::<()>("response", &[&"accept"]);
+    alert.force_close();
+    let moved = state.store.borrow().get(older).unwrap();
+    assert_eq!(moved.group_id, target_group);
+    assert_eq!(moved.pinned_at, 0);
 }
 
 // Exercise the actual chooser and its refresh path, including a duplicate add.

@@ -14,7 +14,11 @@ const ITEM_FILTER_SQL: &str = "(?1=-1 OR group_id=?1) AND (instr(unicode_lower(c
     AND (?7 IS NULL OR (?7=0 AND NOT EXISTS(SELECT 1 FROM item_classifications a WHERE a.item_id=items.id AND a.category_id IS NOT NULL))
          OR EXISTS(SELECT 1 FROM item_classifications a WHERE a.item_id=items.id AND a.category_id=?7))
     AND (?8 IS NULL OR EXISTS(SELECT 1 FROM item_classifications a WHERE a.item_id=items.id AND a.subcategory_id=?8))
-    AND (?9='' OR EXISTS(SELECT 1 FROM item_classifications a WHERE a.item_id=items.id AND instr(unicode_lower(a.comment),?9)>0))";
+    AND (?9='' OR EXISTS(SELECT 1 FROM item_classifications a WHERE a.item_id=items.id AND instr(unicode_lower(a.comment),?9)>0))
+    AND (?10 IS NULL OR (?10=1 AND pinned_at>0) OR (?10=0 AND pinned_at=0))";
+
+const ITEM_ORDER_SQL: &str =
+    "CASE WHEN ?1>=1 AND pinned_at>0 THEN 1 ELSE 0 END DESC, CASE WHEN ?1>=1 AND pinned_at>0 THEN pinned_at ELSE 0 END DESC, copied_at DESC, id DESC";
 
 pub struct Store {
     pub db: Connection,
@@ -84,7 +88,7 @@ impl Store {
         )?;
         self.db.busy_timeout(std::time::Duration::from_secs(5))?;
         let version: i64 = self.db.query_row("PRAGMA user_version", [], |r| r.get(0))?;
-        if version > 3 {
+        if version > 4 {
             return Err(
                 tr("Database was created by a newer application; refusing to open it").into(),
             );
@@ -120,6 +124,15 @@ impl Store {
         }
         if version < 3 {
             crate::classification::migrate(&mut self.db)?;
+        }
+        if version < 4 {
+            let tx = self.db.transaction()?;
+            tx.execute_batch(
+                "ALTER TABLE items ADD COLUMN pinned_at INTEGER NOT NULL DEFAULT 0;
+                 CREATE INDEX items_group_pinned ON items(group_id, pinned_at DESC, copied_at DESC, id DESC);
+                 PRAGMA user_version=4;",
+            )?;
+            tx.commit()?;
         }
         Ok(())
     }
@@ -186,6 +199,7 @@ impl Store {
             updated_at: r.get(8)?,
             copied_at: r.get(9)?,
             group_id: r.get(10)?,
+            pinned_at: r.get(11)?,
         })
     }
     pub fn get(&self, id: i64) -> Result<Item> {
@@ -214,7 +228,7 @@ impl Store {
         };
         let pattern = query.search.to_lowercase();
         let mut stmt = self.db.prepare(&format!(
-            "SELECT * FROM items WHERE {ITEM_FILTER_SQL} ORDER BY copied_at DESC,id DESC LIMIT ?10 OFFSET ?11"
+            "SELECT * FROM items WHERE {ITEM_FILTER_SQL} ORDER BY {ITEM_ORDER_SQL} LIMIT ?11 OFFSET ?12"
         ))?;
         let items = stmt
             .query_map(
@@ -228,6 +242,7 @@ impl Store {
                     query.category_id,
                     query.subcategory_id,
                     query.comment.to_lowercase(),
+                    query.pinned.map(i64::from),
                     limit,
                     query.offset.max(0)
                 ],
@@ -238,7 +253,7 @@ impl Store {
     }
     pub fn matching_item_ids(&self, query: &Query) -> Result<Vec<i64>> {
         let mut stmt = self.db.prepare(&format!(
-            "SELECT id FROM items WHERE {ITEM_FILTER_SQL} ORDER BY copied_at DESC,id DESC"
+            "SELECT id FROM items WHERE {ITEM_FILTER_SQL} ORDER BY {ITEM_ORDER_SQL}"
         ))?;
         let ids = stmt
             .query_map(
@@ -251,7 +266,8 @@ impl Store {
                     query.until,
                     query.category_id,
                     query.subcategory_id,
-                    query.comment.to_lowercase()
+                    query.comment.to_lowercase(),
+                    query.pinned.map(i64::from)
                 ],
                 |r| r.get(0),
             )?
@@ -313,9 +329,24 @@ impl Store {
     }
     pub fn move_item(&self, id: i64, group: i64) -> Result<()> {
         self.db.execute(
-            "UPDATE items SET group_id=?1,updated_at=?2 WHERE id=?3",
+            "UPDATE items SET pinned_at=CASE WHEN group_id=?1 THEN pinned_at ELSE 0 END,group_id=?1,updated_at=?2 WHERE id=?3",
             params![group, now(), id],
         )?;
+        Ok(())
+    }
+    pub fn set_pinned(&self, id: i64, pinned: bool) -> Result<()> {
+        if pinned {
+            let changed = self.db.execute(
+                "UPDATE items SET pinned_at=MAX(?1, pinned_at+1) WHERE id=?2 AND group_id>=1",
+                params![now(), id],
+            )?;
+            if changed == 0 {
+                return Err(tr("Only items in Notes or folders can be pinned.").into());
+            }
+        } else {
+            self.db
+                .execute("UPDATE items SET pinned_at=0 WHERE id=?1", [id])?;
+        }
         Ok(())
     }
     pub fn create_group(&self, name: &str) -> Result<()> {
@@ -333,7 +364,7 @@ impl Store {
         tx.execute("INSERT INTO groups(name,position) VALUES(?1,(SELECT COALESCE(MAX(position),1)+1 FROM groups))", [name.trim()])?;
         let group = tx.last_insert_rowid();
         let changed = tx.execute(
-            "UPDATE items SET group_id=?1,updated_at=?2 WHERE id=?3",
+            "UPDATE items SET group_id=?1,pinned_at=0,updated_at=?2 WHERE id=?3",
             params![group, now(), id],
         )?;
         if changed == 0 {
@@ -357,7 +388,10 @@ impl Store {
             return Err(tr("Built-in folders cannot be deleted").into());
         }
         let tx = self.db.transaction()?;
-        tx.execute("UPDATE items SET group_id=1 WHERE group_id=?1", [id])?;
+        tx.execute(
+            "UPDATE items SET group_id=1,pinned_at=0 WHERE group_id=?1",
+            [id],
+        )?;
         tx.execute("DELETE FROM groups WHERE id=?1", [id])?;
         tx.commit()?;
         Ok(())
@@ -739,11 +773,119 @@ mod tests {
             .unwrap();
         assert_eq!(first_revision, second_revision);
         assert_eq!(s.get(42).unwrap().content, "Old content");
+        assert_eq!(s.get(42).unwrap().pinned_at, 0);
         assert_eq!(
             s.db.query_row("PRAGMA user_version", [], |r| r.get::<_, i64>(0))
                 .unwrap(),
-            3
+            4
         );
+    }
+
+    #[test]
+    fn pinning_orders_within_folder_filters_and_clears_on_move() {
+        let mut s = store();
+        s.capture("history clip", "Browser", "", false).unwrap();
+        let history_id = s.query(&Query::default()).unwrap()[0].id;
+        assert!(s.set_pinned(history_id, true).is_err());
+
+        let first = s.save_item(None, "First", "note 1").unwrap();
+        let second = s.save_item(None, "Second", "note 2").unwrap();
+        let third = s.save_item(None, "Third", "note 3").unwrap();
+        s.db.execute("UPDATE items SET copied_at=10 WHERE id=?1", [first])
+            .unwrap();
+        s.db.execute("UPDATE items SET copied_at=20 WHERE id=?1", [second])
+            .unwrap();
+        s.db.execute("UPDATE items SET copied_at=30 WHERE id=?1", [third])
+            .unwrap();
+
+        s.set_pinned(first, true).unwrap();
+        s.db.execute("UPDATE items SET pinned_at=100 WHERE id=?1", [first])
+            .unwrap();
+        s.set_pinned(second, true).unwrap();
+        s.db.execute("UPDATE items SET pinned_at=200 WHERE id=?1", [second])
+            .unwrap();
+
+        let notes_q = Query {
+            group_id: 1,
+            ..Default::default()
+        };
+        let notes_ids: Vec<i64> = s
+            .query(&notes_q)
+            .unwrap()
+            .into_iter()
+            .map(|i| i.id)
+            .collect();
+        assert_eq!(notes_ids, vec![second, first, third]);
+        assert_eq!(s.matching_item_ids(&notes_q).unwrap(), notes_ids);
+
+        // Re-pinning updates pinned_at and moves first to the top.
+        s.set_pinned(first, false).unwrap();
+        assert_eq!(s.get(first).unwrap().pinned_at, 0);
+        s.set_pinned(first, true).unwrap();
+        assert!(s.get(first).unwrap().pinned_at > 200);
+        let repinned_ids: Vec<i64> = s
+            .query(&notes_q)
+            .unwrap()
+            .into_iter()
+            .map(|i| i.id)
+            .collect();
+        assert_eq!(repinned_ids, vec![first, second, third]);
+
+        // All Items preserves chronological order (copied_at DESC, id DESC).
+        let all_ids: Vec<i64> = s
+            .query(&Query {
+                group_id: -1,
+                ..Default::default()
+            })
+            .unwrap()
+            .into_iter()
+            .filter(|i| i.group_id == 1)
+            .map(|i| i.id)
+            .collect();
+        assert_eq!(all_ids, vec![third, second, first]);
+
+        // Filter by pinned / unpinned.
+        let only_pinned: Vec<i64> = s
+            .query(&Query {
+                group_id: 1,
+                pinned: Some(true),
+                ..Default::default()
+            })
+            .unwrap()
+            .into_iter()
+            .map(|i| i.id)
+            .collect();
+        assert_eq!(only_pinned, vec![first, second]);
+        let only_unpinned: Vec<i64> = s
+            .query(&Query {
+                group_id: 1,
+                pinned: Some(false),
+                ..Default::default()
+            })
+            .unwrap()
+            .into_iter()
+            .map(|i| i.id)
+            .collect();
+        assert_eq!(only_unpinned, vec![third]);
+
+        // Moving to another folder clears pin; moving to the same folder keeps it.
+        s.move_item(first, 1).unwrap();
+        assert!(s.get(first).unwrap().pinned_at > 0);
+        s.create_group("Work").unwrap();
+        let work_id = s.groups().unwrap().last().unwrap().id;
+        s.move_item(first, work_id).unwrap();
+        assert_eq!(s.get(first).unwrap().pinned_at, 0);
+
+        // Creating a folder for a pinned item clears its pin.
+        s.create_group_for_item(second, "Archive").unwrap();
+        assert_eq!(s.get(second).unwrap().pinned_at, 0);
+
+        // Deleting a folder moves items to Notes and clears pins.
+        s.set_pinned(first, true).unwrap();
+        assert!(s.get(first).unwrap().pinned_at > 0);
+        s.delete_group(work_id).unwrap();
+        assert_eq!(s.get(first).unwrap().group_id, 1);
+        assert_eq!(s.get(first).unwrap().pinned_at, 0);
     }
 
     #[test]

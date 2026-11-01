@@ -31,7 +31,7 @@ fn read_selected(db: &Connection, ids: &[i64]) -> Result<Vec<SelectedItem>> {
             .query_row([id], |r| {
                 Ok(SelectedItem {
                     item: Store::row(r)?,
-                    revision: r.get(11)?,
+                    revision: r.get(12)?,
                     annotation: export_annotation(db, id)?,
                 })
             })
@@ -155,7 +155,7 @@ impl Store {
         let timestamp = now();
         for selected in items {
             tx.execute(
-                "UPDATE items SET group_id=?1,updated_at=?2 WHERE id=?3",
+                "UPDATE items SET pinned_at=CASE WHEN group_id=?1 THEN pinned_at ELSE 0 END,group_id=?1,updated_at=?2 WHERE id=?3",
                 params![group, timestamp, selected.item.id],
             )?;
         }

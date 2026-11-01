@@ -98,6 +98,19 @@ fn menu_actions(widget: &impl IsA<gtk::Widget>, state: &Rc<State>, names: &[&str
     widget.insert_action_group("menu", Some(&actions));
 }
 
+fn add_pin_menu_action(widget: &impl IsA<gtk::Widget>, state: &Rc<State>, id: i64, pinned: bool) {
+    let actions = gio::SimpleActionGroup::new();
+    let action = gio::SimpleAction::new_stateful("toggle-pin", None, &pinned.to_variant());
+    let state = Rc::downgrade(state);
+    action.connect_activate(move |_, _| {
+        if let Some(state) = state.upgrade() {
+            state.activate("toggle-pin", id);
+        }
+    });
+    actions.add_action(&action);
+    widget.insert_action_group("pin", Some(&actions));
+}
+
 fn main_menu_model(settings: Option<&gio::Settings>) -> gio::Menu {
     let model = gio::Menu::new();
     let navigation = gio::Menu::new();
@@ -415,6 +428,10 @@ pub fn show(state: &Rc<State>) {
         .build();
     filters.append(&source);
     source.set_widget_name("library-filter-source");
+    let pinned_filter =
+        gtk::DropDown::from_strings(&[&tr("All items"), &tr("Pinned only"), &tr("Unpinned only")]);
+    pinned_filter.set_widget_name("library-filter-pinned");
+    filters.append(&pinned_filter);
     let classification_filters = crate::classification_filters::Filters::new();
     filters.append(&classification_filters.widget);
     let clear_filters = button("Clear filters");
@@ -575,6 +592,7 @@ pub fn show(state: &Rc<State>) {
         let source = source.clone();
         let source_names = source_names.clone();
         let source_values = source_values.clone();
+        let pinned_filter = pinned_filter.clone();
         let active_group = active_group.clone();
         let offset = offset.clone();
         let page_size = page_size.clone();
@@ -667,6 +685,7 @@ pub fn show(state: &Rc<State>) {
             let (since, end) = applied_date_range.get();
             let count = u8::from(kinds.selected() != 0)
                 + u8::from(source.selected() != 0)
+                + u8::from(pinned_filter.selected() != 0)
                 + u8::from(since != 0 || end != 0)
                 + classification_filters.count();
             filter_button.set_label(&if count == 0 {
@@ -683,6 +702,7 @@ pub fn show(state: &Rc<State>) {
                 kinds.selected() != 0
                     || dates.selected() != 0
                     || source.selected() != 0
+                    || pinned_filter.selected() != 0
                     || !from.text().is_empty()
                     || !until.text().is_empty()
                     || classification_filters.count() > 0,
@@ -761,6 +781,11 @@ pub fn show(state: &Rc<State>) {
                 category_id: classification_query.category_id,
                 subcategory_id: classification_query.subcategory_id,
                 comment: classification_query.comment,
+                pinned: match pinned_filter.selected() {
+                    1 => Some(true),
+                    2 => Some(false),
+                    _ => None,
+                },
                 search: search.text().to_string(),
                 group_id: active_group.get(),
                 kind: match kinds.selected() {
@@ -826,7 +851,8 @@ pub fn show(state: &Rc<State>) {
                             || query.until != 0
                             || query.category_id.is_some()
                             || query.subcategory_id.is_some()
-                            || !query.comment.is_empty();
+                            || !query.comment.is_empty()
+                            || query.pinned.is_some();
                         if filtered {
                             empty.set_title(&tr("No Matching Items"));
                             empty.set_description(Some(&tr(
@@ -879,6 +905,7 @@ pub fn show(state: &Rc<State>) {
         let kinds = kinds.clone();
         let dates = dates.clone();
         let source = source.clone();
+        let pinned_filter = pinned_filter.clone();
         let from = from.clone();
         let until = until.clone();
         let offset = offset.clone();
@@ -889,6 +916,7 @@ pub fn show(state: &Rc<State>) {
             kinds.set_selected(0);
             dates.set_selected(0);
             source.set_selected(0);
+            pinned_filter.set_selected(0);
             from.set_text("");
             until.set_text("");
             classification_filters.clear();
@@ -946,6 +974,18 @@ pub fn show(state: &Rc<State>) {
         let offset = offset.clone();
         let resetting_filters = resetting_filters.clone();
         source.connect_selected_notify(move |_| {
+            if resetting_filters.get() {
+                return;
+            }
+            offset.set(0);
+            refresh();
+        });
+    }
+    {
+        let refresh = refresh.clone();
+        let offset = offset.clone();
+        let resetting_filters = resetting_filters.clone();
+        pinned_filter.connect_selected_notify(move |_| {
             if resetting_filters.get() {
                 return;
             }
@@ -1076,6 +1116,13 @@ fn card(state: &Rc<State>, item: &Item, selecting: bool, collection: Option<&Gro
     let heading = crate::card_metadata::MetadataTag::wrap(&heading);
     heading.set_hexpand(true);
     head.append(&heading);
+    if item.pinned_at > 0 && item.group_id >= 1 {
+        let pin_icon = gtk::Image::from_icon_name("view-pin-symbolic");
+        pin_icon.set_tooltip_text(Some(&tr("Pinned")));
+        pin_icon.set_widget_name("card-pinned");
+        pin_icon.add_css_class("dim-label");
+        head.append(&pin_icon);
+    }
     let details_button = gtk::Button::builder()
         .icon_name("help-about-symbolic")
         .tooltip_text(tr("Item Details"))
@@ -1196,6 +1243,14 @@ fn card(state: &Rc<State>, item: &Item, selecting: bool, collection: Option<&Gro
     }
     model.append_section(None, &details);
     let organize = gio::Menu::new();
+    let pinned = item.pinned_at > 0;
+    if item.group_id >= 1 && (collection.is_none() || pinned) {
+        add_pin_menu_action(&menu, state, item.id, pinned);
+        organize.append(
+            Some(&if pinned { tr("Pinned") } else { tr("Pin") }),
+            Some("pin.toggle-pin"),
+        );
+    }
     organize.append(Some(&tr("Move to Notes")), Some("menu.notes"));
     organize.append_submenu(Some(&tr("Move to folder")), &move_destinations(&folders));
     crate::classification_ui::add_menu(state, item.id, &menu, &organize);
@@ -1257,10 +1312,29 @@ pub fn new_group(state: &Rc<State>) {
 }
 
 pub fn new_group_for_item(state: &Rc<State>, id: i64) {
+    let pinned = state
+        .store
+        .borrow()
+        .get(id)
+        .is_ok_and(|item| item.pinned_at > 0);
     let s = state.clone();
     prompt(state, "New Folder", "", move |name| {
-        let result = s.store.borrow_mut().create_group_for_item(id, &name);
-        s.report(result);
+        if pinned {
+            let s2 = s.clone();
+            confirm(
+                &s,
+                "Move pinned item?",
+                &tr("Moving this item to another folder will remove its pin."),
+                "Move",
+                move || {
+                    let result = s2.store.borrow_mut().create_group_for_item(id, &name);
+                    s2.report(result);
+                },
+            );
+        } else {
+            let result = s.store.borrow_mut().create_group_for_item(id, &name);
+            s.report(result);
+        }
     });
 }
 pub fn rename_item(state: &Rc<State>, id: i64) {
@@ -1289,11 +1363,35 @@ pub fn delete_item(state: &Rc<State>, id: i64) {
         },
     );
 }
+pub fn move_item_to_group(state: &Rc<State>, id: i64, group: i64) {
+    let item = match state.store.borrow().get(id) {
+        Ok(item) => item,
+        Err(e) => {
+            error(state, &e.to_string());
+            return;
+        }
+    };
+    if item.pinned_at > 0 && item.group_id != group {
+        let s = state.clone();
+        confirm(
+            state,
+            "Move pinned item?",
+            &tr("Moving this item to another folder will remove its pin."),
+            "Move",
+            move || {
+                let result = s.store.borrow().move_item(id, group);
+                s.report(result);
+            },
+        );
+    } else {
+        let result = state.store.borrow().move_item(id, group);
+        state.report(result);
+    }
+}
 pub fn move_item(state: &Rc<State>, id: i64) {
     let s = state.clone();
     choose_move(state, false, None, move |group| {
-        let result = s.store.borrow().move_item(id, group);
-        s.report(result);
+        move_item_to_group(&s, id, group);
     });
 }
 
@@ -1549,7 +1647,7 @@ pub fn info(state: &Rc<State>, item: &Item) {
     let group = adw::PreferencesGroup::new();
     group.set_valign(gtk::Align::Start);
     group.set_widget_name("item-details-properties");
-    for (name, value) in [
+    let mut rows = vec![
         (
             mark("Source"),
             if item.source.is_empty() {
@@ -1569,8 +1667,12 @@ pub fn info(state: &Rc<State>, item: &Item) {
         (mark("Created"), date(item.created_at)),
         (mark("Edited"), date(item.updated_at)),
         (mark("Last Copied"), date(item.copied_at)),
-        (mark("Length"), content_length(&item.content)),
-    ] {
+    ];
+    if item.pinned_at > 0 && item.group_id >= 1 {
+        rows.push((mark("Pinned At"), date(item.pinned_at)));
+    }
+    rows.push((mark("Length"), content_length(&item.content)));
+    for (name, value) in rows {
         let row = adw::ActionRow::builder()
             .title(tr(name))
             .subtitle(value)

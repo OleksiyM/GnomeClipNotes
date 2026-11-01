@@ -147,9 +147,9 @@ impl Store {
                     &[("id", &id.to_string())],
                 )
             })?;
-            let mut stmt = tx.prepare("SELECT i.id,i.title,i.content,i.kind,i.origin,i.source,i.source_id,i.created_at,i.updated_at,i.copied_at,i.group_id,r.token FROM items i JOIN item_export_revisions r ON r.item_id=i.id WHERE i.group_id=?1 ORDER BY i.created_at,i.id")?;
+            let mut stmt = tx.prepare("SELECT i.id,i.title,i.content,i.kind,i.origin,i.source,i.source_id,i.created_at,i.updated_at,i.copied_at,i.group_id,i.pinned_at,r.token FROM items i JOIN item_export_revisions r ON r.item_id=i.id WHERE i.group_id=?1 ORDER BY i.created_at,i.id")?;
             let rows = stmt
-                .query_map([id], |r| Ok((Store::row(r)?, r.get::<_, Vec<u8>>(11)?)))?
+                .query_map([id], |r| Ok((Store::row(r)?, r.get::<_, Vec<u8>>(12)?)))?
                 .collect::<rusqlite::Result<Vec<_>>>()?;
             let annotations = rows
                 .iter()
@@ -317,7 +317,7 @@ fn changed_reason(
     old: &Item,
     revision: Option<&Vec<u8>>,
 ) -> ExportResult<Option<String>> {
-    let current: Option<(Item,Vec<u8>)> = db.query_row("SELECT i.id,i.title,i.content,i.kind,i.origin,i.source,i.source_id,i.created_at,i.updated_at,i.copied_at,i.group_id,r.token FROM items i JOIN item_export_revisions r ON r.item_id=i.id WHERE i.id=?1", [old.id], |r|Ok((Store::row(r)?,r.get(11)?))).optional()?;
+    let current: Option<(Item,Vec<u8>)> = db.query_row("SELECT i.id,i.title,i.content,i.kind,i.origin,i.source,i.source_id,i.created_at,i.updated_at,i.copied_at,i.group_id,i.pinned_at,r.token FROM items i JOIN item_export_revisions r ON r.item_id=i.id WHERE i.id=?1", [old.id], |r|Ok((Store::row(r)?,r.get(12)?))).optional()?;
     Ok(match current {
         None => Some(tr("item was deleted")),
         Some((now, token)) if revision != Some(&token) || !same_item(old, &now) => {
@@ -342,6 +342,7 @@ fn same_item(a: &Item, b: &Item) -> bool {
         && a.updated_at == b.updated_at
         && a.copied_at == b.copied_at
         && a.group_id == b.group_id
+        && a.pinned_at == b.pinned_at
 }
 
 pub fn write_markdown_export(
@@ -531,6 +532,10 @@ pub fn render_collection(
                     ("date", &copied),
                 ],
             ));
+            if item.pinned_at > 0 {
+                let pinned = timestamp(item.pinned_at);
+                out.push_str(&trf("- Pinned at: {date}\n", &[("date", &pinned)]));
+            }
         }
         out.push('\n');
         out.push_str(&item.content);
@@ -653,7 +658,7 @@ mod tests {
     }
     fn add(s: &Store, id: i64, group: i64, title: &str, content: &str, created: i64) {
         s.db.execute(
-            "INSERT INTO items VALUES(?1,?2,?3,'text','manual','src','sid',?4,?4,?4,?5)",
+            "INSERT INTO items(id,title,content,kind,origin,source,source_id,created_at,updated_at,copied_at,group_id) VALUES(?1,?2,?3,'text','manual','src','sid',?4,?4,?4,?5)",
             params![id, title, content, created, group],
         )
         .unwrap();
@@ -672,7 +677,6 @@ mod tests {
     fn v2_classification_migration_preserves_existing_export_snapshots() {
         let mut s = store_v2();
         add(&s, 42, 2, "Old title", "Old content", 10);
-        let before_item = s.get(42).unwrap();
         let before_revision: Vec<u8> =
             s.db.query_row(
                 "SELECT token FROM item_export_revisions WHERE item_id=42",
@@ -688,6 +692,7 @@ mod tests {
             )
             .unwrap();
         s.migrate().unwrap();
+        let before_item = s.get(42).unwrap();
         s.migrate().unwrap();
         let after = s.snapshot_markdown_export(&[2]).unwrap();
         assert!(same_item(&before_item, &after.collections[0].items[0]));
@@ -853,6 +858,8 @@ mod tests {
         add(&s, 2, 1, "", "Second item", 60);
         s.db.execute("UPDATE items SET updated_at=30 WHERE id=1", [])
             .unwrap();
+        s.db.execute("UPDATE items SET pinned_at=45 WHERE id=1", [])
+            .unwrap();
         let snapshot = s.snapshot_markdown_export(&[1]).unwrap();
         let collection = &snapshot.collections[0];
         let plain = render_collection(collection, ExportOptions::default(), &glib::TimeZone::utc());
@@ -871,6 +878,8 @@ mod tests {
         );
         assert!(detailed.contains("- Item ID: 1\n"));
         assert!(detailed.contains("- Source ID: sid\n"));
+        assert!(detailed.contains("- Pinned at: 1970-01-01 00:00:45 UTC+00:00\n"));
+        assert_eq!(detailed.matches("- Pinned at:").count(), 1);
     }
 
     #[test]

@@ -167,21 +167,26 @@ impl State {
             "view" | "preview" => ui::view(self, id),
             "delete" => ui::delete_item(self, id),
             "pin" => ui::move_item(self, id),
+            "toggle-pin" => {
+                let result = {
+                    let store = self.store.borrow();
+                    store
+                        .get(id)
+                        .and_then(|item| store.set_pinned(id, item.pinned_at == 0))
+                };
+                self.report(result);
+            }
             "rename" => ui::rename_item(self, id),
             "new-group" => ui::new_group(self),
             "new-group-move" => ui::new_group_for_item(self, id),
             action if action.starts_with("move-group-") => {
                 if let Ok(group) = action["move-group-".len()..].parse::<i64>() {
                     if group > 1 {
-                        let result = self.store.borrow().move_item(id, group);
-                        self.report(result);
+                        ui::move_item_to_group(self, id, group);
                     }
                 }
             }
-            "notes" => {
-                let result = self.store.borrow().move_item(id, 1);
-                self.report(result);
-            }
+            "notes" => ui::move_item_to_group(self, id, 1),
             "info" => {
                 let item = self.store.borrow().get(id);
                 match item {

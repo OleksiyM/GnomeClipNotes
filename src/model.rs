@@ -22,6 +22,8 @@ pub struct Item {
     pub updated_at: i64,
     pub copied_at: i64,
     pub group_id: i64,
+    #[serde(default)]
+    pub pinned_at: i64,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -66,6 +68,7 @@ pub struct Query {
     pub subcategory_id: Option<i64>,
     /// Literal case-insensitive search in the user's classification comment only.
     pub comment: String,
+    pub pinned: Option<bool>,
     pub limit: i64,
     pub offset: i64,
 }
@@ -82,6 +85,7 @@ impl Query {
             && self.category_id == other.category_id
             && self.subcategory_id == other.subcategory_id
             && self.comment == other.comment
+            && self.pinned == other.pinned
     }
 }
 

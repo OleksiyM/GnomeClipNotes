@@ -50,6 +50,11 @@ msgstr ""
 msgid " · Modified: {date}"
 msgstr ""
 
+#: src/export.rs
+#, rust-format
+msgid "- Pinned at: {date}\n"
+msgstr ""
+
 #: src/preferences.rs
 msgid "1 day"
 msgstr ""
@@ -220,6 +225,10 @@ msgstr ""
 
 #: src/classification_filters.rs
 msgid "All categories"
+msgstr ""
+
+#: src/ui.rs
+msgid "All items"
 msgstr ""
 
 #: src/export_ui.rs
@@ -1010,6 +1019,10 @@ msgid "Move down"
 msgstr ""
 
 #: src/ui.rs
+msgid "Move pinned item?"
+msgstr ""
+
+#: src/ui.rs
 msgid "Move to Folder"
 msgstr ""
 
@@ -1024,6 +1037,17 @@ msgstr ""
 #: src/classification_preferences.rs src/preferences.rs
 msgid "Move up"
 msgstr ""
+
+#: src/ui.rs
+msgid "Moving this item to another folder will remove its pin."
+msgstr ""
+
+#: src/library_actions.rs
+#, rust-format
+msgid "Moving {count} pinned item to another folder will remove its pin."
+msgid_plural "Moving {count} pinned items to another folder will remove their pins."
+msgstr[0] ""
+msgstr[1] ""
 
 #: src/ui.rs
 msgid "Name is optional."
@@ -1143,6 +1167,10 @@ msgstr ""
 msgid "Only History is affected. Notes and your folders will not be deleted. Future History entries will expire after the selected period."
 msgstr ""
 
+#: src/store.rs
+msgid "Only items in Notes or folders can be pinned."
+msgstr ""
+
 #: src/export_ui.rs
 msgid "Only selected custom folders. The Notes collection is never deleted."
 msgstr ""
@@ -1223,6 +1251,22 @@ msgstr[1] ""
 
 #: extension/extension.js
 msgid "Paused until {time}"
+msgstr ""
+
+#: src/ui.rs
+msgid "Pin"
+msgstr ""
+
+#: src/ui.rs
+msgid "Pinned"
+msgstr ""
+
+#: src/ui.rs
+msgid "Pinned At"
+msgstr ""
+
+#: src/ui.rs
+msgid "Pinned only"
 msgstr ""
 
 #: src/preferences.rs
@@ -1664,6 +1708,10 @@ msgstr ""
 
 #: src/ui.rs
 msgid "Unknown"
+msgstr ""
+
+#: src/ui.rs
+msgid "Unpinned only"
 msgstr ""
 
 #: src/ui.rs
