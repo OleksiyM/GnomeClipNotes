@@ -3,6 +3,24 @@
 Release availability and publication dates are recorded in
 [GitHub Releases](https://github.com/OleksiyM/GnomeClipNotes/releases).
 
+## 1.4.0 — 2026-11-01
+
+### Library & Collections
+
+- Added folder-scoped note pinning: pin important notes inside **Notes** or custom
+  collections (**Collections**). Pinned items stay at the top ordered by pin time
+  (`pinned_at DESC`), while unpinned items retain standard chronological sorting.
+- Shared ordering between Library and the **Super+V** GNOME Shell overlay. Chronological
+  ordering is preserved across **All Items** and **History**.
+- Card header pin indicator (`view-pin-symbolic`) on pinned cards in Library and the overlay.
+- Added Pin toggle action (`Pin` / `Pinned`) in the Library card menu; unpinning is also
+  supported directly from **All Items**.
+- Added Pinned filter in Library **Filters** popover (`All items`, `Pinned only`, `Unpinned only`).
+- Added confirmation dialog when moving pinned items to another folder, clearing their pin state.
+- Added `Pinned At` timestamp to *Item Details* (`help-about-symbolic`) when pinned.
+- Included pinned timestamp in Markdown exports when exporting with metadata.
+- Database schema upgraded to version 4 with automatic migration.
+
 ## 1.3.3 — 2026-11-01
 
 ### Library & Editor

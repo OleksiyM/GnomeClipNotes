@@ -68,6 +68,18 @@ for inline code.
 Since 1.3.2, the Shell extension adds support for **GNOME Shell 51**, updating
 widget orientation properties to match upstream St API requirements.
 
+Since 1.3.3, editor and library controls receive refined indicators: a clean
+bullet (`•`) marks unsaved drafts, native preview avoids autofocusing on open,
+and the card info button uses the standard circular symbol (`help-about-symbolic`).
+Card grids and page capacity also adapt reliably to long titles and window resizing.
+
+Since 1.4.0, Library supports **folder-scoped note pinning**: pin important notes
+inside **Notes** or custom collections/folders (**Collections**) so they stay at the top
+(`pinned_at DESC`), while preserving chronological order across **All Items** and
+**History**. Pinned cards display a subtle pin indicator, can be filtered in the
+**Filters** popover, and prompt for confirmation before moving to another folder where
+the pin is cleared.
+
 ## Install
 
 Two installation paths, **the same complete app**. Both verify SHA256 and can
