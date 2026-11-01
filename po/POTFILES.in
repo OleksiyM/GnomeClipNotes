@@ -21,6 +21,7 @@ src/preview_html.rs
 src/preview_native.rs
 src/preview_webkit.rs
 src/release_check.rs
+src/rich_capture.rs
 src/store.rs
 src/ui.rs
 src/update.rs

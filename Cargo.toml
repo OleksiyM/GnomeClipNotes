@@ -18,6 +18,7 @@ soup = { package = "soup3", version = "0.9" }
 rusqlite = { version = "0.32", features = ["bundled", "backup", "functions"] }
 pulldown-cmark = "0.12"
 webkit = { package = "webkit6", version = "0.6" }
+htmd = "0.5"
 
 [profile.release]
 lto = "thin"

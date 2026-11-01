@@ -188,6 +188,8 @@ changed to reserve either combination.
   layouts, a section list and native back navigation on narrow layouts. General,
   History, Privacy, Shortcuts, Folders, Categories and Data keep native `AdwPreferencesPage`,
   `AdwSwitchRow` and `AdwComboRow` content, with a bounded reading width.
+  General houses Clipboard ownership and Rich text capture (`Convert rich text to Markdown`),
+  allowing users to choose whether formatted HTML from web pages is saved as Markdown or literal plain text.
   The selected section survives list refreshes (ignored apps and folders).
 - History retention uses a restrained-width scale with a separate selected
   period, Apply button and currently applied period. Dragging never saves or

@@ -2,6 +2,7 @@ import Clutter from 'gi://Clutter';
 import Gio from 'gi://Gio';
 import GLib from 'gi://GLib';
 import Shell from 'gi://Shell';
+import St from 'gi://St';
 import {Extension} from 'resource:///org/gnome/shell/extensions/extension.js';
 import * as Main from 'resource:///org/gnome/shell/ui/main.js';
 import * as Keyboard from 'resource:///org/gnome/shell/ui/status/keyboard.js';
@@ -29,6 +30,7 @@ const XML=`<node><interface name="org.example.ClipNotesTestDriver">
 <method name="ServiceControl"><arg type="s" direction="in"/></method>
 <method name="ServiceInfo"><arg type="s" direction="out"/></method>
 <method name="ServiceMenuOpen"><arg type="s" direction="in"/></method>
+<method name="ClipboardText"><arg type="s" direction="out"/></method>
 <method name="OpenNativeEditor"/><method name="CloseNativeEditor"/>
 </interface></node>`;
 export default class TestDriver extends Extension {
@@ -403,6 +405,11 @@ export default class TestDriver extends Extension {
                     error:overlay?._lastError??null,
                     last_click:this._lastClick??null,
                     events:this._events,
+                });
+            },
+            ClipboardTextAsync:(_args,invocation)=>{
+                St.Clipboard.get_default().get_text(St.ClipboardType.CLIPBOARD,(_c,text)=>{
+                    invocation.return_value(new GLib.Variant('(s)',[text??'']));
                 });
             },
             ScreenshotAsync:([path],invocation)=>{

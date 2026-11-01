@@ -15,3 +15,15 @@ export function textFormats(advertised) {
     return unique.filter(mime => rank(mime) < 4)
         .sort((a, b) => rank(a) - rank(b)).slice(0, MAX_TEXT_FORMATS);
 }
+
+export function htmlFormats(advertised) {
+    const unique = [...new Set(advertised.filter(value => typeof value === 'string'))];
+    const rank = mime => {
+        if (mime === 'text/html;charset=utf-8') return 0;
+        if (/^text\/html\s*;\s*charset\s*=\s*(?:utf-8|"utf-8")\s*$/i.test(mime)) return 1;
+        if (mime.toLowerCase() === 'text/html') return 2;
+        return 3;
+    };
+    return unique.filter(mime => rank(mime) < 3)
+        .sort((a, b) => rank(a) - rank(b)).slice(0, 4);
+}

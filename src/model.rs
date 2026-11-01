@@ -110,6 +110,7 @@ pub struct Settings {
     pub classification_enabled: bool,
     pub comments_enabled: bool,
     pub capture_ownership: String,
+    pub convert_rich_text: bool,
 }
 impl Default for Settings {
     fn default() -> Self {
@@ -139,6 +140,7 @@ impl Default for Settings {
             classification_enabled: false,
             comments_enabled: false,
             capture_ownership: "preserve".into(),
+            convert_rich_text: true,
         }
     }
 }

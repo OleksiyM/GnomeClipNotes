@@ -160,6 +160,17 @@ impl Store {
         source_id: &str,
         sensitive: bool,
     ) -> Result<bool> {
+        self.capture_rich(content, None, source, source_id, sensitive)
+    }
+
+    pub fn capture_rich(
+        &mut self,
+        content: &str,
+        html: Option<&str>,
+        source: &str,
+        source_id: &str,
+        sensitive: bool,
+    ) -> Result<bool> {
         if content.trim().is_empty()
             || content.len() > MAX_CONTENT
             || content.contains('\0')
@@ -167,11 +178,26 @@ impl Store {
         {
             return Ok(false);
         }
+        let valid_html =
+            html.filter(|h| !h.trim().is_empty() && h.len() <= MAX_CONTENT && !h.contains('\0'));
+        let converted = crate::rich_capture::capture_content(
+            content,
+            valid_html,
+            self.settings.convert_rich_text,
+        );
+        let final_content = if converted.trim().is_empty()
+            || converted.len() > MAX_CONTENT
+            || converted.contains('\0')
+        {
+            content
+        } else {
+            &converted
+        };
         let existing: Option<i64> = self
             .db
             .query_row(
                 "SELECT id FROM items WHERE group_id=0 AND content=?1 LIMIT 1",
-                [content],
+                [final_content],
                 |r| r.get(0),
             )
             .optional()?;
@@ -181,7 +207,7 @@ impl Store {
                 params![now(), source, source_id, id],
             )?;
         } else {
-            self.db.execute("INSERT INTO items(content,kind,origin,source,source_id,created_at,updated_at,copied_at) VALUES(?1,?2,'clipboard',?3,?4,?5,?5,?5)", params![content,kind(content),source,source_id,now()])?;
+            self.db.execute("INSERT INTO items(content,kind,origin,source,source_id,created_at,updated_at,copied_at) VALUES(?1,?2,'clipboard',?3,?4,?5,?5,?5)", params![final_content,kind(final_content),source,source_id,now()])?;
         }
         Ok(true)
     }
@@ -592,6 +618,16 @@ mod tests {
             .len(),
             1
         );
+
+        // Rich capture conversion
+        let rich_html = "<h3>GnomeClipNotes</h3><p>See <a href=\"https://github.com\">Repo</a></p>";
+        let plain = "GnomeClipNotes\nSee Repo";
+        s.capture_rich(plain, Some(rich_html), "Browser", "browser", false)
+            .unwrap();
+        let items = s.query(&Query::default()).unwrap();
+        let latest = &items[0];
+        assert!(latest.content.contains("### GnomeClipNotes"));
+        assert!(latest.content.contains("[Repo](https://github.com)"));
     }
 
     #[test]

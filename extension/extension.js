@@ -14,7 +14,7 @@ import * as PanelMenu from 'resource:///org/gnome/shell/ui/panelMenu.js';
 import * as PopupMenu from 'resource:///org/gnome/shell/ui/popupMenu.js';
 import {customDateRange, localDate, formatLocalDate} from './dateRange.js';
 import {DateCalendar} from './datePicker.js';
-import {textFormats} from './clipboardFormats.js';
+import {textFormats, htmlFormats} from './clipboardFormats.js';
 
 const SERVICE = 'io.github.OleksiyM.GnomeClipNotes';
 const SERVICE_PATH = '/io/github/OleksiyM/GnomeClipNotes';
@@ -23,6 +23,7 @@ const MAX_BYTES = 1024 * 1024;
 
 const SERVICE_XML = `<node><interface name="${SERVICE_IFACE}">
  <method name="Capture"><arg type="s" direction="in"/><arg type="s" direction="in"/><arg type="s" direction="in"/><arg type="b" direction="in"/><arg type="b" direction="out"/></method>
+ <method name="CaptureRich"><arg type="s" direction="in"/><arg type="s" direction="in"/><arg type="s" direction="in"/><arg type="s" direction="in"/><arg type="b" direction="in"/><arg type="b" direction="out"/></method>
  <method name="Query"><arg type="s" direction="in"/><arg type="s" direction="out"/></method>
  <method name="GetItem"><arg type="x" direction="in"/><arg type="s" direction="out"/></method>
  <method name="Activate"><arg type="s" direction="in"/><arg type="x" direction="in"/></method>
@@ -1264,7 +1265,7 @@ export default class GnomeClipNotesExtension extends Extension {
                         const text = new TextDecoder('utf-8', {fatal: true}).decode(bytes.get_data());
                         if (text.includes('\0')) { this._lastCaptureStatus = 'ignored:invalid-text'; return; }
                         if (!text) { this._lastCaptureStatus = 'ignored:empty'; return; }
-                        this._service.CaptureRemote(text, app.name, app.id, false, (reply, error) => {
+                        const onCaptured = (reply, error) => {
                             if (!current()) return;
                             if (error) {
                                 this._lastCaptureStatus = `error:${error.message}`;
@@ -1279,7 +1280,46 @@ export default class GnomeClipNotesExtension extends Extension {
                             } else {
                                 this._lastCaptureStatus = 'ignored:service-rejected';
                             }
-                        });
+                        };
+                        const htmlCandidates = (this._runtimeSettings?.convert_rich_text !== false && text.trim()) ? htmlFormats(mimeTypes) : [];
+                        if (htmlCandidates.length > 0 && typeof this._service.CaptureRichRemote === 'function') {
+                            const htmlOutput = Gio.MemoryOutputStream.new_resizable();
+                            try {
+                                selection.transfer_async(type, htmlCandidates[0], MAX_BYTES + 1, htmlOutput, cancellable, (_sel, htmlRes) => {
+                                    let htmlText = '';
+                                    try {
+                                        selection.transfer_finish(htmlRes);
+                                        htmlOutput.close(null);
+                                        const htmlBytes = htmlOutput.steal_as_bytes();
+                                        if (htmlBytes.get_size() <= MAX_BYTES) {
+                                            const raw = htmlBytes.get_data();
+                                            if (raw.length >= 2 && raw[0] === 0xFF && raw[1] === 0xFE) {
+                                                htmlText = new TextDecoder('utf-16le', {fatal: false}).decode(raw.subarray(2));
+                                            } else if (raw.length >= 2 && raw[0] === 0xFE && raw[1] === 0xFF) {
+                                                htmlText = new TextDecoder('utf-16be', {fatal: false}).decode(raw.subarray(2));
+                                            } else {
+                                                htmlText = new TextDecoder('utf-8', {fatal: false}).decode(raw);
+                                            }
+                                            htmlText = htmlText.replace(/\0+$/g, '');
+                                            if (htmlText.includes('\0')) htmlText = '';
+                                        }
+                                    } catch (_) {
+                                        try { htmlOutput.close(null); } catch (_) {}
+                                    }
+                                    if (!permitted()) return;
+                                    if (htmlText) {
+                                        this._service.CaptureRichRemote(text, htmlText, app.name, app.id, false, onCaptured);
+                                    } else {
+                                        this._service.CaptureRemote(text, app.name, app.id, false, onCaptured);
+                                    }
+                                });
+                            } catch (_) {
+                                try { htmlOutput.close(null); } catch (_) {}
+                                this._service.CaptureRemote(text, app.name, app.id, false, onCaptured);
+                            }
+                        } else {
+                            this._service.CaptureRemote(text, app.name, app.id, false, onCaptured);
+                        }
                     } catch (error) {
                         this._lastCaptureStatus = `error:${error.message}`;
                         console.debug(`Gnome Clip Notes clipboard text: ${error.message}`);

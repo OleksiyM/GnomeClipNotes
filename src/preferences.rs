@@ -1185,6 +1185,31 @@ fn show_page(state: &Rc<State>, page: Option<&str>) {
     ownership_group.add(&eager_row);
     general.add(&ownership_group);
 
+    let rich_group = adw::PreferencesGroup::builder()
+        .title(tr("Rich text capture"))
+        .description(tr(
+            "Controls how formatted content is stored in your library and history.",
+        ))
+        .build();
+    let rich_row = switch_row(
+        mark("Convert rich text to Markdown"),
+        mark("Preserve links, headings, and formatting from web pages. When disabled, saves plain text."),
+        current.convert_rich_text,
+    );
+    {
+        let state = state.clone();
+        rich_row.connect_active_notify(move |toggle| {
+            let wanted = toggle.is_active();
+            if wanted != state.store.borrow().settings.convert_rich_text
+                && !save_change(&state, |settings| settings.convert_rich_text = wanted)
+            {
+                toggle.set_active(!wanted);
+            }
+        });
+    }
+    rich_group.add(&rich_row);
+    general.add(&rich_group);
+
     let retention_group = adw::PreferencesGroup::builder()
         .title(tr("History retention"))
         .description(tr("Applies only to History. Notes and your folders are never deleted automatically. Months are 30 days; a year is 365 days."))

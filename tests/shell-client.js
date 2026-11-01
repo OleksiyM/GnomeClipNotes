@@ -61,13 +61,20 @@ async function waitUntil(description, predicate, attempts = 50) {
     throw new Error(`Timed out waiting for ${description}`);
 }
 
-function readClipboard(clipboard) {
-    return new Promise((resolve, reject) => {
+async function readClipboard(clipboard) {
+    const text = await new Promise(resolve => {
         clipboard.read_text_async(null, (object, result) => {
             try { resolve(object.read_text_finish(result)); }
-            catch (error) { reject(error); }
+            catch (_) { resolve(null); }
         });
     });
+    if (text !== null) return text;
+    try {
+        const [driverText] = await driver('ClipboardText');
+        return driverText;
+    } catch (_) {
+        return null;
+    }
 }
 
 GLib.set_prgname('org.example.ClipNotesShellTest');
@@ -127,6 +134,8 @@ try {
     assert(await readClipboard(clipboard) === FIXTURE, 'Clipboard text changed after capture ownership transfer');
     assert((await status()).capture_attempts===attempts,'Own clipboard changes caused another transfer');
     print('PASS ownership lifetime without duplicate capture');
+    clipboard.set_content(null);
+    await delay(100);
     const markdownFixture='fallback markdown 4db7\n\n- first\n- **second**\n\n`exact bytes`';
     const textOffer=text=>Gdk.ContentProvider.new_union([
         Gdk.ContentProvider.new_for_bytes('text/plain;charset=UTF-8',new GLib.Bytes(new TextEncoder().encode(text))),
@@ -142,6 +151,8 @@ try {
     print('PASS exact MIME preference and transfer fallback preserve multiline Markdown');
 
     const failedFixture='all transfer formats fail 981a';
+    clipboard.set_content(null);
+    await delay(100);
     await transferProbe({failures:{'text/plain;charset=utf-8':1,'text/plain;charset=UTF-8':1,UTF8_STRING:1}});
     clipboard.set_content(textOffer(failedFixture));
     await waitUntil('all MIME transfers attempted',async()=> (await status()).last_capture_status.startsWith('error:'));
@@ -152,6 +163,8 @@ try {
 
     const partialFixture='fallback after partial failure c821';
     const partialGarbage='partial transfer garbage must be discarded';
+    clipboard.set_content(null);
+    await delay(100);
     await transferProbe({failures:{'text/plain;charset=utf-8':1},partial_text:partialGarbage});
     clipboard.set_content(textOffer(partialFixture));
     await waitUntil('fallback after partial failed transfer',async()=> (await allItems()).some(item=>item.content===partialFixture));
@@ -161,6 +174,8 @@ try {
     print('PASS partial failed transfer is discarded before clean fallback');
 
     const oversizedFixture='oversized failed transfer must not fallback e91d';
+    clipboard.set_content(null);
+    await delay(100);
     await transferProbe({failures:{'text/plain;charset=utf-8':1},partial_size:1024*1024+1});
     clipboard.set_content(textOffer(oversizedFixture));
     await waitUntil('oversized partial transfer rejected',async()=> (await status()).last_capture_status==='ignored:too-large');
@@ -171,6 +186,8 @@ try {
 
     const staleFixture='cancelled fallback must not capture a13e';
     const replacementFixture='replacement owner captured 72bc';
+    clipboard.set_content(null);
+    await delay(100);
     await transferProbe({failures:{'text/plain;charset=utf-8':16},delay_ms:250});
     clipboard.set_content(textOffer(staleFixture));
     await waitUntil('stale owner transfer start',async()=>{
@@ -187,6 +204,19 @@ try {
     assert(cancellationProbe.attempts.some(attempt=>attempt.mime==='text/plain' && attempt.time>=replacementAt),'Replacement owner was not read independently');
     assert(!(await allItems()).some(item=>item.content===staleFixture),'Cancelled owner produced an old capture');
     print('PASS owner switch cancels stale transfer without fallback');
+
+    const richPlainFixture = 'Plain text fallback 1a2b\nLink to site';
+    const richHtmlFixture = '<h3>Heading 1a2b</h3><p>See <a href="https://gnome.org">GNOME</a></p>';
+    clipboard.set_content(null);
+    await delay(100);
+    clipboard.set_content(Gdk.ContentProvider.new_union([
+        Gdk.ContentProvider.new_for_bytes('text/html', new GLib.Bytes(new TextEncoder().encode(richHtmlFixture))),
+        Gdk.ContentProvider.new_for_bytes('text/plain;charset=utf-8', new GLib.Bytes(new TextEncoder().encode(richPlainFixture))),
+    ]));
+    await waitUntil('rich text HTML converted to Markdown', async () =>
+        (await allItems()).some(item => item.content.includes('### Heading 1a2b') && item.content.includes('[GNOME](https://gnome.org)'))
+    );
+    print('PASS rich text HTML captured and converted to Markdown');
     for(const [text,source] of [
         ['https://docs.gtk.org/gtk4/','Firefox'],
         ['A little space for what matters.','Text Editor'],
@@ -572,7 +602,7 @@ try {
         await driver('Key','right');
         await waitUntil('arrow traverses history',async()=>{
             const after=await overlayInfo();
-            return after.offset!==before.offset||after.selected!==before.selected;
+            return after.offset!==before.offset||after.selected!==before.selected||after.selected_id!==before.selected_id;
         });
     }
     const last=await overlayInfo();

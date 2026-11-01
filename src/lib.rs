@@ -26,6 +26,7 @@ mod model;
 mod preferences;
 mod preview_native;
 mod release_check;
+mod rich_capture;
 #[cfg(debug_assertions)]
 mod smoke;
 mod store;
@@ -46,6 +47,7 @@ const INTERFACE: &str = "io.github.OleksiyM.GnomeClipNotes.Service";
 thread_local! { static SERVICE_STATE: RefCell<Option<Rc<State>>> = const { RefCell::new(None) }; }
 const XML: &str = r#"<node><interface name="io.github.OleksiyM.GnomeClipNotes.Service">
 <method name="Capture"><arg type="s" direction="in"/><arg type="s" direction="in"/><arg type="s" direction="in"/><arg type="b" direction="in"/><arg type="b" direction="out"/></method>
+<method name="CaptureRich"><arg type="s" direction="in"/><arg type="s" direction="in"/><arg type="s" direction="in"/><arg type="s" direction="in"/><arg type="b" direction="in"/><arg type="b" direction="out"/></method>
 <method name="Query"><arg type="s" direction="in"/><arg type="s" direction="out"/></method>
 <method name="GetItem"><arg type="x" direction="in"/><arg type="s" direction="out"/></method>
 <method name="Activate"><arg type="s" direction="in"/><arg type="x" direction="in"/></method>
@@ -231,6 +233,27 @@ fn register_service(state: &Rc<State>) -> store::Result<()> {
                             .store
                             .borrow_mut()
                             .capture(&text, &source, &source_id, sensitive)?;
+                        if accepted {
+                            state.changed();
+                        }
+                        Ok((accepted,).to_variant())
+                    }
+                    "CaptureRich" => {
+                        if state.update.stopping() {
+                            return Ok((false,).to_variant());
+                        }
+                        let (text, html, source, source_id, sensitive) = parameters
+                            .get::<(String, String, String, String, bool)>()
+                            .ok_or("Invalid capture rich parameters")?;
+                        let html_opt = if html.is_empty() {
+                            None
+                        } else {
+                            Some(html.as_str())
+                        };
+                        let accepted = state
+                            .store
+                            .borrow_mut()
+                            .capture_rich(&text, html_opt, &source, &source_id, sensitive)?;
                         if accepted {
                             state.changed();
                         }

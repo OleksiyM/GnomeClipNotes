@@ -18,9 +18,13 @@ from the entry's last copy time. Forever disables expiry. A month is 30 days;
 a year is 365 days. Moving the settings slider does not apply the policy:
 Apply commits it, with a deletion count and confirmation for shorter periods.
 
-Only plain text is captured. Markdown notes store Markdown source as plain text.
-Rich HTML, images, files, cross-device sync, and clipboard-manager interoperability
-are outside the initial release. Automatic paste depends on GNOME Shell and the
+GnomeClipNotes stores plain text and Markdown source locally. When enabled,
+rich HTML clipboard content (such as formatted articles, links and tables from
+web browsers) is automatically converted to clean Markdown on capture; copying code
+from IDEs or text without semantic markup preserves literal plain text without escaping.
+When disabled in Settings → General, capture stores literal plain text.
+Raw author HTML, images, files, cross-device sync, and clipboard-manager interoperability
+remain outside the capture scope. Automatic paste depends on GNOME Shell and the
 target application; sandboxed applications or protected input fields may reject
 injected paste events.
 

@@ -491,6 +491,14 @@ msgid "Controls how captured text is handled in the system clipboard."
 msgstr ""
 
 #: src/preferences.rs
+msgid "Controls how formatted content is stored in your library and history."
+msgstr ""
+
+#: src/preferences.rs
+msgid "Convert rich text to Markdown"
+msgstr ""
+
+#: src/preferences.rs
 msgid "Converts clipboard to plain text. Content survives closing the source application immediately."
 msgstr ""
 
@@ -1270,6 +1278,10 @@ msgid "Pinned only"
 msgstr ""
 
 #: src/preferences.rs
+msgid "Preserve links, headings, and formatting from web pages. When disabled, saves plain text."
+msgstr ""
+
+#: src/preferences.rs
 msgid "Preserve source formatting"
 msgstr ""
 
@@ -1360,6 +1372,10 @@ msgstr ""
 
 #: src/preferences.rs
 msgid "Resume capture"
+msgstr ""
+
+#: src/preferences.rs
+msgid "Rich text capture"
 msgstr ""
 
 #: src/preferences.rs
