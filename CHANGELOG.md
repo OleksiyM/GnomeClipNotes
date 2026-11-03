@@ -31,6 +31,10 @@ Release availability and publication dates are recorded in
 - Included pinned timestamp in Markdown exports when exporting with metadata.
 - Database schema upgraded to version 4 with automatic migration.
 
+### Bug Fixes & Layout
+
+- Fixed card layout and pagination in Library: clamped heading and source label widths so long titles no longer expand card bounds, cause `FlowBox` to drop columns, or introduce vertical scrollbars (`aa149d7`).
+
 ## 1.3.3 — 2026-11-01
 
 ### Library & Editor

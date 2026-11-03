@@ -148,8 +148,11 @@ changed to reserve either combination.
 - The library uses `AdwOverlaySplitView`, `AdwToolbarView`, and a breakpoint.
   Its sidebar becomes an overlay on narrow windows.
 - Library cards have bounded, whitespace-normalized previews; full text remains
-  available in the editor. Page capacity is measured from the viewport and card
-  size, so Previous/Next page through fitting rows in History, Notes, and folders.
+  available in the editor. Card heading, source, and preview widths are clamped
+  (`src/card_metadata.rs`) so long titles never expand card bounds, force
+  `GtkFlowBox` to drop columns unexpectedly, or leak vertical scrollbars onto the
+  fitted page. Page capacity is measured from the viewport and card size, so
+  Previous/Next page through fitting rows in History, Notes, and folders.
   Fetch one extra result to detect the final page without opening an empty one.
   If a mutation empties a later page, return to the first page. Library's source
   filter reconciles against existing sources on refresh, preserves a still-valid
