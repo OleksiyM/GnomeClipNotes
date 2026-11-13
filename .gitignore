@@ -18,3 +18,7 @@ __pycache__/
 /.codex/
 /extension/schemas/gschemas.compiled
 *.mo
+/companion-ide/node_modules/
+/companion-ide/out/
+/companion-ide/*.vsix
+

@@ -1,0 +1,111 @@
+{
+  "name": "gnome-clip-notes-ide",
+  "displayName": "GnomeClipNotes Companion",
+  "description": "IDE companion extension for GnomeClipNotes: local-first notes projection, bidirectional sync, and folder browsing.",
+  "version": "1.0.0",
+  "publisher": "OleksiyM",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/OleksiyM/GnomeClipNotes"
+  },
+  "engines": {
+    "vscode": "^1.85.0"
+  },
+  "categories": [
+    "Productivity",
+    "Other"
+  ],
+  "icon": "resources/icon.png",
+  "main": "./out/src/extension.js",
+  "activationEvents": [
+    "onStartupFinished"
+  ],
+  "contributes": {
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "gnome-clip-notes",
+          "title": "GnomeClipNotes",
+          "icon": "resources/icon.svg"
+        }
+      ]
+    },
+    "views": {
+      "gnome-clip-notes": [
+        {
+          "id": "gnomeClipNotesFolders",
+          "name": "Notes & Folders"
+        }
+      ]
+    },
+    "commands": [
+      {
+        "command": "gnomeClipNotes.refresh",
+        "title": "Refresh Notes",
+        "category": "GnomeClipNotes",
+        "icon": "$(refresh)"
+      },
+      {
+        "command": "gnomeClipNotes.openNote",
+        "title": "Open Note",
+        "category": "GnomeClipNotes"
+      },
+      {
+        "command": "gnomeClipNotes.clearCache",
+        "title": "Clear Notes Cache",
+        "category": "GnomeClipNotes",
+        "icon": "$(trash)"
+      }
+    ],
+    "menus": {
+      "view/title": [
+        {
+          "command": "gnomeClipNotes.refresh",
+          "when": "view == gnomeClipNotesFolders",
+          "group": "navigation@1"
+        },
+        {
+          "command": "gnomeClipNotes.clearCache",
+          "when": "view == gnomeClipNotesFolders",
+          "group": "navigation@2"
+        }
+      ],
+      "view/item/context": [
+        {
+          "command": "gnomeClipNotes.openNote",
+          "when": "view == gnomeClipNotesFolders && viewItem == note",
+          "group": "inline"
+        }
+      ]
+    },
+    "configuration": {
+      "title": "GnomeClipNotes",
+      "properties": {
+        "gnomeClipNotes.bridgePath": {
+          "type": "string",
+          "default": "gnome-clip-notes",
+          "description": "Path to the gnome-clip-notes binary for bridge communication."
+        },
+        "gnomeClipNotes.debounceMs": {
+          "type": "number",
+          "default": 250,
+          "description": "Debounce delay in milliseconds before saving edits to the bridge."
+        }
+      }
+    }
+  },
+  "scripts": {
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "pretest": "npm run compile",
+    "test": "node --test out/tests/**/*.test.js",
+    "package": "vsce package --no-dependencies"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.1",
+    "@types/vscode": "^1.85.0",
+    "@vscode/vsce": "^3.2.1",
+    "typescript": "^5.7.2"
+  }
+}
