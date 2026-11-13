@@ -27,6 +27,48 @@ IDE Extension (TypeScript)  <--- JSONL stdin/stdout --->  gnome-clip-notes --bri
 
 No native SQLite, C bindings, or D-Bus libraries are bundled into the extension.
 
+## Installation
+
+### Requirements
+
+- **GnomeClipNotes `1.6.0` or newer** installed locally (providing `gnome-clip-notes --bridge`), or a built `gnome-clip-notes` binary reachable via `gnomeClipNotes.bridgePath`.
+- A compatible IDE: **Antigravity IDE**, **VSCodium**, or **VS Code** (`>= 1.85.0`).
+
+### Install from GitHub Releases (`.vsix`)
+
+1. Download `gnome-clip-notes-ide-<VERSION>.vsix` (and optionally `SHA256SUMS` / `gnome-clip-notes-ide-<VERSION>.vsix.sigstore.json`) from [GitHub Releases](https://github.com/OleksiyM/GnomeClipNotes/releases).
+2. Verify the checksum if desired:
+
+   ```sh
+   sha256sum --check --ignore-missing SHA256SUMS
+   ```
+
+3. Install the `.vsix` in your IDE:
+   - **GUI:** Open the **Extensions** view (`Ctrl+Shift+X`), open the `...` menu, choose **Install from VSIX...**, and select the downloaded `.vsix` file.
+   - **CLI:**
+
+     ```sh
+     # Antigravity IDE
+     agy --install-extension gnome-clip-notes-ide-<VERSION>.vsix
+     # VSCodium
+     codium --install-extension gnome-clip-notes-ide-<VERSION>.vsix
+     # VS Code
+     code --install-extension gnome-clip-notes-ide-<VERSION>.vsix
+     ```
+
+4. If `gnome-clip-notes` is not in your `PATH` (for example, when installed under `~/Applications/GnomeClipNotes/gnome-clip-notes` or running a local Cargo build), set **`gnomeClipNotes.bridgePath`** in your IDE settings to the full binary path.
+
+### Build and install from source
+
+```bash
+cd companion-ide
+npm ci
+npm test
+npm run package
+```
+
+Then install the generated `.vsix` file using the GUI or CLI steps above.
+
 ## Configuration
 
 | Setting | Type | Default | Description |

@@ -4,7 +4,8 @@ The bottom clipboard panel is the quick capture/reuse interface; Library is the
 application window for browsing and organizing collections. Launching from the
 applications menu (D-Bus activation, or the desktop file's `--library` fallback)
 opens or presents Library. Super+V, the indicator and the no-argument CLI retain
-the overlay behavior. The background `--daemon` entry point opens neither.
+the overlay behavior. The background `--daemon` entry point opens neither. The `--bridge` flag runs
+the headless JSONL bridge over stdin/stdout without opening any window.
 Keep desktop startup notification enabled: launcher activation presents a GTK
 window, not just a Shell actor. Route through `State::activate("show", 0)` to
 preserve update exclusion and shortcut-conflict consent.
@@ -210,6 +211,43 @@ changed to reserve either combination.
   empty reserve. Long values wrap; scrolling remains available in small windows.
 - Colors come from the platform. Test both light and dark appearances, along
   with narrow layouts; avoid fixed-size promotional typography.
+
+## Headless bridge & IDE companion (`companion-ide/`)
+
+- **CLI & D-Bus:** `gnome-clip-notes --bridge` reads JSONL requests from stdin
+  and writes JSONL responses and events to stdout. After a successful
+  `save_item`, the bridge calls the `NotifyChanged` D-Bus method on
+  `io.github.OleksiyM.GnomeClipNotes.Service` (if a session bus is available,
+  without auto-starting the service) so the daemon emits `Changed`; incoming
+  `Changed` signals are forwarded to stdout as `{"type":"event","event":"changed","timestamp":...}`.
+- **JSONL methods:**
+  - `ping`: returns `version` and `max_content` (`1048576` bytes).
+  - `list_folders`: returns non-History collections (`include_history` optional,
+    defaults to `false`) with `id`, `name`, `item_count`, and `position`.
+  - `list_items`: returns item summaries (`id`, `folder_id`, `title`,
+    `updated_at`, `created_at`, `revision`) for `folder_id`, preserving folder
+    pinning and chronological order.
+  - `read_item`: returns full item details including `content` and `revision`.
+  - `save_item`: validates `id`, `content`, `expected_revision`, and optional
+    `title`; returns updated `id`, `revision`, and `updated_at`. Editing History
+    (`group_id == 0`) is rejected with `FORBIDDEN`.
+- **Error codes:** `INVALID_REQUEST`, `NOT_FOUND`, `CONFLICT` (includes
+  `current_revision`, `title`, `content`, and `updated_at`), `CONTENT_TOO_LARGE`
+  (above 1 MiB), `INVALID_CONTENT` (whitespace-only or NUL bytes), `FORBIDDEN`,
+  and `INTERNAL_ERROR`.
+- **IDE workflow (`companion-ide/`):**
+  - The `Notes & Folders` sidebar tree displays collections and notes from the
+    bridge and refreshes on `changed` events or `GnomeClipNotes: Refresh Notes`.
+  - Opening a note projects it to `$XDG_RUNTIME_DIR/gnome-clip-notes-ide/<pid>/`
+    and monitors both editor saves (`onDidSaveTextDocument`) and direct disk
+    writes (`FileSystemWatcher`, debounced by `gnomeClipNotes.debounceMs`) with
+    content-hash echo-loop suppression.
+  - `CONFLICT` opens a side-by-side diff between the database version and the
+    local RAM file without overwriting local edits; `CONTENT_TOO_LARGE` and
+    `INVALID_CONTENT` preserve the RAM file and alert the user.
+  - Closing an editor tab keeps the RAM file intact; `GnomeClipNotes: Clear
+    Notes Cache`, extension deactivation, and dead-PID orphan cleanup on startup
+    remove session files cleanly.
 
 ## Design references
 

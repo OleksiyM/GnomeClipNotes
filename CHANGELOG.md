@@ -3,6 +3,21 @@
 Release availability and publication dates are recorded in
 [GitHub Releases](https://github.com/OleksiyM/GnomeClipNotes/releases).
 
+## 1.6.0 — 2026-11-13
+
+### IDE Companion & Headless Bridge
+
+- Added headless JSONL bridge mode `gnome-clip-notes --bridge` (`src/bridge.rs`) for external IDE integrations:
+  - Exposes `ping`, `list_folders`, `list_items`, `read_item`, and `save_item` over line-delimited JSON (`stdin`/`stdout`), keeping all Rust/GLib/SQLite logs strictly on `stderr`.
+  - Uses short-lived SQLite transactions without holding an idle `update_lock`, and exits cleanly on stdin EOF, `SIGTERM`, or `SIGINT`.
+  - Enforces `MAX_CONTENT` (1 MiB), empty/NUL rejection, read-only protection for History (`FORBIDDEN`), and optimistic revision locking via `item_export_revisions` (`CONFLICT` with current DB state).
+  - Adds the `NotifyChanged` D-Bus method on `io.github.OleksiyM.GnomeClipNotes.Service` (without touching `remote_editors`) and subscribes to `Changed` signals so IDE edits and desktop windows/overlay stay synchronized.
+- Added the TypeScript IDE companion extension in `companion-ide/` (compatible with Antigravity IDE, VSCodium, and VS Code, packaged as `.vsix`):
+  - **Notes & Folders** sidebar tree view and `Refresh Notes`, `Open Note`, and `Clear Notes Cache` commands.
+  - Projects opened notes as local `file://` `.md` files inside `$XDG_RUNTIME_DIR/gnome-clip-notes-ide/<pid>/` (`0700`/`0600`) for first-class IDE tooling and AI-agent editing.
+  - Dual save triggers (`onDidSaveTextDocument` and debounced `FileSystemWatcher`) with content-hash echo-loop suppression, side-by-side Diff view on `CONFLICT`, draft preservation on `CONTENT_TOO_LARGE` / `INVALID_CONTENT`, and safe cleanup on deactivation and dead-PID startup (preserving files across individual tab closes).
+- Added `companion-ide` CI testing/VSIX packaging in `.github/workflows/build.yml` and `.vsix` release publishing with checksums and Sigstore provenance in `.github/workflows/release.yml`.
+
 ## 1.5.0 — 2026-11-01
 
 ### Clipboard & Rich Text Capture

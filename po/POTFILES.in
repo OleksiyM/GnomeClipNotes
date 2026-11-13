@@ -1,4 +1,5 @@
 src/bin/gnome-clip-notes-editor.rs
+src/bridge.rs
 src/card_metadata.rs
 src/classification.rs
 src/classification_filters.rs

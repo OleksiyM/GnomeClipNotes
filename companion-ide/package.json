@@ -2,7 +2,7 @@
   "name": "gnome-clip-notes-ide",
   "displayName": "GnomeClipNotes Companion",
   "description": "IDE companion extension for GnomeClipNotes: local-first notes projection, bidirectional sync, and folder browsing.",
-  "version": "1.0.0",
+  "version": "1.6.0",
   "publisher": "OleksiyM",
   "license": "MIT",
   "repository": {

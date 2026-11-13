@@ -30,10 +30,15 @@ the product. Do not turn a local bug fix into a rewrite or infrastructure projec
 - **GNOME Shell extension:** Wayland clipboard, global keys, paste/focus,
   indicator and overlay. D-Bus only, never direct SQLite access. Shell-specific
   code stays here; the overlay is **St/Clutter + Shell CSS**, not HTML/WebKit.
-- **Shared Store:** SQLite operations/migrations in `src/store.rs`. Both daemon
-  and Full editors open connections (WAL, busy timeout); the daemon is not the
-  only writer. Full saves send `EditorSaved`; the service emits `Changed` so
-  Library/overlay refresh. Preserve this propagation when adding mutations.
+- **Shared Store:** SQLite operations/migrations in `src/store.rs`. Both daemon,
+  Full editors, and `--bridge` open connections (WAL, busy timeout); the daemon
+  is not the only writer. Full saves send `EditorSaved` and `--bridge` saves
+  call `NotifyChanged`; the service emits `Changed` so Library/overlay refresh.
+  Preserve this propagation when adding mutations.
+- **IDE companion (`companion-ide/`):** Separate TypeScript extension communicating
+  with `gnome-clip-notes --bridge` (`src/bridge.rs`) over JSONL stdio and
+  projecting notes as `.md` files in `$XDG_RUNTIME_DIR/gnome-clip-notes-ide/<pid>/`
+  without bundling SQLite/D-Bus or holding an idle `update_lock`.
 - **Two previews, intentionally:** Native uses bounded GTK blocks in the daemon;
   Full uses pulldown-cmark → filtered HTML → WebKitGTK in a separate editor.
   A per-editor systemd *service* cleans up the entire cgroup, including WebKit
@@ -51,6 +56,7 @@ Details: [architecture](docs/architecture.md), [preview decisions](docs/preview.
 | Data/retention/sources/settings | `src/store.rs`, `src/classification.rs`, `src/model.rs`, `src/preferences.rs` | [Architecture](docs/architecture.md), [privacy](docs/privacy.md) |
 | Library/Native editor/selection | `src/ui.rs`, `src/library_{selection,actions,items}.rs`, `src/classification_{ui,filters,preferences}.rs`, `src/item_shortcuts.rs`, `src/date_picker.rs`, `src/style.css` | [Interface](docs/interface.md) |
 | Full editor/rendering | `src/editor_process.rs`, `src/bin/gnome-clip-notes-editor.rs`, `src/preview_{native,html,webkit}.rs` | [Preview](docs/preview.md) |
+| Headless bridge/IDE companion | `src/bridge.rs`, `companion-ide/src/`, `companion-ide/README.md` | [Architecture](docs/architecture.md), [interface](docs/interface.md) |
 | Export/cleanup | `src/export.rs`, `src/export_ui.rs`, revision triggers in `src/store.rs` | [Export](docs/export.md) |
 | Languages/update check | `src/i18n.rs`, `po/`, `scripts/translations.py`; `src/release_check.rs` | [Translations](docs/translations.md), [privacy](docs/privacy.md) |
 | Install/package/release/site | Standard `install.sh` / `uninstall.sh`; Guided `guided-install.sh`, `scripts/install-release.py`; `scripts/package-release.py`, `.github/workflows/`, `site/` | [Distribution](docs/distribution.md), [installation](docs/installation.md), [site](site/README.md) |
@@ -153,8 +159,9 @@ never private notes. Use meaningful commit subjects for generated release notes.
    [site instructions](site/README.md) cover setup/recovery.
 
 Each `gnome-clip-notes-VERSION-ARCH.tar.gz` includes both binaries and extension;
-`release.json` records exact platform. No separate extension ZIP or universal Linux
-binary claim. SHA256 is mandatory; provenance uses capable `gh` automatically.
+`release.json` records exact platform. No separate Shell extension ZIP or universal Linux
+binary claim; the optional IDE companion is published separately as
+`gnome-clip-notes-ide-VERSION.vsix`. SHA256 is mandatory; provenance uses capable `gh` automatically.
 Standard explicitly skips missing/old gh; Guided refuses old gh and skips missing gh.
 `--require-provenance` makes verification mandatory in either path;
 failed verification never downgrades. Discuss changes to install/update behavior first.

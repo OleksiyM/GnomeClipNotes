@@ -235,3 +235,31 @@ If Super+V conflicts with GNOME's calendar, the app offers to free just that
 binding with consent. Settings → Shortcuts also offers Resolve. Super+M and other
 calendar bindings remain. The installer never changes GNOME shortcuts; an accepted
 calendar change persists after uninstall.
+
+## IDE companion extension (optional)
+
+Starting with `1.6.0`, each release also publishes `gnome-clip-notes-ide-<VERSION>.vsix`
+alongside its checksum and provenance bundle. This extension connects **Antigravity IDE**,
+**VSCodium**, or **VS Code** (`>= 1.85.0`) to your local notes via `gnome-clip-notes --bridge`.
+
+1. Install or update the desktop app (`1.6.0` or newer) using Standard, Guided, or
+   manual archive installation.
+2. Download `gnome-clip-notes-ide-<VERSION>.vsix` from
+   [GitHub Releases](https://github.com/OleksiyM/GnomeClipNotes/releases) (verify with
+   `sha256sum --check --ignore-missing SHA256SUMS` or `gh attestation verify` if desired).
+3. Install the `.vsix` via **Extensions → `...` → Install from VSIX...**, or from a terminal:
+
+   ```sh
+   agy --install-extension gnome-clip-notes-ide-1.6.0.vsix      # Antigravity IDE
+   codium --install-extension gnome-clip-notes-ide-1.6.0.vsix   # VSCodium
+   code --install-extension gnome-clip-notes-ide-1.6.0.vsix     # VS Code
+   ```
+
+4. If `gnome-clip-notes` is installed outside `PATH` (for example in
+   `~/Applications/GnomeClipNotes/gnome-clip-notes`), set **`gnomeClipNotes.bridgePath`**
+   in the IDE settings to that binary path.
+
+The companion extension does not require bundling SQLite or D-Bus dependencies and
+does not hold `update.lock` between requests, so app updates remain safe while your
+IDE is open. See [companion-ide/README.md](../companion-ide/README.md) for commands
+and building the `.vsix` from source.

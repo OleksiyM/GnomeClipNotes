@@ -88,3 +88,24 @@ aborts its dedicated session. Strict stable `vMAJOR.MINOR.PATCH` tags are compar
 numerically; release links are constructed from the canonical repository, never
 accepted as arbitrary remote URLs. This is availability information, not an
 updater. Tests inject local outcomes into the UI, not alternate production URLs.
+
+## IDE companion bridge
+
+The `--bridge` entry point (`src/bridge.rs`) runs a headless, line-delimited JSON
+(JSONL) protocol over stdin/stdout for external IDE integrations. Like Full
+editors, it opens its own SQLite connection (WAL mode and busy timeout) and
+executes short-lived transactions rather than holding an idle
+`update_lock::RuntimeLock` across the session. When a session D-Bus is
+available, `--bridge` subscribes to `Changed` signals to forward live
+invalidations and invokes `NotifyChanged` (with `NO_AUTO_START`) on
+`io.github.OleksiyM.GnomeClipNotes.Service` after `save_item` so a running
+daemon, Library window, and Shell overlay refresh without auto-starting the
+service.
+
+The `companion-ide/` directory contains a separate TypeScript IDE extension
+(compatible with VS Code, VSCodium, and Antigravity IDE) that spawns
+`gnome-clip-notes --bridge` without bundling SQLite, native C bindings, or
+D-Bus libraries. Opened notes are projected as standard `.md` files in a
+per-process RAM session directory under `$XDG_RUNTIME_DIR/gnome-clip-notes-ide/<pid>/`
+(falling back to `/tmp/gnome-clip-notes-ide-<uid>/<pid>/`) with `0700` directory
+and `0600` file permissions.

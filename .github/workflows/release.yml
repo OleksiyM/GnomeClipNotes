@@ -139,9 +139,87 @@ jobs:
           if-no-files-found: error
           retention-days: 7
 
+  build-ide-extension:
+    name: Build IDE Companion (.vsix)
+    needs: guard
+    if: github.repository == 'OleksiyM/GnomeClipNotes'
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: read
+      id-token: write
+      attestations: write
+      artifact-metadata: write
+    env:
+      VERSION: ${{ needs.guard.outputs.version }}
+    steps:
+      - name: Check out the tagged source
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Test and package IDE companion in Node 24
+        run: |
+          set -euo pipefail
+          workspace_uid=$(stat -c %u "$GITHUB_WORKSPACE")
+          workspace_gid=$(stat -c %g "$GITHUB_WORKSPACE")
+          docker run --rm \
+            -e VERSION \
+            -e WORKSPACE_UID="$workspace_uid" \
+            -e WORKSPACE_GID="$workspace_gid" \
+            -v "$GITHUB_WORKSPACE:/workspace" \
+            -w /workspace \
+            node:24-bookworm \
+            bash -euxo pipefail -c '
+              mkdir -p dist
+              npm --prefix companion-ide ci
+              npm --prefix companion-ide test
+              npm --prefix companion-ide run package -- --out "/workspace/dist/gnome-clip-notes-ide-${VERSION}.vsix"
+              chown -R "$WORKSPACE_UID:$WORKSPACE_GID" companion-ide/node_modules companion-ide/out dist
+            '
+
+      - name: Validate VSIX contract
+        id: vsix
+        run: |
+          set -euo pipefail
+          vsix_name="gnome-clip-notes-ide-${VERSION}.vsix"
+          [[ -f "dist/$vsix_name" ]] || {
+            printf 'Packager did not produce required VSIX: dist/%s\n' "$vsix_name" >&2
+            exit 1
+          }
+          pkg_version=$(node -p "require('./companion-ide/package.json').version")
+          [[ "$pkg_version" == "$VERSION" ]] || {
+            printf 'companion-ide/package.json version %s does not match release %s\n' "$pkg_version" "$VERSION" >&2
+            exit 1
+          }
+          printf 'name=%s\n' "$vsix_name" >> "$GITHUB_OUTPUT"
+
+      - name: Attest VSIX provenance
+        id: attest_vsix
+        uses: actions/attest@1e69f48acb82d1966a394da916b4c1698aa569d6 # v4.2.2
+        with:
+          subject-path: dist/${{ steps.vsix.outputs.name }}
+
+      - name: Preserve local VSIX attestation bundle
+        env:
+          VSIX: ${{ steps.vsix.outputs.name }}
+          BUNDLE_PATH: ${{ steps.attest_vsix.outputs.bundle-path }}
+        run: |
+          set -euo pipefail
+          install -m 0644 "$BUNDLE_PATH" "dist/${VSIX}.sigstore.json"
+
+      - name: Stage IDE companion release assets
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: release-ide
+          path: |
+            dist/${{ steps.vsix.outputs.name }}
+            dist/${{ steps.vsix.outputs.name }}.sigstore.json
+          if-no-files-found: error
+          retention-days: 7
+
   publish:
     name: Publish release
-    needs: [guard, build]
+    needs: [guard, build, build-ide-extension]
     runs-on: ubuntu-24.04
     env:
       VERSION: ${{ needs.guard.outputs.version }}
@@ -172,16 +250,17 @@ jobs:
           archives=(
             "gnome-clip-notes-${VERSION}-aarch64.tar.gz"
             "gnome-clip-notes-${VERSION}-x86_64.tar.gz"
+            "gnome-clip-notes-ide-${VERSION}.vsix"
           )
           for archive in "${archives[@]}"; do
             [[ -f "$archive" && -f "${archive}.sigstore.json" ]] || {
-              printf 'Missing archive or attestation bundle: %s\n' "$archive" >&2
+              printf 'Missing release asset or attestation bundle: %s\n' "$archive" >&2
               exit 1
             }
           done
           mapfile -t staged < <(find . -maxdepth 1 -type f -printf '%f\n' | LC_ALL=C sort)
-          [[ ${#staged[@]} -eq 4 ]] || {
-            printf 'Expected exactly two archives and two attestation bundles, found %s files\n' "${#staged[@]}" >&2
+          [[ ${#staged[@]} -eq 6 ]] || {
+            printf 'Expected three release assets and three attestation bundles, found %s files\n' "${#staged[@]}" >&2
             exit 1
           }
           sha256sum -- "${archives[@]}" > SHA256SUMS

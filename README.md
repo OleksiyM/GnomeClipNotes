@@ -87,6 +87,14 @@ Markdown, while preserving literal plain text for bare URLs (`Link`) and code sn
 copied from IDEs (**VS Code**, **JetBrains**). Toggle **Convert rich text to Markdown**
 in **Settings → General** under **Rich text capture** (enabled by default).
 
+Since 1.6.0, **GnomeClipNotes** includes a headless JSONL bridge (`gnome-clip-notes --bridge`)
+and an optional **IDE companion extension** (`companion-ide/`, distributed as a `.vsix` for
+**Antigravity IDE**, **VSCodium**, and **VS Code**). Open notes from your **Notes & Folders**
+sidebar directly as local `.md` files in a private RAM session directory
+(`$XDG_RUNTIME_DIR/gnome-clip-notes-ide/<pid>/`), edit across tabs or with IDE AI agents,
+save safely with revision conflict detection (`CONFLICT` opens a side-by-side Diff), and keep
+your running desktop Library and Shell overlay updated via D-Bus without locking updates.
+
 ## Install
 
 Two installation paths, **the same complete app**. Both verify SHA256 and can
@@ -147,6 +155,17 @@ See [installation, updates and uninstall](docs/installation.md) and
 See the [installation guide](docs/installation.md#requirements-and-verification)
 for compatibility evidence and archive limits. ARM64 desktop support remains
 experimental.
+
+### IDE companion (optional)
+
+To browse and edit saved notes in **Antigravity IDE**, **VSCodium**, or **VS Code**,
+download `gnome-clip-notes-ide-<VERSION>.vsix` from
+[GitHub Releases](https://github.com/OleksiyM/GnomeClipNotes/releases) (after installing
+GnomeClipNotes `1.6.0` or newer) and install it via **Install from VSIX...** or CLI
+(`agy` / `codium` / `code --install-extension ...`). See
+[companion-ide/README.md](companion-ide/README.md) and
+[IDE companion installation](docs/installation.md#ide-companion-extension-optional)
+for setup, `gnomeClipNotes.bridgePath`, and building from source.
 
 [Download releases](https://github.com/OleksiyM/GnomeClipNotes/releases) ·
 [Website](https://oleksiym.github.io/GnomeClipNotes/)
