@@ -484,6 +484,243 @@ impl Store {
     }
 }
 
+#[derive(Debug, Clone, PartialEq, Eq, serde::Serialize)]
+pub struct BridgeFolder {
+    pub id: i64,
+    pub name: String,
+    pub item_count: i64,
+    pub position: i64,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, serde::Serialize)]
+pub struct BridgeItemSummary {
+    pub id: i64,
+    pub folder_id: i64,
+    pub title: String,
+    pub updated_at: i64,
+    pub created_at: i64,
+    pub revision: String,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, serde::Serialize)]
+pub struct BridgeItem {
+    pub id: i64,
+    pub folder_id: i64,
+    pub title: String,
+    pub content: String,
+    pub updated_at: i64,
+    pub created_at: i64,
+    pub revision: String,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, serde::Serialize)]
+pub struct BridgeSaveResult {
+    pub id: i64,
+    pub revision: String,
+    pub updated_at: i64,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub enum BridgeError {
+    NotFound(String),
+    ContentTooLarge {
+        max_bytes: usize,
+        actual_bytes: usize,
+    },
+    InvalidContent(String),
+    Conflict {
+        current_revision: String,
+        title: String,
+        content: String,
+        updated_at: i64,
+    },
+    Forbidden(String),
+    Internal(String),
+}
+
+impl From<rusqlite::Error> for BridgeError {
+    fn from(error: rusqlite::Error) -> Self {
+        Self::Internal(error.to_string())
+    }
+}
+
+fn hex_encode(bytes: &[u8]) -> String {
+    use std::fmt::Write;
+    let mut out = String::with_capacity(bytes.len() * 2);
+    for byte in bytes {
+        let _ = write!(&mut out, "{byte:02x}");
+    }
+    out
+}
+
+impl Store {
+    pub fn bridge_list_folders(
+        &self,
+        include_history: bool,
+    ) -> std::result::Result<Vec<BridgeFolder>, BridgeError> {
+        let mut stmt = self.db.prepare(
+            "SELECT g.id, g.name, COUNT(i.id) AS item_count, g.position
+             FROM groups g
+             LEFT JOIN items i ON i.group_id = g.id
+             WHERE (?1 = 1 OR g.id <> 0)
+             GROUP BY g.id, g.name, g.position
+             ORDER BY g.position, g.id",
+        )?;
+        let folders = stmt
+            .query_map([i64::from(include_history)], |r| {
+                Ok(BridgeFolder {
+                    id: r.get(0)?,
+                    name: r.get(1)?,
+                    item_count: r.get(2)?,
+                    position: r.get(3)?,
+                })
+            })?
+            .collect::<rusqlite::Result<Vec<_>>>()?;
+        Ok(folders)
+    }
+
+    pub fn bridge_list_items(
+        &mut self,
+        folder_id: i64,
+    ) -> std::result::Result<Vec<BridgeItemSummary>, BridgeError> {
+        let tx = self
+            .db
+            .transaction_with_behavior(rusqlite::TransactionBehavior::Deferred)?;
+        let exists: bool = tx.query_row(
+            "SELECT EXISTS(SELECT 1 FROM groups WHERE id=?1)",
+            [folder_id],
+            |r| r.get(0),
+        )?;
+        if !exists {
+            return Err(BridgeError::NotFound(format!(
+                "Folder {folder_id} does not exist"
+            )));
+        }
+        let mut stmt = tx.prepare(
+            "SELECT i.id, i.group_id, i.title, i.updated_at, i.created_at, r.token
+             FROM items i
+             JOIN item_export_revisions r ON r.item_id = i.id
+             WHERE i.group_id = ?1
+             ORDER BY CASE WHEN ?1 >= 1 AND i.pinned_at > 0 THEN 1 ELSE 0 END DESC,
+                      CASE WHEN ?1 >= 1 AND i.pinned_at > 0 THEN i.pinned_at ELSE 0 END DESC,
+                      i.copied_at DESC, i.id DESC",
+        )?;
+        let items = stmt
+            .query_map([folder_id], |r| {
+                let token: Vec<u8> = r.get(5)?;
+                Ok(BridgeItemSummary {
+                    id: r.get(0)?,
+                    folder_id: r.get(1)?,
+                    title: r.get(2)?,
+                    updated_at: r.get(3)?,
+                    created_at: r.get(4)?,
+                    revision: hex_encode(&token),
+                })
+            })?
+            .collect::<rusqlite::Result<Vec<_>>>()?;
+        drop(stmt);
+        tx.commit()?;
+        Ok(items)
+    }
+
+    pub fn bridge_read_item(&self, id: i64) -> std::result::Result<BridgeItem, BridgeError> {
+        let item = self
+            .db
+            .query_row(
+                "SELECT i.id, i.group_id, i.title, i.content, i.updated_at, i.created_at, r.token
+                 FROM items i
+                 JOIN item_export_revisions r ON r.item_id = i.id
+                 WHERE i.id = ?1",
+                [id],
+                |r| {
+                    let token: Vec<u8> = r.get(6)?;
+                    Ok(BridgeItem {
+                        id: r.get(0)?,
+                        folder_id: r.get(1)?,
+                        title: r.get(2)?,
+                        content: r.get(3)?,
+                        updated_at: r.get(4)?,
+                        created_at: r.get(5)?,
+                        revision: hex_encode(&token),
+                    })
+                },
+            )
+            .optional()?;
+        item.ok_or_else(|| BridgeError::NotFound(format!("Item {id} does not exist")))
+    }
+
+    pub fn bridge_save_item(
+        &mut self,
+        id: i64,
+        content: &str,
+        expected_revision: &str,
+        title: Option<&str>,
+    ) -> std::result::Result<BridgeSaveResult, BridgeError> {
+        if content.len() > MAX_CONTENT {
+            return Err(BridgeError::ContentTooLarge {
+                max_bytes: MAX_CONTENT,
+                actual_bytes: content.len(),
+            });
+        }
+        if content.trim().is_empty() || content.contains('\0') {
+            return Err(BridgeError::InvalidContent(
+                "Content must not be empty or contain NUL characters".to_string(),
+            ));
+        }
+
+        let tx = self
+            .db
+            .transaction_with_behavior(rusqlite::TransactionBehavior::Immediate)?;
+        let current: Option<(i64, String, String, i64, Vec<u8>)> = tx
+            .query_row(
+                "SELECT i.group_id, i.title, i.content, i.updated_at, r.token
+                 FROM items i
+                 JOIN item_export_revisions r ON r.item_id = i.id
+                 WHERE i.id = ?1",
+                [id],
+                |r| Ok((r.get(0)?, r.get(1)?, r.get(2)?, r.get(3)?, r.get(4)?)),
+            )
+            .optional()?;
+        let (group_id, existing_title, existing_content, existing_updated_at, token) =
+            current.ok_or_else(|| BridgeError::NotFound(format!("Item {id} does not exist")))?;
+
+        if group_id == 0 {
+            return Err(BridgeError::Forbidden(
+                "History items cannot be edited via bridge".to_string(),
+            ));
+        }
+
+        let current_revision = hex_encode(&token);
+        if current_revision != expected_revision {
+            return Err(BridgeError::Conflict {
+                current_revision,
+                title: existing_title,
+                content: existing_content,
+                updated_at: existing_updated_at,
+            });
+        }
+
+        let new_title = title.unwrap_or(&existing_title);
+        let updated_at = now();
+        tx.execute(
+            "UPDATE items SET title=?1, content=?2, kind=?3, updated_at=?4 WHERE id=?5",
+            params![new_title, content, kind(content), updated_at, id],
+        )?;
+        let new_token: Vec<u8> = tx.query_row(
+            "SELECT token FROM item_export_revisions WHERE item_id=?1",
+            [id],
+            |r| r.get(0),
+        )?;
+        tx.commit()?;
+
+        Ok(BridgeSaveResult {
+            id,
+            revision: hex_encode(&new_token),
+            updated_at,
+        })
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -961,5 +1198,117 @@ mod tests {
         drop(snapshot);
         fs::remove_file(path).unwrap();
         fs::remove_dir(dir).unwrap();
+    }
+
+    #[test]
+    fn bridge_folders_and_items_order_and_revisions() {
+        let mut s = store();
+        s.capture("History clip", "App", "", false).unwrap();
+        let first = s.save_item(None, "First", "First body").unwrap();
+        let second = s.save_item(None, "Second", "Second body").unwrap();
+        s.set_pinned(first, true).unwrap();
+        s.create_group("Projects").unwrap();
+
+        let without_history = s.bridge_list_folders(false).unwrap();
+        assert_eq!(without_history.len(), 2);
+        assert_eq!(without_history[0].id, 1);
+        assert_eq!(without_history[0].name, "Notes");
+        assert_eq!(without_history[0].item_count, 2);
+        assert_eq!(without_history[1].name, "Projects");
+        assert_eq!(without_history[1].item_count, 0);
+
+        let with_history = s.bridge_list_folders(true).unwrap();
+        assert_eq!(with_history.len(), 3);
+        assert_eq!(with_history[0].id, 0);
+        assert_eq!(with_history[0].item_count, 1);
+
+        assert!(matches!(
+            s.bridge_list_items(999),
+            Err(BridgeError::NotFound(_))
+        ));
+        let items = s.bridge_list_items(1).unwrap();
+        assert_eq!(items.len(), 2);
+        assert_eq!(items[0].id, first);
+        assert_eq!(items[1].id, second);
+        assert_eq!(items[0].revision.len(), 32);
+        assert!(items[0]
+            .revision
+            .chars()
+            .all(|c| c.is_ascii_hexdigit() && !c.is_ascii_uppercase()));
+
+        let read = s.bridge_read_item(first).unwrap();
+        assert_eq!(read.content, "First body");
+        assert_eq!(read.revision, items[0].revision);
+        assert!(matches!(
+            s.bridge_read_item(9999),
+            Err(BridgeError::NotFound(_))
+        ));
+    }
+
+    #[test]
+    fn bridge_save_item_validates_conflicts_history_and_updates_revision() {
+        let mut s = store();
+        s.capture("History clip", "App", "", false).unwrap();
+        let history_id = s.bridge_list_items(0).unwrap()[0].id;
+        let note_id = s.save_item(None, "Original", "Initial body").unwrap();
+        let initial = s.bridge_read_item(note_id).unwrap();
+
+        let too_large = "a".repeat(MAX_CONTENT + 1);
+        assert_eq!(
+            s.bridge_save_item(note_id, &too_large, &initial.revision, None),
+            Err(BridgeError::ContentTooLarge {
+                max_bytes: MAX_CONTENT,
+                actual_bytes: MAX_CONTENT + 1,
+            })
+        );
+        assert!(matches!(
+            s.bridge_save_item(note_id, "   \n\t ", &initial.revision, None),
+            Err(BridgeError::InvalidContent(_))
+        ));
+        assert!(matches!(
+            s.bridge_save_item(note_id, "bad\0text", &initial.revision, None),
+            Err(BridgeError::InvalidContent(_))
+        ));
+        assert!(matches!(
+            s.bridge_save_item(9999, "valid", &initial.revision, None),
+            Err(BridgeError::NotFound(_))
+        ));
+        let history_rev = s.bridge_read_item(history_id).unwrap().revision;
+        assert!(matches!(
+            s.bridge_save_item(history_id, "edited", &history_rev, None),
+            Err(BridgeError::Forbidden(_))
+        ));
+        assert_eq!(
+            s.bridge_save_item(note_id, "edited", "00000000000000000000000000000000", None),
+            Err(BridgeError::Conflict {
+                current_revision: initial.revision.clone(),
+                title: "Original".to_string(),
+                content: "Initial body".to_string(),
+                updated_at: initial.updated_at,
+            })
+        );
+
+        let saved = s
+            .bridge_save_item(note_id, "https://example.com", &initial.revision, None)
+            .unwrap();
+        assert_ne!(saved.revision, initial.revision);
+        assert_eq!(saved.revision.len(), 32);
+        let updated = s.bridge_read_item(note_id).unwrap();
+        assert_eq!(updated.title, "Original");
+        assert_eq!(updated.content, "https://example.com");
+        assert_eq!(updated.revision, saved.revision);
+        assert_eq!(s.get(note_id).unwrap().kind, "link");
+
+        // Stale revision after save must conflict
+        assert!(matches!(
+            s.bridge_save_item(note_id, "again", &initial.revision, Some("Renamed")),
+            Err(BridgeError::Conflict { .. })
+        ));
+        let saved2 = s
+            .bridge_save_item(note_id, "Plain text", &saved.revision, Some("Renamed"))
+            .unwrap();
+        assert_ne!(saved2.revision, saved.revision);
+        assert_eq!(s.bridge_read_item(note_id).unwrap().title, "Renamed");
+        assert_eq!(s.get(note_id).unwrap().kind, "text");
     }
 }

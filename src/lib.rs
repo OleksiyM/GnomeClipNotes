@@ -1,3 +1,4 @@
+mod bridge;
 mod card_metadata;
 mod classification;
 mod classification_filters;
@@ -53,6 +54,7 @@ const XML: &str = r#"<node><interface name="io.github.OleksiyM.GnomeClipNotes.Se
 <method name="Activate"><arg type="s" direction="in"/><arg type="x" direction="in"/></method>
 <method name="Pause"><arg type="u" direction="in"/></method>
 <method name="EditorSaved"><arg type="x" direction="in"/><arg type="s" direction="in"/></method>
+<method name="NotifyChanged"/>
 <method name="GetUpdateStatus"><arg type="s" direction="out"/></method>
 <method name="QuitForUpdate"><arg type="b" direction="out"/></method>
 <signal name="Changed"/><signal name="PasteRequested"><arg type="s"/><arg type="b"/></signal>
@@ -304,6 +306,10 @@ fn register_service(state: &Rc<State>) -> store::Result<()> {
                         state.changed();
                         Ok(().to_variant())
                     }
+                    "NotifyChanged" => {
+                        state.changed();
+                        Ok(().to_variant())
+                    }
                     _ => Err("Unknown method".into()),
                 })();
                 match result {
@@ -367,8 +373,11 @@ pub fn run() -> glib::ExitCode {
         return glib::ExitCode::SUCCESS;
     }
     if args.iter().any(|s| s == "--help" || s == "-h") {
-        println!("GnomeClipNotes\n\nUsage: gnome-clip-notes [OPTION]\n\n  --daemon        Keep the clipboard service running\n  --library       Open the library window\n  --new-note      Open a new Markdown note\n  --settings      Open settings\n  --about         Open the About window\n  --backup PATH   Create a consistent SQLite snapshot (new file)\n  --quit          Stop the background service after editors are closed; the Shell indicator remains available\n  --version       Print version\n\nWithout an option, open the clipboard panel.");
+        println!("GnomeClipNotes\n\nUsage: gnome-clip-notes [OPTION]\n\n  --daemon        Keep the clipboard service running\n  --library       Open the library window\n  --new-note      Open a new Markdown note\n  --settings      Open settings\n  --about         Open the About window\n  --backup PATH   Create a consistent SQLite snapshot (new file)\n  --bridge        Run headless JSONL bridge over stdin/stdout\n  --quit          Stop the background service after editors are closed; the Shell indicator remains available\n  --version       Print version\n\nWithout an option, open the clipboard panel.");
         return glib::ExitCode::SUCCESS;
+    }
+    if args.iter().any(|s| s == "--bridge") {
+        return bridge::run();
     }
     if let Some(index) = args.iter().position(|s| s == "--backup") {
         let result = (|| {
