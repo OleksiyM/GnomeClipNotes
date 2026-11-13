@@ -56,7 +56,7 @@ describe('ProjectionManager & RAM Projection', () => {
   });
 
   test('slug sanitization prevents path traversal and special characters', () => {
-    assert.strictEqual(manager.sanitizeSlug('../../etc/passwd'), '_etc_passwd');
+    assert.strictEqual(manager.sanitizeSlug('../../etc/passwd'), 'etc_passwd');
     assert.strictEqual(manager.sanitizeSlug('Hello / World \\ Test: Note!'), 'Hello_World_Test_Note');
     assert.strictEqual(manager.sanitizeSlug('   '), 'note');
     assert.strictEqual(manager.sanitizeSlug('Заметка №123 (План)'), 'Заметка_123_План');
@@ -263,5 +263,41 @@ describe('ProjectionManager & RAM Projection', () => {
     // File removed
     assert.strictEqual(fs.existsSync(tracked.filePath), false);
     assert.strictEqual(manager.getAllTrackedNotes().length, 0);
+  });
+
+  test('handleFileChanged ignores sibling directory prefix', async () => {
+    await manager.openNote(42);
+    const tracked = manager.getTrackedNote(42)!;
+    const siblingDir = manager.getSessionDir() + '-sibling';
+    fs.mkdirSync(siblingDir, { recursive: true, mode: 0o700 });
+    const siblingFile = path.join(siblingDir, '42_Test_Note.md');
+    fs.writeFileSync(siblingFile, 'should be ignored', 'utf-8');
+
+    const initialRev = tracked.revision;
+    manager.handleFileChanged(siblingFile);
+    await new Promise((r) => setTimeout(r, 80));
+
+    assert.strictEqual(tracked.revision, initialRev);
+    fs.rmSync(siblingDir, { recursive: true, force: true });
+  });
+
+  test('openNote does not overwrite unsaved local edits', async () => {
+    await manager.openNote(42);
+    const tracked = manager.getTrackedNote(42)!;
+
+    // Modify local file without saving to bridge
+    const localDraft = '# Unsaved Local Draft\nKeep me safe!';
+    fs.writeFileSync(tracked.filePath, localDraft, { encoding: 'utf-8', mode: 0o600 });
+
+    // Re-open same note while remote also changed
+    mockProc.currentRevision = 'remote_rev_newer';
+    mockProc.currentContent = '# Remote Newer Content';
+    mockState.warningResponses.set('unsaved local edits', 'Keep Local');
+
+    await manager.openNote(42);
+
+    const contentAfter = fs.readFileSync(tracked.filePath, 'utf-8');
+    assert.strictEqual(contentAfter, localDraft);
+    assert.ok(mockState.warningMessages.some((m) => m.includes('unsaved local edits')));
   });
 });

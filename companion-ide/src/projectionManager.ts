@@ -207,6 +207,7 @@ export class ProjectionManager {
       .replace(/[/\\]/g, '_')
       .replace(/\.\./g, '_')
       .replace(/[^a-zA-Z0-9_\-\u0400-\u04FF]+/g, '_')
+      .replace(/_+/g, '_')
       .replace(/^_+|_+$/g, '');
 
     if (!slug) {
@@ -250,6 +251,48 @@ export class ProjectionManager {
     this.ensureDirectories();
 
     const item = await this.bridgeClient.readItem(id);
+    const existing = this.trackedNotes.get(item.id);
+    if (existing && fs.existsSync(existing.filePath)) {
+      const openDoc = vscode.workspace.textDocuments.find(
+        (d) => d.uri.fsPath === existing.filePath
+      );
+      const isDirty = openDoc ? openDoc.isDirty : false;
+      const localContent = fs.readFileSync(existing.filePath, 'utf-8');
+      const localHash = this.computeHash(localContent);
+
+      if (isDirty || localHash !== existing.lastSyncedHash) {
+        const doc = await vscode.workspace.openTextDocument(vscode.Uri.file(existing.filePath));
+        await vscode.window.showTextDocument(doc, { preview: false });
+
+        if (item.revision !== existing.revision) {
+          const choice = await vscode.window.showWarningMessage(
+            `Note "${existing.title}" (#${existing.id}) has newer changes in GnomeClipNotes, and you have unsaved local edits.`,
+            'View Diff',
+            'Discard Local Changes',
+            'Keep Local'
+          );
+
+          if (choice === 'View Diff') {
+            await this.showConflictDiff(
+              existing.id,
+              item.content,
+              item.revision,
+              existing.filePath
+            );
+          } else if (choice === 'Discard Local Changes') {
+            const newHash = this.computeHash(item.content);
+            this.recordSelfWrite(existing.filePath, newHash);
+            fs.writeFileSync(existing.filePath, item.content, { encoding: 'utf-8', mode: 0o600 });
+            existing.revision = item.revision;
+            existing.lastSyncedHash = newHash;
+            existing.title = item.title;
+          }
+        }
+
+        return doc;
+      }
+    }
+
     const filePath = this.getFilePathForItem(item.id, item.title);
     const contentHash = this.computeHash(item.content);
 
@@ -292,7 +335,10 @@ export class ProjectionManager {
    * Handle FileSystemWatcher change/create or onDidSaveTextDocument
    */
   public handleFileChanged(filePath: string): void {
-    if (!filePath.startsWith(this.sessionDir)) {
+    const sessionPrefix = this.sessionDir.endsWith(path.sep)
+      ? this.sessionDir
+      : this.sessionDir + path.sep;
+    if (!filePath.startsWith(sessionPrefix)) {
       return;
     }
 

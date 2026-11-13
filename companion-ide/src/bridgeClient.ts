@@ -110,6 +110,10 @@ export class BridgeClient extends EventEmitter {
       return;
     }
 
+    if (!msg || typeof msg !== 'object') {
+      return;
+    }
+
     if (msg.type === 'response') {
       const pending = this.pendingRequests.get(msg.request_id);
       if (pending) {

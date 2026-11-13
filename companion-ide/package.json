@@ -4,6 +4,7 @@
   "description": "IDE companion extension for GnomeClipNotes: local-first notes projection, bidirectional sync, and folder browsing.",
   "version": "1.0.0",
   "publisher": "OleksiyM",
+  "license": "MIT",
   "repository": {
     "type": "git",
     "url": "https://github.com/OleksiyM/GnomeClipNotes"
@@ -15,7 +16,7 @@
     "Productivity",
     "Other"
   ],
-  "icon": "resources/icon.svg",
+  "icon": "resources/icon.png",
   "main": "./out/src/extension.js",
   "activationEvents": [
     "onStartupFinished"

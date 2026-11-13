@@ -146,6 +146,10 @@ describe('BridgeClient Protocol & Communication', () => {
       eventTimestamp = ts;
     });
 
+    // Ensure bridge process is spawned before emitting async event
+    const initRes = await client.ping();
+    assert.strictEqual(initRes.version, '1.0.0');
+
     // Send async event
     mockProc.sendEvent({
       type: 'event',

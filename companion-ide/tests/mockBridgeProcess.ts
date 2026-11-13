@@ -65,7 +65,9 @@ export class MockBridgeProcess extends EventEmitter {
     if (this.customHandler) {
       const customRes = this.customHandler(req);
       if (customRes !== undefined) {
-        this.sendLine(customRes);
+        if (customRes !== null) {
+          this.sendLine(customRes);
+        }
         return;
       }
     }
