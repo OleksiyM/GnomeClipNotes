@@ -3,6 +3,15 @@
 Release availability and publication dates are recorded in
 [GitHub Releases](https://github.com/OleksiyM/GnomeClipNotes/releases).
 
+## 1.6.1 — 2026-11-24
+
+### IDE Companion & Headless Bridge
+
+- **Pin indicators in IDE sidebar:** Exposed `pinned_at` on `list_items` and `read_item` in `gnome-clip-notes --bridge` (`0` when unpinned or in History), displaying a pin icon on pinned notes in **Notes & Folders** while preserving canonical folder pin ordering.
+- **Hover metadata, categories, and comments:** Added lightweight `read_item_details` to `--bridge` (computing character and word counts in Rust without transferring up to 1 MiB note bodies, and reloading `settings.json` so `classification_enabled` and `comments_enabled` toggles apply live). Hovering a note lazily resolves an inert Markdown card (`resolveTreeItem`) with folder, pin status, optional category/subcategory and multi-line comment, origin/source, local 24-hour timestamps (`Nov 24, 2026 · 13:28`, omitting duplicate `Edited` / `Last Copied` lines), and length, with a silent fallback for `1.6.0` bridges.
+- **Resilient `gnomeClipNotes.bridgePath` lookup:** Trims surrounding whitespace, expands leading `~/`, and when left at the default `"gnome-clip-notes"` checks `PATH` followed by `~/Applications/GnomeClipNotes/gnome-clip-notes` and `~/.local/bin/gnome-clip-notes` (`isFile()` + `X_OK`).
+- **Leaner VSIX & CLI docs:** Added `companion-ide/.vscodeignore` to exclude TypeScript sources, tests, sourcemaps, and build configs from the packaged `.vsix`, and updated Antigravity IDE CLI install examples from `agy` to `antigravity-ide --install-extension`.
+
 ## 1.6.0 — 2026-11-13
 
 ### IDE Companion & Headless Bridge

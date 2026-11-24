@@ -250,14 +250,15 @@ alongside its checksum and provenance bundle. This extension connects **Antigrav
 3. Install the `.vsix` via **Extensions → `...` → Install from VSIX...**, or from a terminal:
 
    ```sh
-   agy --install-extension gnome-clip-notes-ide-1.6.0.vsix      # Antigravity IDE
-   codium --install-extension gnome-clip-notes-ide-1.6.0.vsix   # VSCodium
-   code --install-extension gnome-clip-notes-ide-1.6.0.vsix     # VS Code
+   antigravity-ide --install-extension gnome-clip-notes-ide-1.6.1.vsix  # Antigravity IDE
+   codium --install-extension gnome-clip-notes-ide-1.6.1.vsix   # VSCodium
+   code --install-extension gnome-clip-notes-ide-1.6.1.vsix     # VS Code
    ```
 
-4. If `gnome-clip-notes` is installed outside `PATH` (for example in
-   `~/Applications/GnomeClipNotes/gnome-clip-notes`), set **`gnomeClipNotes.bridgePath`**
-   in the IDE settings to that binary path.
+4. By default, `gnomeClipNotes.bridgePath` (`"gnome-clip-notes"`) checks `PATH`
+   first and falls back to `~/Applications/GnomeClipNotes/gnome-clip-notes` and
+   `~/.local/bin/gnome-clip-notes`. If your binary is in another location, set
+   **`gnomeClipNotes.bridgePath`** in the IDE settings (`~/` is expanded).
 
 The companion extension does not require bundling SQLite or D-Bus dependencies and
 does not hold `update.lock` between requests, so app updates remain safe while your

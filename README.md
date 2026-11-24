@@ -162,7 +162,7 @@ To browse and edit saved notes in **Antigravity IDE**, **VSCodium**, or **VS Cod
 download `gnome-clip-notes-ide-<VERSION>.vsix` from
 [GitHub Releases](https://github.com/OleksiyM/GnomeClipNotes/releases) (after installing
 GnomeClipNotes `1.6.0` or newer) and install it via **Install from VSIX...** or CLI
-(`agy` / `codium` / `code --install-extension ...`). See
+(`antigravity-ide` / `codium` / `code --install-extension ...`). See
 [companion-ide/README.md](companion-ide/README.md) and
 [IDE companion installation](docs/installation.md#ide-companion-extension-optional)
 for setup, `gnomeClipNotes.bridgePath`, and building from source.

@@ -2,7 +2,7 @@
   "name": "gnome-clip-notes-ide",
   "displayName": "GnomeClipNotes Companion",
   "description": "IDE companion extension for GnomeClipNotes: local-first notes projection, bidirectional sync, and folder browsing.",
-  "version": "1.6.0",
+  "version": "1.6.1",
   "publisher": "OleksiyM",
   "license": "MIT",
   "repository": {
@@ -85,7 +85,7 @@
         "gnomeClipNotes.bridgePath": {
           "type": "string",
           "default": "gnome-clip-notes",
-          "description": "Path to the gnome-clip-notes binary for bridge communication."
+          "description": "Path to the gnome-clip-notes binary (~ is expanded). When left at the default, checks PATH, ~/Applications/GnomeClipNotes/gnome-clip-notes, and ~/.local/bin/gnome-clip-notes."
         },
         "gnomeClipNotes.debounceMs": {
           "type": "number",

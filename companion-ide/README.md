@@ -4,7 +4,7 @@ A lightweight, local-first companion IDE extension for **GnomeClipNotes** (compa
 
 ## Features
 
-- **Folder & Note Browsing**: Sidebar view container (`Notes & Folders`) showing all GnomeClipNotes collections and items.
+- **Folder & Note Browsing**: Sidebar view container (`Notes & Folders`) showing all GnomeClipNotes collections and items, with pin indicators and lazy hover tooltips displaying item metadata, categories, and comments.
 - **RAM Projection (`file://` `.md`)**: Opens notes as ordinary local Markdown files in high-speed RAM session directories (`$XDG_RUNTIME_DIR/gnome-clip-notes-ide/<pid>/` or fallback `/tmp/gnome-clip-notes-ide-<uid>/<pid>/`) with strict permissions (`0700` directories, `0600` files).
 - **First-Class AI Agent & Tooling Support**: Because notes are projected onto the filesystem as standard `.md` files, external CLI tools (`ripgrep`), IDE spellcheckers, Markdown previews, and IDE AI agents have full direct read and write access.
 - **Dual Save Triggers & Echo-Loop Prevention**: Monitors both editor buffer saves (`onDidSaveTextDocument`) and direct disk filesystem writes (`createFileSystemWatcher`), with per-file debouncing (default 250ms) and self-write content-hash tracking to suppress echo loops.
@@ -49,14 +49,14 @@ No native SQLite, C bindings, or D-Bus libraries are bundled into the extension.
 
      ```sh
      # Antigravity IDE
-     agy --install-extension gnome-clip-notes-ide-<VERSION>.vsix
+     antigravity-ide --install-extension gnome-clip-notes-ide-<VERSION>.vsix
      # VSCodium
      codium --install-extension gnome-clip-notes-ide-<VERSION>.vsix
      # VS Code
      code --install-extension gnome-clip-notes-ide-<VERSION>.vsix
      ```
 
-4. If `gnome-clip-notes` is not in your `PATH` (for example, when installed under `~/Applications/GnomeClipNotes/gnome-clip-notes` or running a local Cargo build), set **`gnomeClipNotes.bridgePath`** in your IDE settings to the full binary path.
+4. When `gnomeClipNotes.bridgePath` is left at the default (`"gnome-clip-notes"`), the extension checks `PATH` first and then falls back to `~/Applications/GnomeClipNotes/gnome-clip-notes` and `~/.local/bin/gnome-clip-notes`. If your binary lives elsewhere (for example, a local Cargo build), set **`gnomeClipNotes.bridgePath`** in your IDE settings (`~/` is expanded automatically).
 
 ### Build and install from source
 
@@ -73,7 +73,7 @@ Then install the generated `.vsix` file using the GUI or CLI steps above.
 
 | Setting | Type | Default | Description |
 |---|---|---|---|
-| `gnomeClipNotes.bridgePath` | `string` | `"gnome-clip-notes"` | Path to the `gnome-clip-notes` binary. |
+| `gnomeClipNotes.bridgePath` | `string` | `"gnome-clip-notes"` | Path to the `gnome-clip-notes` binary (trims whitespace, expands `~/`; default checks `PATH`, `~/Applications/GnomeClipNotes/gnome-clip-notes`, and `~/.local/bin/gnome-clip-notes`). |
 | `gnomeClipNotes.debounceMs` | `number` | `250` | Debounce delay in milliseconds before sending edits to the bridge. |
 
 ## Commands

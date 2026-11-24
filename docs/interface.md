@@ -225,9 +225,16 @@ changed to reserve either combination.
   - `list_folders`: returns non-History collections (`include_history` optional,
     defaults to `false`) with `id`, `name`, `item_count`, and `position`.
   - `list_items`: returns item summaries (`id`, `folder_id`, `title`,
-    `updated_at`, `created_at`, `revision`) for `folder_id`, preserving folder
-    pinning and chronological order.
-  - `read_item`: returns full item details including `content` and `revision`.
+    `updated_at`, `created_at`, `pinned_at`, `revision`) for `folder_id`,
+    preserving folder pinning and chronological order (`pinned_at` is `0` when
+    unpinned or in History).
+  - `read_item`: returns full item details including `content`, `pinned_at`,
+    and `revision`.
+  - `read_item_details`: returns lightweight metadata (`folder_name`, `kind`,
+    `origin`, `source`, `source_id`, timestamps, `pinned_at`, `char_count`,
+    `word_count`) plus optional `category_name`, `subcategory_name`, and
+    `comment` gated by `classification_enabled` and `comments_enabled` in
+    `Settings`.
   - `save_item`: validates `id`, `content`, `expected_revision`, and optional
     `title`; returns updated `id`, `revision`, and `updated_at`. Editing History
     (`group_id == 0`) is rejected with `FORBIDDEN`.
@@ -237,7 +244,9 @@ changed to reserve either combination.
   and `INTERNAL_ERROR`.
 - **IDE workflow (`companion-ide/`):**
   - The `Notes & Folders` sidebar tree displays collections and notes from the
-    bridge and refreshes on `changed` events or `GnomeClipNotes: Refresh Notes`.
+    bridge (marking pinned notes with a pin icon), resolves lazy hover
+    tooltips (`resolveTreeItem`) with item metadata, categories, and comments,
+    and refreshes on `changed` events or `GnomeClipNotes: Refresh Notes`.
   - Opening a note projects it to `$XDG_RUNTIME_DIR/gnome-clip-notes-ide/<pid>/`
     and monitors both editor saves (`onDidSaveTextDocument`) and direct disk
     writes (`FileSystemWatcher`, debounced by `gnomeClipNotes.debounceMs`) with
