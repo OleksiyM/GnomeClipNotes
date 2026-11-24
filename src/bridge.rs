@@ -249,6 +249,25 @@ fn handle_request_line(
                 Err(err) => map_bridge_error(request_id, err),
             }
         }
+        "read_item_details" => {
+            let Some(id) = params.get("id").and_then(Value::as_i64) else {
+                return error_response(
+                    request_id,
+                    "INVALID_REQUEST",
+                    "Missing or invalid id",
+                    json!({}),
+                );
+            };
+            match store.bridge_read_item_details(id) {
+                Ok(details) => match serde_json::to_value(details) {
+                    Ok(val) => success_response(request_id, val),
+                    Err(err) => {
+                        error_response(request_id, "INTERNAL_ERROR", &err.to_string(), json!({}))
+                    }
+                },
+                Err(err) => map_bridge_error(request_id, err),
+            }
+        }
         "save_item" => {
             let Some(id) = params.get("id").and_then(Value::as_i64) else {
                 return error_response(
@@ -485,6 +504,7 @@ mod tests {
         );
         assert_eq!(items["ok"], true);
         let item_id = items["result"]["items"][0]["id"].as_i64().unwrap();
+        assert_eq!(items["result"]["items"][0]["pinned_at"], 0);
         let rev = items["result"]["items"][0]["revision"]
             .as_str()
             .unwrap()
@@ -497,6 +517,29 @@ mod tests {
         );
         assert_eq!(read["ok"], true);
         assert_eq!(read["result"]["content"], "Body 1");
+        assert_eq!(read["result"]["pinned_at"], 0);
+
+        let details = handle_request_line(
+            &format!(
+                r#"{{"request_id":31,"method":"read_item_details","params":{{"id":{item_id}}}}}"#
+            ),
+            &mut store,
+            None,
+        );
+        assert_eq!(details["ok"], true);
+        assert_eq!(details["result"]["folder_name"], "Notes");
+        assert_eq!(details["result"]["char_count"], 6);
+        assert_eq!(details["result"]["word_count"], 2);
+        assert!(details["result"]["category_name"].is_null());
+        assert!(details["result"]["comment"].is_null());
+
+        let missing_details = handle_request_line(
+            r#"{"request_id":32,"method":"read_item_details","params":{"id":99999}}"#,
+            &mut store,
+            None,
+        );
+        assert_eq!(missing_details["ok"], false);
+        assert_eq!(missing_details["error"]["code"], "NOT_FOUND");
 
         let save = handle_request_line(
             &format!(

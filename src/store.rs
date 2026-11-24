@@ -499,6 +499,7 @@ pub struct BridgeItemSummary {
     pub title: String,
     pub updated_at: i64,
     pub created_at: i64,
+    pub pinned_at: i64,
     pub revision: String,
 }
 
@@ -510,7 +511,29 @@ pub struct BridgeItem {
     pub content: String,
     pub updated_at: i64,
     pub created_at: i64,
+    pub pinned_at: i64,
     pub revision: String,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, serde::Serialize)]
+pub struct BridgeItemDetails {
+    pub id: i64,
+    pub folder_id: i64,
+    pub folder_name: String,
+    pub title: String,
+    pub kind: String,
+    pub origin: String,
+    pub source: String,
+    pub source_id: String,
+    pub created_at: i64,
+    pub updated_at: i64,
+    pub copied_at: i64,
+    pub pinned_at: i64,
+    pub char_count: usize,
+    pub word_count: usize,
+    pub category_name: Option<String>,
+    pub subcategory_name: Option<String>,
+    pub comment: Option<String>,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, serde::Serialize)]
@@ -597,7 +620,9 @@ impl Store {
             )));
         }
         let mut stmt = tx.prepare(
-            "SELECT i.id, i.group_id, i.title, i.updated_at, i.created_at, r.token
+            "SELECT i.id, i.group_id, i.title, i.updated_at, i.created_at,
+                    CASE WHEN i.group_id >= 1 THEN i.pinned_at ELSE 0 END,
+                    r.token
              FROM items i
              JOIN item_export_revisions r ON r.item_id = i.id
              WHERE i.group_id = ?1
@@ -607,13 +632,14 @@ impl Store {
         )?;
         let items = stmt
             .query_map([folder_id], |r| {
-                let token: Vec<u8> = r.get(5)?;
+                let token: Vec<u8> = r.get(6)?;
                 Ok(BridgeItemSummary {
                     id: r.get(0)?,
                     folder_id: r.get(1)?,
                     title: r.get(2)?,
                     updated_at: r.get(3)?,
                     created_at: r.get(4)?,
+                    pinned_at: r.get(5)?,
                     revision: hex_encode(&token),
                 })
             })?
@@ -627,13 +653,15 @@ impl Store {
         let item = self
             .db
             .query_row(
-                "SELECT i.id, i.group_id, i.title, i.content, i.updated_at, i.created_at, r.token
+                "SELECT i.id, i.group_id, i.title, i.content, i.updated_at, i.created_at,
+                        CASE WHEN i.group_id >= 1 THEN i.pinned_at ELSE 0 END,
+                        r.token
                  FROM items i
                  JOIN item_export_revisions r ON r.item_id = i.id
                  WHERE i.id = ?1",
                 [id],
                 |r| {
-                    let token: Vec<u8> = r.get(6)?;
+                    let token: Vec<u8> = r.get(7)?;
                     Ok(BridgeItem {
                         id: r.get(0)?,
                         folder_id: r.get(1)?,
@@ -641,12 +669,83 @@ impl Store {
                         content: r.get(3)?,
                         updated_at: r.get(4)?,
                         created_at: r.get(5)?,
+                        pinned_at: r.get(6)?,
                         revision: hex_encode(&token),
                     })
                 },
             )
             .optional()?;
         item.ok_or_else(|| BridgeError::NotFound(format!("Item {id} does not exist")))
+    }
+
+    fn effective_settings(&self) -> Settings {
+        if !self.config_path.as_os_str().is_empty() && self.config_path.exists() {
+            if let Ok(bytes) = fs::read(&self.config_path) {
+                if let Ok(parsed) = serde_json::from_slice::<Settings>(&bytes) {
+                    return parsed;
+                }
+            }
+        }
+        self.settings.clone()
+    }
+
+    pub fn bridge_read_item_details(
+        &self,
+        id: i64,
+    ) -> std::result::Result<BridgeItemDetails, BridgeError> {
+        let settings = self.effective_settings();
+        let details = self
+            .db
+            .query_row(
+                "SELECT i.id, i.group_id, g.name, i.title, i.content, i.kind, i.origin,
+                        i.source, i.source_id, i.created_at, i.updated_at, i.copied_at,
+                        CASE WHEN i.group_id >= 1 THEN i.pinned_at ELSE 0 END,
+                        c.name, sc.name, COALESCE(a.comment, '')
+                 FROM items i
+                 JOIN groups g ON g.id = i.group_id
+                 LEFT JOIN item_classifications a ON a.item_id = i.id
+                 LEFT JOIN categories c ON c.id = a.category_id
+                 LEFT JOIN subcategories sc ON sc.id = a.subcategory_id AND sc.category_id = a.category_id
+                 WHERE i.id = ?1",
+                [id],
+                |r| {
+                    let content: String = r.get(4)?;
+                    let raw_category: Option<String> = r.get(13)?;
+                    let raw_subcategory: Option<String> = r.get(14)?;
+                    let raw_comment: String = r.get(15)?;
+                    let (category_name, subcategory_name) = if settings.classification_enabled {
+                        (raw_category, raw_subcategory)
+                    } else {
+                        (None, None)
+                    };
+                    let comment = if settings.comments_enabled && !raw_comment.trim().is_empty() {
+                        Some(raw_comment)
+                    } else {
+                        None
+                    };
+                    Ok(BridgeItemDetails {
+                        id: r.get(0)?,
+                        folder_id: r.get(1)?,
+                        folder_name: r.get(2)?,
+                        title: r.get(3)?,
+                        kind: r.get(5)?,
+                        origin: r.get(6)?,
+                        source: r.get(7)?,
+                        source_id: r.get(8)?,
+                        created_at: r.get(9)?,
+                        updated_at: r.get(10)?,
+                        copied_at: r.get(11)?,
+                        pinned_at: r.get(12)?,
+                        char_count: content.chars().count(),
+                        word_count: content.split_whitespace().count(),
+                        category_name,
+                        subcategory_name,
+                        comment,
+                    })
+                },
+            )
+            .optional()?;
+        details.ok_or_else(|| BridgeError::NotFound(format!("Item {id} does not exist")))
     }
 
     pub fn bridge_save_item(
@@ -1229,7 +1328,9 @@ mod tests {
         let items = s.bridge_list_items(1).unwrap();
         assert_eq!(items.len(), 2);
         assert_eq!(items[0].id, first);
+        assert!(items[0].pinned_at > 0);
         assert_eq!(items[1].id, second);
+        assert_eq!(items[1].pinned_at, 0);
         assert_eq!(items[0].revision.len(), 32);
         assert!(items[0]
             .revision
@@ -1238,6 +1339,7 @@ mod tests {
 
         let read = s.bridge_read_item(first).unwrap();
         assert_eq!(read.content, "First body");
+        assert_eq!(read.pinned_at, items[0].pinned_at);
         assert_eq!(read.revision, items[0].revision);
         assert!(matches!(
             s.bridge_read_item(9999),
@@ -1310,5 +1412,97 @@ mod tests {
         assert_ne!(saved2.revision, saved.revision);
         assert_eq!(s.bridge_read_item(note_id).unwrap().title, "Renamed");
         assert_eq!(s.get(note_id).unwrap().kind, "text");
+    }
+
+    #[test]
+    fn bridge_read_item_details_respects_feature_switches_and_counts() {
+        let dir = std::env::temp_dir().join(format!(
+            "gcn-bridge-details-{}-{}",
+            std::process::id(),
+            now()
+        ));
+        fs::create_dir_all(&dir).unwrap();
+        let config_path = dir.join("settings.json");
+
+        let mut s = store();
+        s.config_path = config_path.clone();
+        s.capture(
+            "First line\nПривет мир",
+            "Firefox",
+            "firefox.desktop",
+            false,
+        )
+        .unwrap();
+        let id = s.query(&Query::default()).unwrap()[0].id;
+        s.create_group("Research").unwrap();
+        let folder_id = s.groups().unwrap().last().unwrap().id;
+        s.move_item(id, folder_id).unwrap();
+        s.save_item(Some(id), "Unicode note", "First line\nПривет мир")
+            .unwrap();
+        s.set_pinned(id, true).unwrap();
+        let cat = s.create_category("Work").unwrap();
+        let sub = s.create_subcategory(cat, "API").unwrap();
+        s.set_item_classification(
+            id,
+            &ItemClassification {
+                category_id: Some(cat),
+                subcategory_id: Some(sub),
+                comment: "Check edge cases".into(),
+            },
+        )
+        .unwrap();
+
+        // 1. Both disabled by default
+        let d0 = s.bridge_read_item_details(id).unwrap();
+        assert_eq!(d0.folder_id, folder_id);
+        assert_eq!(d0.folder_name, "Research");
+        assert_eq!(d0.title, "Unicode note");
+        assert_eq!(d0.kind, "text");
+        assert_eq!(d0.origin, "clipboard");
+        assert_eq!(d0.source, "Firefox");
+        assert_eq!(d0.source_id, "firefox.desktop");
+        assert!(d0.pinned_at > 0);
+        assert_eq!(d0.char_count, "First line\nПривет мир".chars().count());
+        assert_eq!(d0.word_count, 4);
+        assert_eq!(d0.category_name, None);
+        assert_eq!(d0.subcategory_name, None);
+        assert_eq!(d0.comment, None);
+
+        // 2. Classification enabled, comments disabled
+        s.settings.classification_enabled = true;
+        s.settings.comments_enabled = false;
+        let d1 = s.bridge_read_item_details(id).unwrap();
+        assert_eq!(d1.category_name.as_deref(), Some("Work"));
+        assert_eq!(d1.subcategory_name.as_deref(), Some("API"));
+        assert_eq!(d1.comment, None);
+
+        // 3. Classification disabled, comments enabled
+        s.settings.classification_enabled = false;
+        s.settings.comments_enabled = true;
+        let d2 = s.bridge_read_item_details(id).unwrap();
+        assert_eq!(d2.category_name, None);
+        assert_eq!(d2.subcategory_name, None);
+        assert_eq!(d2.comment.as_deref(), Some("Check edge cases"));
+
+        // 4. Both enabled via on-disk settings.json (simulates live toggle in running app)
+        s.settings.classification_enabled = false;
+        s.settings.comments_enabled = false;
+        let disk_settings = Settings {
+            classification_enabled: true,
+            comments_enabled: true,
+            ..Settings::default()
+        };
+        fs::write(&config_path, serde_json::to_vec(&disk_settings).unwrap()).unwrap();
+        let d3 = s.bridge_read_item_details(id).unwrap();
+        assert_eq!(d3.category_name.as_deref(), Some("Work"));
+        assert_eq!(d3.subcategory_name.as_deref(), Some("API"));
+        assert_eq!(d3.comment.as_deref(), Some("Check edge cases"));
+
+        assert!(matches!(
+            s.bridge_read_item_details(9999),
+            Err(BridgeError::NotFound(_))
+        ));
+
+        let _ = fs::remove_dir_all(&dir);
     }
 }
