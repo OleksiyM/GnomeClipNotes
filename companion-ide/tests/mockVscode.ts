@@ -48,11 +48,20 @@ export class MockThemeIcon {
   constructor(public readonly id: string) {}
 }
 
+export class MockMarkdownString {
+  public isTrusted: boolean = false;
+
+  constructor(
+    public value: string = '',
+    public supportThemeIcons: boolean = false
+  ) {}
+}
+
 export class MockTreeItem {
   public description?: string;
   public contextValue?: string;
   public iconPath?: any;
-  public tooltip?: string;
+  public tooltip?: string | MockMarkdownString;
   public command?: any;
 
   constructor(
@@ -150,6 +159,7 @@ export const mockVscode = {
   EventEmitter: MockEventEmitter,
   RelativePattern: MockRelativePattern,
   ThemeIcon: MockThemeIcon,
+  MarkdownString: MockMarkdownString,
   TreeItem: MockTreeItem,
   TreeItemCollapsibleState: MockTreeItemCollapsibleState,
   Disposable: {

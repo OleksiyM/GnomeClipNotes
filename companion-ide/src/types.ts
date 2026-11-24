@@ -64,6 +64,7 @@ export interface ItemSummary {
   title: string;
   updated_at: number;
   created_at: number;
+  pinned_at?: number;
   revision: string;
 }
 
@@ -74,7 +75,28 @@ export interface ItemDetail {
   content: string;
   updated_at: number;
   created_at: number;
+  pinned_at?: number;
   revision: string;
+}
+
+export interface ItemDetails {
+  id: number;
+  folder_id: number;
+  folder_name: string;
+  title: string;
+  kind: string;
+  origin: string;
+  source: string;
+  source_id: string;
+  created_at: number;
+  updated_at: number;
+  copied_at: number;
+  pinned_at: number;
+  char_count: number;
+  word_count: number;
+  category_name: string | null;
+  subcategory_name: string | null;
+  comment: string | null;
 }
 
 export interface SaveItemResult {

@@ -1,5 +1,8 @@
 import { spawn, ChildProcess } from 'child_process';
 import { EventEmitter } from 'events';
+import * as fs from 'fs';
+import * as os from 'os';
+import * as path from 'path';
 import {
   BridgeRequest,
   BridgeMessage,
@@ -9,13 +12,90 @@ import {
   Folder,
   ItemSummary,
   ItemDetail,
+  ItemDetails,
   SaveItemResult
 } from './types';
+
+export const DEFAULT_BRIDGE_BINARY = 'gnome-clip-notes';
+
+export interface BridgePathResolveDeps {
+  homedir?: string;
+  envPath?: string;
+  isExecutableFile?: (filePath: string) => boolean;
+}
+
+/**
+ * Checks whether `filePath` is an existing regular file with execute permission.
+ */
+export function defaultIsExecutableFile(filePath: string): boolean {
+  try {
+    const stat = fs.statSync(filePath);
+    if (!stat.isFile()) {
+      return false;
+    }
+    fs.accessSync(filePath, fs.constants.X_OK);
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+/**
+ * Expands a leading `~` or `~/` segment to `homedir` without altering `~user/...`.
+ */
+export function expandLeadingTilde(inputPath: string, homedir: string): string {
+  if (inputPath === '~') {
+    return homedir;
+  }
+  if (inputPath.startsWith('~/') || inputPath.startsWith('~\\')) {
+    return path.join(homedir, inputPath.slice(2));
+  }
+  return inputPath;
+}
+
+/**
+ * Resolves the configured `gnomeClipNotes.bridgePath` value.
+ * Trims whitespace, expands leading `~/`, and for the default binary falls back
+ * to standard user install locations when not found on `PATH`.
+ */
+export function resolveBridgePath(rawPath?: string, deps: BridgePathResolveDeps = {}): string {
+  const homedir = deps.homedir ?? os.homedir();
+  const envPath = deps.envPath ?? process.env.PATH ?? '';
+  const isExecutable = deps.isExecutableFile ?? defaultIsExecutableFile;
+  const trimmed = (rawPath ?? '').trim();
+
+  if (trimmed !== '' && trimmed !== DEFAULT_BRIDGE_BINARY) {
+    return expandLeadingTilde(trimmed, homedir);
+  }
+
+  for (const dir of envPath.split(path.delimiter)) {
+    if (!dir) {
+      continue;
+    }
+    if (isExecutable(path.join(dir, DEFAULT_BRIDGE_BINARY))) {
+      return DEFAULT_BRIDGE_BINARY;
+    }
+  }
+
+  const standardCandidates = [
+    path.join(homedir, 'Applications', 'GnomeClipNotes', DEFAULT_BRIDGE_BINARY),
+    path.join(homedir, '.local', 'bin', DEFAULT_BRIDGE_BINARY)
+  ];
+
+  for (const candidate of standardCandidates) {
+    if (isExecutable(candidate)) {
+      return candidate;
+    }
+  }
+
+  return DEFAULT_BRIDGE_BINARY;
+}
 
 export interface BridgeClientOptions {
   bridgePath?: string;
   spawnFn?: (command: string, args: string[]) => ChildProcess;
   requestTimeoutMs?: number;
+  pathResolveDeps?: BridgePathResolveDeps;
 }
 
 interface PendingRequest {
@@ -25,9 +105,10 @@ interface PendingRequest {
 }
 
 export class BridgeClient extends EventEmitter {
-  private bridgePath: string;
+  private configuredBridgePath: string;
   private spawnFn: (command: string, args: string[]) => ChildProcess;
   private requestTimeoutMs: number;
+  private pathResolveDeps?: BridgePathResolveDeps;
   private process: ChildProcess | null = null;
   private stdoutBuffer: string = '';
   private nextRequestId: number = 1;
@@ -36,20 +117,21 @@ export class BridgeClient extends EventEmitter {
 
   constructor(options: BridgeClientOptions = {}) {
     super();
-    this.bridgePath = options.bridgePath || 'gnome-clip-notes';
+    this.configuredBridgePath = options.bridgePath ?? DEFAULT_BRIDGE_BINARY;
     this.spawnFn = options.spawnFn || ((cmd, args) => spawn(cmd, args, { stdio: ['pipe', 'pipe', 'inherit'] }));
     this.requestTimeoutMs = options.requestTimeoutMs || 10000;
+    this.pathResolveDeps = options.pathResolveDeps;
   }
 
   public setBridgePath(newPath: string): void {
-    if (this.bridgePath !== newPath) {
-      this.bridgePath = newPath;
+    if (this.configuredBridgePath !== newPath) {
+      this.configuredBridgePath = newPath;
       this.restart();
     }
   }
 
   public getBridgePath(): string {
-    return this.bridgePath;
+    return resolveBridgePath(this.configuredBridgePath, this.pathResolveDeps);
   }
 
   private ensureProcess(): ChildProcess {
@@ -60,7 +142,8 @@ export class BridgeClient extends EventEmitter {
       return this.process;
     }
 
-    const child = this.spawnFn(this.bridgePath, ['--bridge']);
+    const resolvedBridgePath = this.getBridgePath();
+    const child = this.spawnFn(resolvedBridgePath, ['--bridge']);
     this.process = child;
     this.stdoutBuffer = '';
 
@@ -71,7 +154,7 @@ export class BridgeClient extends EventEmitter {
     child.on('error', (err: Error) => {
       this.handleProcessFailure(new BridgeError({
         code: 'SPAWN_ERROR',
-        message: `Failed to spawn bridge '${this.bridgePath}': ${err.message}`
+        message: `Failed to spawn bridge '${resolvedBridgePath}': ${err.message}`
       }));
     });
 
@@ -192,6 +275,10 @@ export class BridgeClient extends EventEmitter {
 
   public async readItem(id: number): Promise<ItemDetail> {
     return this.sendRequest<ItemDetail>('read_item', { id });
+  }
+
+  public async readItemDetails(id: number): Promise<ItemDetails> {
+    return this.sendRequest<ItemDetails>('read_item_details', { id });
   }
 
   public async saveItem(

@@ -12,6 +12,15 @@ export class MockBridgeProcess extends EventEmitter {
   public currentContent: string = '# Hello from GnomeClipNotes\nInitial content.';
   public currentTitle: string = 'Test Note';
   public currentFolderId: number = 1;
+  public currentFolderName: string = 'Notes';
+  public currentKind: string = 'text';
+  public currentOrigin: string = 'clipboard';
+  public currentSource: string = 'Firefox';
+  public currentSourceId: string = 'firefox.desktop';
+  public currentPinnedAt: number = 0;
+  public currentCategoryName: string | null = null;
+  public currentSubcategoryName: string | null = null;
+  public currentComment: string | null = null;
 
   public customHandler?: (req: any) => any;
 
@@ -112,6 +121,7 @@ export class MockBridgeProcess extends EventEmitter {
                   title: this.currentTitle,
                   updated_at: 1000,
                   created_at: 900,
+                  pinned_at: this.currentPinnedAt,
                   revision: this.currentRevision
                 }
               ]
@@ -140,7 +150,45 @@ export class MockBridgeProcess extends EventEmitter {
               content: this.currentContent,
               updated_at: 1000,
               created_at: 900,
+              pinned_at: this.currentPinnedAt,
               revision: this.currentRevision
+            }
+          });
+        } else {
+          this.sendLine({
+            type: 'response',
+            request_id,
+            ok: false,
+            error: { code: 'NOT_FOUND', message: `Item #${params?.id} not found` }
+          });
+        }
+        break;
+
+      case 'read_item_details':
+        if (params?.id === 42) {
+          const trimmedWords = this.currentContent.trim();
+          this.sendLine({
+            type: 'response',
+            request_id,
+            ok: true,
+            result: {
+              id: 42,
+              folder_id: this.currentFolderId,
+              folder_name: this.currentFolderName,
+              title: this.currentTitle,
+              kind: this.currentKind,
+              origin: this.currentOrigin,
+              source: this.currentSource,
+              source_id: this.currentSourceId,
+              created_at: 900,
+              updated_at: 1000,
+              copied_at: 1050,
+              pinned_at: this.currentPinnedAt,
+              char_count: Array.from(this.currentContent).length,
+              word_count: trimmedWords ? trimmedWords.split(/\s+/).length : 0,
+              category_name: this.currentCategoryName,
+              subcategory_name: this.currentSubcategoryName,
+              comment: this.currentComment
             }
           });
         } else {
